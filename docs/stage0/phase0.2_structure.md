@@ -1,7 +1,7 @@
 ---
 tags: [stage0, structure, src, tests]
 created: 2026-06-15
-updated: 2026-06-15
+updated: 2026-06-17
 ---
 
 # Phase 0.2 src · tests 구조 확정
@@ -13,6 +13,7 @@ updated: 2026-06-15
 - 4개 프레임워크(NumPy/CuPy, PyTorch, TensorFlow, JAX) 프로젝트가 동일한 `src/` 최상위 구조를 공유한다.
 - 실행 객체는 `training/` 대신 `core/` 에 배치한다.
 - 프레임워크별 차이는 `models/` 하위 구현에서 흡수하며 최상위 `nn/` 폴더는 사용하지 않는다.
+- 레거시 `common/optimizers.py` 에 대응하는 `optimizers.py` 는 `core/` 에 배치한다.
 
 ## 2. src 패키지 구조
 
@@ -25,7 +26,8 @@ src/
 ├── task.py
 ├── data/
 │   ├── __init__.py
-│   └── mnist.py
+│   ├── mnist.py
+│   └── dataloader.py
 ├── models/
 │   ├── __init__.py
 │   ├── mlp.py
@@ -35,6 +37,7 @@ src/
 │   └── losses.py
 ├── core/
 │   ├── __init__.py
+│   ├── optimizers.py
 │   ├── checkpoints.py
 │   ├── trainer.py
 │   ├── evaluator.py
@@ -54,17 +57,19 @@ src/
 |---|---|
 | `src/config.py` | 기본 경로, seed, batch size, epoch, task, split 기본값 |
 | `src/task.py` | task별 target 변환, output_dim, loss, metric, 후처리 규약 |
-| `src/data/mnist.py` | 로컬 gz 파일 로딩, split 선택 |
+| `src/data/mnist.py` | 로컬 gz 파일 로딩, split 선택, MnistDataset |
+| `src/data/dataloader.py` | 범용 DataLoader — shuffle, drop_last 지원 |
 | `src/models/mlp.py` | NumPy MLP 생성, forward, backward, update |
 | `src/models/cnn.py` | CuPy CNN 생성, forward, backward, update |
 | `src/models/layers.py` | Linear 레이어 from-scratch 구현 |
-| `src/models/activations.py` | sigmoid, softmax, identity 활성화 함수 |
-| `src/models/losses.py` | cross_entropy, binary_cross_entropy, mse 손실 함수 |
-| `src/core/trainer.py` | 학습 루프, 배치 처리, loss/metric 집계 |
-| `src/core/evaluator.py` | 평가 루프, loss/metric 집계 |
+| `src/models/activations.py` | sigmoid, softmax, identity, relu 활성화 함수 |
+| `src/models/losses.py` | cross_entropy, binary_cross_entropy, mse 손실 함수 및 지표 |
+| `src/core/optimizers.py` | SGD, Adam 옵티마이저 — model.params/grads 기반 in-place 업데이트 |
+| `src/core/checkpoints.py` | 파라미터 저장·로딩 |
+| `src/core/trainer.py` | 학습 루프, Dataloader 수신, loss/metric 집계 |
+| `src/core/evaluator.py` | 평가 루프, Dataloader 수신, loss/metric 집계 |
 | `src/core/predictor.py` | task별 예측 후처리 |
 | `src/core/visualizer.py` | 학습 로그, 예측 결과, 샘플 이미지 시각화 |
-| `src/core/checkpoints.py` | 파라미터 저장·로딩 |
 | `src/core/experiment.py` | data, task, model, core 실행 객체 조립 |
 | `src/utils/batching.py` | mini-batch 인덱스 생성, shuffle |
 | `src/utils/random.py` | 난수 시드 고정 |
@@ -76,39 +81,34 @@ src/
 
 ```text
 tests/
-├── __init__.py
 ├── conftest.py
-├── test_config.py
-├── test_task.py
-├── data/
-│   ├── __init__.py
-│   └── test_mnist.py
-├── models/
-│   ├── __init__.py
+├── stage1/
+│   ├── test_config.py
+│   ├── test_task.py
+│   ├── test_batching.py
+│   ├── test_random.py
+│   └── test_io.py
+├── stage2/
+│   ├── test_mnist.py
+│   ├── test_dataset.py
+│   └── test_dataloader.py
+├── stage3/
 │   ├── test_mlp.py
-│   ├── test_cnn.py
 │   ├── test_layers.py
 │   ├── test_activations.py
 │   └── test_losses.py
-├── core/
-│   ├── __init__.py
+├── stage4/
+│   ├── test_optimizers.py
 │   ├── test_checkpoints.py
 │   ├── test_trainer.py
 │   ├── test_evaluator.py
 │   ├── test_predictor.py
-│   ├── test_visualizer.py
 │   └── test_experiment.py
-├── scripts/
-│   ├── __init__.py
-│   ├── test_train.py
-│   ├── test_evaluate.py
-│   ├── test_predict.py
-│   └── test_visualize.py
-└── utils/
-    ├── __init__.py
-    ├── test_batching.py
-    ├── test_random.py
-    └── test_io.py
+└── stage5/
+    ├── test_train.py
+    ├── test_evaluate.py
+    ├── test_predict.py
+    └── test_visualize.py
 ```
 
 ## 4. scripts와 core 관계

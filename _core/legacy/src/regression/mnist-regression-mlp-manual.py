@@ -20,7 +20,7 @@ from common.functions import identity, mse, r2_score
 #################################################################
 # Hyperparameters and preprocessing
 #################################################################
-DATA_DIR = "/mnt/d/deep_learning/datasets/mnist"
+DATA_DIR = "/mnt/d/datasets/mnist"
 SEED = 42
 BATCH_SIZE = 32
 LEARNING_RATE = 1e-2

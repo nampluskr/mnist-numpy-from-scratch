@@ -20,7 +20,7 @@ from common.functions import softmax, cross_entropy, accuracy
 #################################################################
 # Hyperparameters and preprocessing
 #################################################################
-DATA_DIR = "/mnt/d/deep_learning/datasets/mnist"
+DATA_DIR = "/mnt/d/datasets/mnist"
 SEED = 42
 BATCH_SIZE = 64
 LEARNING_RATE = 1e-2

@@ -26,7 +26,7 @@ updated: 2026-06-17
 - MLP 모델은 CPU 기반 NumPy 구현으로 학습한다.
 - CNN 모델은 GPU 기반 CuPy 구현으로 학습한다.
 - 후속 PyTorch, TensorFlow, JAX 프로젝트와 호환되도록 모듈명, 함수명, 사용법을 통일한다.
-- `_core/legacy/src/` 폴더에 사용자가 제공하는 기존 3가지 작업의 레거시 코드를 보관하고 분석한다.
+- `_core/legacy/src/` 폴더에 사용자가 제공하는 기존 3가지 작업의 레거시 코드(task 스크립트 6개 + common 모듈 6개)를 보관하고 분석한다.
 - `src/` 폴더에 실제 소스 코드를 구현한다.
 - `scripts/` 폴더에 클라이언트 코드 `train.py`, `evaluate.py`, `predict.py`, `visualize.py`를 작성한다.
 - `tests/` 폴더 기반으로 `pytest`를 이용한 TDD 구조를 구현한다.
@@ -44,13 +44,13 @@ updated: 2026-06-17
 
 ## 5. 진행 단계
 
-프로젝트는 Stage 0에서 기존 설계를 재검토한 뒤, Stage 1부터 각 파일마다 코드 작성 Task와 테스트 작성 Task를 분리하여 진행한다.
+프로젝트는 Stage 0에서 레거시 코드를 분석하여 구현 계획과 테스트 계획을 수립한 뒤, Stage 1부터 각 파일마다 코드 작성 Task와 테스트 작성 Task를 분리하여 진행한다.
 
-### 5.1. Stage 0 프로젝트 설계 재검토
+### 5.1. Stage 0 레거시 코드 분석 및 계획 수립
 
-- Phase 0.1 기존 계획 및 레거시 입력 재검토
-- Phase 0.2 공통 `src` 및 `tests` 구조 확정
-- Phase 0.3 파일 단위 코드·테스트 구현 순서 확정
+- Phase 0.1 레거시 코드 분석 — 코드 구조, 두 가지 구현 패턴, task별 차이 파악
+- Phase 0.2 구현 계획 수립 — 레거시-src 매핑, src 패키지 구조, Stage별 구현 순서 확정
+- Phase 0.3 테스트 계획 수립 — tests 폴더 구조, 인터페이스 규약, TDD 원칙 확정
 
 ### 5.2. Stage 1 기본 설정 및 과제 규약 구현
 
@@ -71,19 +71,20 @@ updated: 2026-06-17
 
 ### 5.5. Stage 4 실행 객체 구현
 
-- Phase 4.1 `core/checkpoints.py` 코드 작성 및 `core/test_checkpoints.py` 테스트 작성
-- Phase 4.2 `core/trainer.py` 코드 작성 및 `core/test_trainer.py` 테스트 작성
-- Phase 4.3 `core/evaluator.py` 코드 작성 및 `core/test_evaluator.py` 테스트 작성
-- Phase 4.4 `core/predictor.py` 코드 작성 및 `core/test_predictor.py` 테스트 작성
-- Phase 4.5 `core/experiment.py` 코드 작성 및 `core/test_experiment.py` 테스트 작성
-- Phase 4.6 `core/visualizer.py` 코드 작성 및 `core/test_visualizer.py` 테스트 작성
+- Phase 4.1 `core/optimizers.py` 코드 작성 및 `stage4/test_optimizers.py` 테스트 작성
+- Phase 4.2 `core/checkpoints.py` 코드 작성 및 `stage4/test_checkpoints.py` 테스트 작성
+- Phase 4.3 `core/trainer.py` 코드 작성 및 `stage4/test_trainer.py` 테스트 작성
+- Phase 4.4 `core/evaluator.py` 코드 작성 및 `stage4/test_evaluator.py` 테스트 작성
+- Phase 4.5 `core/predictor.py` 코드 작성 및 `stage4/test_predictor.py` 테스트 작성
+- Phase 4.6 `core/experiment.py` 코드 작성 및 `stage4/test_experiment.py` 테스트 작성
+- Phase 4.7 `core/visualizer.py` 코드 작성 및 `stage4/test_visualizer.py` 테스트 작성
 
 ### 5.6. Stage 5 클라이언트 코드 구현
 
-- Phase 5.1 `scripts/train.py` 코드 작성 및 `tests/scripts/test_train.py` 테스트 작성
-- Phase 5.2 `scripts/evaluate.py` 코드 작성 및 `tests/scripts/test_evaluate.py` 테스트 작성
-- Phase 5.3 `scripts/predict.py` 코드 작성 및 `tests/scripts/test_predict.py` 테스트 작성
-- Phase 5.4 `scripts/visualize.py` 코드 작성 및 `tests/scripts/test_visualize.py` 테스트 작성
+- Phase 5.1 `scripts/train.py` 코드 작성 및 `tests/stage5/test_train.py` 테스트 작성
+- Phase 5.2 `scripts/evaluate.py` 코드 작성 및 `tests/stage5/test_evaluate.py` 테스트 작성
+- Phase 5.3 `scripts/predict.py` 코드 작성 및 `tests/stage5/test_predict.py` 테스트 작성
+- Phase 5.4 `scripts/visualize.py` 코드 작성 및 `tests/stage5/test_visualize.py` 테스트 작성
 
 ### 5.7. Stage 6 CuPy 기반 CNN 구현
 
@@ -127,23 +128,27 @@ MNIST 로컬 저장소는 다음 4개 파일을 포함해야 한다.
 src/
 ├── __init__.py
 ├── config.py
+├── task.py
 ├── data/
 │   ├── __init__.py
 │   ├── mnist.py
 │   └── dataloader.py
-├── task.py
 ├── models/
 │   ├── __init__.py
 │   ├── mlp.py
-│   └── cnn.py
+│   ├── cnn.py
+│   ├── layers.py
+│   ├── activations.py
+│   └── losses.py
 ├── core/
 │   ├── __init__.py
-│   ├── experiment.py
+│   ├── optimizers.py
+│   ├── checkpoints.py
 │   ├── trainer.py
 │   ├── evaluator.py
 │   ├── predictor.py
 │   ├── visualizer.py
-│   └── checkpoints.py
+│   └── experiment.py
 └── utils/
     ├── __init__.py
     ├── batching.py
@@ -156,12 +161,24 @@ src/
 | 위치 | 책임 |
 | --- | --- |
 | `src/config.py` | 기본 경로, 기본 split, 기본 task, 기본 실행 설정을 정의한다. |
+| `src/task.py` | task별 output_dim, loss, metric, prediction_mode 규약을 단일 진입점으로 관리한다. `transform_targets`는 각 Dataset 클래스가 내부에서 호출하는 헬퍼로 사용한다. |
 | `src/data/mnist.py` | 로컬 MNIST `*.gz` 파일 로딩(`load_mnist`)과 `MnistDataset` 클래스를 제공한다. task별 target 변환은 `MnistDataset` 내부에서 처리한다. |
 | `src/data/dataloader.py` | 범용 `DataLoader` 클래스를 제공한다. `__len__`과 `__getitem__`을 구현한 Dataset이면 모두 수용한다. |
-| `src/task.py` | task별 output_dim, loss, metric, prediction_mode 규약을 단일 진입점으로 관리한다. `transform_targets`는 각 Dataset 클래스가 내부에서 호출하는 헬퍼로 사용한다. |
-| `src/models/` | MLP, CNN 모델 구조를 배치하며 프레임워크별 하위 구현 차이를 흡수한다. |
-| `src/core/` | `scripts/`에서 참조하는 실행 객체를 배치한다. |
-| `src/utils/` | batching, random seed, file I/O 등 공통 보조 기능을 배치한다. |
+| `src/models/mlp.py` | NumPy 기반 MLP 생성, forward, backward, update를 구현한다. |
+| `src/models/cnn.py` | CuPy 기반 CNN 생성, forward, backward, update를 구현한다. |
+| `src/models/layers.py` | `Linear`, `Sigmoid`, `ReLU`, `Sequential` 등 레이어 모듈을 구현한다. |
+| `src/models/activations.py` | `sigmoid`, `softmax`, `identity`, `relu` 활성화 함수를 구현한다. |
+| `src/models/losses.py` | `cross_entropy`, `binary_cross_entropy`, `mse` 손실 함수와 `accuracy`, `binary_accuracy`, `r2_score` 지표를 구현한다. |
+| `src/core/optimizers.py` | `SGD`, `Adam` 옵티마이저를 구현한다. model.params/grads 기반 in-place 업데이트를 수행한다. |
+| `src/core/checkpoints.py` | 모델 파라미터를 파일로 저장하고 불러온다. |
+| `src/core/trainer.py` | 학습 루프를 실행한다. `DataLoader`를 수신하여 loss/metric을 집계한다. |
+| `src/core/evaluator.py` | 평가 루프를 실행한다. `DataLoader`를 수신하여 loss/metric을 집계한다. |
+| `src/core/predictor.py` | task별 예측 후처리를 수행한다. |
+| `src/core/visualizer.py` | 학습 로그, 예측 결과, 샘플 이미지를 시각화한다. |
+| `src/core/experiment.py` | dataset, dataloader, model, optimizer, trainer, evaluator, predictor를 조립하는 최상위 진입점이다. |
+| `src/utils/batching.py` | mini-batch 인덱스 생성과 shuffle을 담당한다. |
+| `src/utils/random.py` | 난수 시드를 고정한다. |
+| `src/utils/io.py` | 파일 저장·로딩 보조 함수를 제공한다. |
 
 ### 6.3. `scripts`와 `core` 관계
 
@@ -178,55 +195,55 @@ src/
 
 테스트 코드는 `src`와 `scripts`의 테스트 대상별로 파일을 분리하여 작성한다.
 
+테스트 폴더는 `__init__.py` 를 두지 않는다. import 는 `pyproject.toml` 의 `pythonpath` 설정으로 해결한다.
+
 ```text
 tests/
-├── __init__.py
 ├── conftest.py
-├── test_config.py
-├── test_task.py
-├── data/
-│   ├── __init__.py
-│   └── test_mnist.py
-├── models/
-│   ├── __init__.py
+├── stage1/
+│   ├── test_config.py
+│   ├── test_task.py
+│   ├── test_batching.py
+│   ├── test_random.py
+│   └── test_io.py
+├── stage2/
+│   ├── test_mnist.py
+│   ├── test_dataset.py
+│   └── test_dataloader.py
+├── stage3/
 │   ├── test_mlp.py
-│   └── test_cnn.py
-├── core/
-│   ├── __init__.py
-│   ├── test_experiment.py
+│   ├── test_layers.py
+│   ├── test_activations.py
+│   └── test_losses.py
+├── stage4/
+│   ├── test_optimizers.py
+│   ├── test_checkpoints.py
 │   ├── test_trainer.py
 │   ├── test_evaluator.py
 │   ├── test_predictor.py
-│   ├── test_visualizer.py
-│   └── test_checkpoints.py
-├── scripts/
-│   ├── __init__.py
-│   ├── test_train.py
-│   ├── test_evaluate.py
-│   ├── test_predict.py
-│   └── test_visualize.py
-└── utils/
-    ├── __init__.py
-    ├── test_batching.py
-    ├── test_random.py
-    └── test_io.py
+│   └── test_experiment.py
+└── stage5/
+    ├── test_train.py
+    ├── test_evaluate.py
+    ├── test_predict.py
+    └── test_visualize.py
 ```
 
-초기 테스트 작성 우선순위는 데이터와 task 규약에서 시작하여 모델, 실행 객체, 클라이언트 코드로 확장한다.
+테스트 작성 우선순위는 설정과 task 규약에서 시작하여 데이터, 모델, 실행 객체, 클라이언트 코드 순으로 확장한다.
 
 | 우선순위 | 테스트 파일 | 대상 |
 | --- | --- | --- |
-| 1 | `tests/test_task.py` | task별 target 변환과 task spec |
-| 2 | `tests/data/test_mnist.py` | 로컬 MNIST 로딩, split 처리, shape 검증 |
-| 3 | `tests/models/test_mlp.py` | MLP 생성, forward shape, parameter update 흐름 |
-| 4 | `tests/core/test_trainer.py` | 학습 루프와 batch 처리 |
-| 5 | `tests/core/test_evaluator.py` | 평가 루프와 metric 집계 |
-| 6 | `tests/core/test_experiment.py` | data, task, model, core 실행 객체 조립 |
-| 7 | `tests/scripts/test_train.py` | train 클라이언트 인자와 실행 객체 호출 |
+| 1 | `tests/stage1/test_task.py` | task별 target 변환과 task spec |
+| 2 | `tests/stage2/test_mnist.py` | 로컬 MNIST 로딩, split 처리, shape 검증 |
+| 3 | `tests/stage3/test_mlp.py` | MLP 생성, forward shape, parameter update 흐름 |
+| 4 | `tests/stage4/test_optimizers.py` | SGD, Adam 파라미터 업데이트 |
+| 5 | `tests/stage4/test_trainer.py` | 학습 루프와 batch 처리 |
+| 6 | `tests/stage4/test_evaluator.py` | 평가 루프와 metric 집계 |
+| 7 | `tests/stage4/test_experiment.py` | data, task, model, core 실행 객체 조립 |
 
 ### 6.5. 레거시 코드와 구현 파일 매핑
 
-레거시 코드 3개 파일은 공통 파이프라인과 task별 차이로 분리하여 Stage 1 이후 구현 파일에 매핑한다.
+레거시 코드는 task 스크립트 6개(`binary`, `multiclass`, `regression` 각각 manual · module 2종)와 공통 모듈 6개(`mnist`, `functions`, `modules`, `optimizers`, `dataloader`, `trainer`)로 구성된다. 공통 파이프라인과 task별 차이로 분리하여 Stage 1 이후 구현 파일에 매핑한다.
 
 공통 파이프라인은 모든 task에서 동일하게 유지한다.
 
@@ -266,15 +283,19 @@ Stage 1 초기 구현에서 사용할 공통 진입점은 후속 프레임워크
 | 파일 | 공개 진입점 | 입력 | 출력 | 책임 |
 | --- | --- | --- | --- | --- |
 | `src/config.py` | `get_default_config()` | 없음 | `dict` | 기본 경로, seed, batch size, epoch, task, split 반환 |
+| `src/task.py` | `get_task_spec(task)` | `task: str` | `dict` | `output_dim`, activation, loss, metric, prediction_mode 반환 |
+| `src/task.py` | `transform_targets(labels, task)` | `labels: np.ndarray`, `task: str` | `np.ndarray` | task별 target 변환 — 각 Dataset 클래스 내부에서 호출 |
 | `src/data/mnist.py` | `load_mnist(split)` | `split: str` | `(images, labels)` tuple | 로컬 MNIST 원본 배열 로딩 |
 | `src/data/mnist.py` | `MnistDataset` | `split: str`, `task: str` | dataset instance | MNIST 로딩·정규화·task별 target 변환 담당 |
 | `src/data/dataloader.py` | `DataLoader` | `dataset`, `batch_size: int`, `shuffle: bool` | dataloader instance | 범용 배치·셔플 이터레이터 (`__len__`+`__getitem__` 프로토콜 요구) |
-| `src/task.py` | `get_task_spec(task)` | `task: str` | `dict` | `output_dim`, activation, loss, metric, prediction_mode 반환 |
-| `src/task.py` | `transform_targets(labels, task)` | `labels: np.ndarray`, `task: str` | `np.ndarray` | task별 target 변환 — 각 Dataset 클래스 내부에서 호출 |
 | `src/models/mlp.py` | `MLP` | config 또는 명시적 차원 인자 | model instance | NumPy 기반 MLP 생성 |
-| `src/core/trainer.py` | `Trainer` | model, task spec, config | trainer instance | 학습 루프 실행 |
-| `src/core/evaluator.py` | `Evaluator` | model, task spec, config | evaluator instance | 평가 루프 실행 |
-| `src/core/predictor.py` | `Predictor` | model, task spec, config | predictor instance | 예측 및 후처리 실행 |
+| `src/models/layers.py` | `Linear`, `Sigmoid`, `ReLU`, `Sequential` | 차원 또는 없음 | layer instance | from-scratch 레이어 구현 |
+| `src/models/activations.py` | `sigmoid`, `softmax`, `identity`, `relu` | `np.ndarray` | `np.ndarray` | 활성화 함수 — forward 전용 |
+| `src/models/losses.py` | `cross_entropy`, `binary_cross_entropy`, `mse` | `preds, targets: np.ndarray` | scalar | 손실 함수 및 평가 지표 |
+| `src/core/optimizers.py` | `SGD`, `Adam` | model instance, `lr: float` | optimizer instance | model.params/grads 기반 in-place 파라미터 업데이트 |
+| `src/core/trainer.py` | `Trainer` | model, optimizer, task spec | trainer instance | 학습 루프 실행 |
+| `src/core/evaluator.py` | `Evaluator` | model, task spec | evaluator instance | 평가 루프 실행 |
+| `src/core/predictor.py` | `Predictor` | model, task spec | predictor instance | 예측 및 후처리 실행 |
 | `src/core/experiment.py` | `Experiment` | config | experiment instance | data, task, model, 실행 객체 조립 |
 
 초기 구현에서 통일할 입력·출력 규약은 아래 기준을 따른다.
@@ -293,10 +314,12 @@ Stage 1 초기 구현에서 사용할 공통 진입점은 후속 프레임워크
 - `get_task_spec(task)`는 최소한 `task`, `output_dim`, `target_dtype`, `prediction_mode` 키를 포함한다.
 - `transform_targets(labels, task)`는 `task.py`에 유지하며 각 Dataset 클래스 내부에서 호출한다.
 - `MLP.forward(x)`는 `(N, output_dim)` prediction 배열을 반환한다.
+- `Linear.backward(dout)`는 상위 레이어로 전달할 gradient를 반환하며, `grad_w`, `grad_b`를 인스턴스에 in-place 저장한다.
+- `SGD.step()`, `Adam.step()`은 model.params 를 in-place 업데이트하며 반환값이 없다.
 - `Trainer.fit(train_loader)`는 `DataLoader`를 수신하며 epoch별 로그 dict 목록 또는 요약 dict를 반환한다.
 - `Evaluator.evaluate(test_loader)`는 `DataLoader`를 수신하며 `loss`, `metric`, `num_samples`를 포함한 dict를 반환한다.
 - `Predictor.predict(images)`는 raw prediction과 decoded prediction을 함께 담은 dict를 반환한다.
-- `Experiment`는 config를 기준으로 dataset, dataloader, task spec, model, trainer, evaluator, predictor를 조립하는 최상위 진입점 역할을 한다.
+- `Experiment`는 config를 기준으로 dataset, dataloader, task spec, model, optimizer, trainer, evaluator, predictor를 조립하는 최상위 진입점 역할을 한다.
 
 ### 6.7. 실패 테스트 작성 원칙과 `pytest` 실행 기준
 
@@ -315,9 +338,9 @@ Stage 1부터는 구현보다 테스트가 먼저 작성되도록 TDD 순서를 
 
 | 목적 | 명령 |
 | --- | --- |
-| config 단일 파일 테스트 | `pytest tests/test_config.py -q` |
-| task 단일 파일 테스트 | `pytest tests/test_task.py -q` |
-| utils 단일 파일 테스트 | `pytest tests/utils/test_batching.py -q` |
-| data 단일 파일 테스트 | `pytest tests/data/test_mnist.py -q` |
-| core 단일 파일 테스트 | `pytest tests/core/test_trainer.py -q` |
-| 전체 테스트 스모크 확인 | `pytest tests -q` |
+| Stage 1 전체 | `pytest tests/stage1/ -q` |
+| Stage 2 전체 | `pytest tests/stage2/ -q` |
+| Stage 3 전체 | `pytest tests/stage3/ -q` |
+| Stage 4 전체 | `pytest tests/stage4/ -q` |
+| 단일 파일 | `pytest tests/stage3/test_mlp.py -q` |
+| 전체 스모크 확인 | `pytest tests/ -q` |
