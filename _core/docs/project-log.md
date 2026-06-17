@@ -32,3 +32,7 @@ updated: 2026-06-17
 | 2026-06-17 | Phase 4.1 완료 - src/core/optimizers.py (SGD, Adam), tests/stage4/test_optimizers.py (12개), docs/stage4/phase4.1_optimizers.md | |
 | 2026-06-17 | Phase 4.2 완료 - src/core/checkpoints.py (save/load), tests/stage4/test_checkpoints.py (7개), docs/stage4/phase4.2_checkpoints.md | |
 | 2026-06-17 | Phase 4.3 완료 - src/core/trainer.py (Trainer.fit), tests/stage4/test_trainer.py (16개), docs/stage4/phase4.3_trainer.md | |
+| 2026-06-17 | Phase 4.4 완료 - src/core/evaluator.py (Evaluator.evaluate), tests/stage4/test_evaluator.py (16개), docs/stage4/phase4.4_evaluator.md | |
+| 2026-06-17 | Phase 4.5 완료 - src/core/predictor.py (Predictor.predict), tests/stage4/test_predictor.py (15개), docs/stage4/phase4.5_predictor.md | argmax/threshold/round_clip 3가지 후처리 |
+| 2026-06-17 | Phase 4.6 완료 - src/core/experiment.py (Experiment.run), tests/stage4/test_experiment.py (24개), docs/stage4/phase4.6_experiment.md | synthetic MNIST gz 기반 통합 테스트 |
+| 2026-06-17 | Phase 4.7 완료 - src/core/visualizer.py (Visualizer), tests/stage4/test_visualizer.py (11개), docs/stage4/phase4.7_visualizer.md | Stage 4 전체 101개 테스트 통과 |
