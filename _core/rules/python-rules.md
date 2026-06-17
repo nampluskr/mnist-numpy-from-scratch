@@ -158,7 +158,7 @@ Epoch 1/50: loss=0.4231, acc=0.8120
 타입 힌트와 독스트링은 요청 시에만 추가한다. 기본적으로 생략하며, 명시적 요청이 있을 때만 아래 형식으로 작성한다.
 
 ```python
-# Default — no type hints, no docstring
+# Default - no type hints, no docstring
 def get_config(model_type, dataset, category, num_epochs):
     config = {
         "model_type": model_type,

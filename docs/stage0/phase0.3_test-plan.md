@@ -50,7 +50,7 @@ tests/
 
 각 구현 파일의 공개 진입점과 입력·출력 규약을 확정한다.
 
-### 2.1. Stage 1 — 기본 설정 · 과제 규약
+### 2.1. Stage 1 - 기본 설정 · 과제 규약
 
 Stage 1 파일의 공개 인터페이스는 아래와 같다.
 
@@ -69,7 +69,7 @@ Stage 1 파일의 공개 인터페이스는 아래와 같다.
 
 `task` 값은 `"multiclass"`, `"binary"`, `"regression"` 세 가지만 허용한다.
 
-### 2.2. Stage 2 — MNIST 데이터 로더
+### 2.2. Stage 2 - MNIST 데이터 로더
 
 Stage 2 파일의 공개 인터페이스는 아래와 같다.
 
@@ -97,7 +97,7 @@ task별 target 변환 규약은 아래와 같다.
 
 `DataLoader(dataset, batch_size, shuffle)`의 `__iter__`는 `(images_batch, targets_batch)` tuple을 yield한다. `__len__`·`__getitem__`을 구현한 Dataset이면 종류에 관계없이 수용한다.
 
-### 2.3. Stage 3 — NumPy MLP 및 구성요소
+### 2.3. Stage 3 - NumPy MLP 및 구성요소
 
 Stage 3 파일의 공개 인터페이스는 아래와 같다.
 
@@ -113,7 +113,7 @@ Stage 3 파일의 공개 인터페이스는 아래와 같다.
 
 `Linear.backward(dout)`는 상위 레이어로 전달할 gradient를 반환하며, `grad_w`와 `grad_b`를 인스턴스에 in-place 저장한다.
 
-### 2.4. Stage 4 — 실행 객체
+### 2.4. Stage 4 - 실행 객체
 
 Stage 4 파일의 공개 인터페이스는 아래와 같다.
 

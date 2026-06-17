@@ -4,7 +4,7 @@ created: 2026-06-17
 updated: 2026-06-17
 ---
 
-# Phase 1.2 task
+# Phase 1.2 과제 규약 정의: target 변환, loss 함수, metric 계산
 
 ## 1. 역할
 

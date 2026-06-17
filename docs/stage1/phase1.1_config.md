@@ -4,7 +4,7 @@ created: 2026-06-17
 updated: 2026-06-17
 ---
 
-# Phase 1.1 config
+# Phase 1.1 환경 설정 구성: 기본 경로, 실행 기본값, 하이퍼파라미터
 
 ## 1. 역할
 
@@ -25,8 +25,8 @@ updated: 2026-06-17
 | `seed` | `42` | 난수 시드 |
 | `batch_size` | `64` | 미니배치 크기 |
 | `num_epochs` | `10` | 학습 epoch 수 |
-| `task` | `"multiclass"` | 과제 유형 — `"multiclass"`, `"binary"`, `"regression"` 중 하나 |
-| `split` | `"train"` | 데이터 split — `"train"` 또는 `"test"` |
+| `task` | `"multiclass"` | 과제 유형 - `"multiclass"`, `"binary"`, `"regression"` 중 하나 |
+| `split` | `"train"` | 데이터 split - `"train"` 또는 `"test"` |
 
 ## 3. 테스트
 

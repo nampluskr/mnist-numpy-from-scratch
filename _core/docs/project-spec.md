@@ -48,54 +48,54 @@ updated: 2026-06-17
 
 ### 5.1. Stage 0 레거시 코드 분석 및 계획 수립
 
-- Phase 0.1 레거시 코드 분석 — 코드 구조, 두 가지 구현 패턴, task별 차이 파악
-- Phase 0.2 구현 계획 수립 — 레거시-src 매핑, src 패키지 구조, Stage별 구현 순서 확정
-- Phase 0.3 테스트 계획 수립 — tests 폴더 구조, 인터페이스 규약, TDD 원칙 확정
+- Phase 0.1 레거시 코드 분석: 코드 구조, 두 가지 구현 패턴, task별 차이 파악
+- Phase 0.2 구현 계획 수립: 레거시-src 매핑, src 패키지 구조, Stage별 구현 순서 확정
+- Phase 0.3 테스트 계획 수립: tests 폴더 구조, 인터페이스 규약, TDD 원칙 확정
 
 ### 5.2. Stage 1 기본 설정 및 과제 규약 구현
 
-- Phase 1.1 `config.py` 코드 작성 및 `test_config.py` 테스트 작성
-- Phase 1.2 `task.py` 코드 작성 및 `test_task.py` 테스트 작성
-- Phase 1.3 `utils` 코드 작성 및 대응 테스트 작성
+- Phase 1.1 환경 설정 구성: 기본 경로, 실행 기본값, 하이퍼파라미터
+- Phase 1.2 과제 규약 정의: target 변환, loss 함수, metric 계산
+- Phase 1.3 유틸리티 구현: 배치 처리, 난수 시드, 파일 I/O
 
 ### 5.3. Stage 2 MNIST 데이터 로더 구현
 
-- Phase 2.1 `data/mnist.py` 코드 작성 및 테스트 작성 — `load_mnist()` raw 로딩
-- Phase 2.2 `data/mnist.py` 확장 및 테스트 작성 — `MnistDataset` 클래스 추가
-- Phase 2.3 `data/dataloader.py` 코드 작성 및 테스트 작성 — 범용 `DataLoader` 클래스
+- Phase 2.1 MNIST 원시 데이터 로딩: gz 파싱, train/test split, 정규화
+- Phase 2.2 Dataset 클래스 구현: MnistDataset, task 변환, __getitem__
+- Phase 2.3 DataLoader 구현: 배치 생성, shuffle, 반복 순회
 
 ### 5.4. Stage 3 NumPy 기반 MLP 구현
 
-- Phase 3.1 `models/mlp.py` 코드 작성 및 `models/test_mlp.py` 테스트 작성
-- Phase 3.2 MLP 학습에 필요한 모델 하위 구현과 대응 테스트 작성
+- Phase 3.1 MLP 모델 구현: forward, backward, 파라미터 갱신
+- Phase 3.2 신경망 구성요소 구현: layers, activations, losses
 
 ### 5.5. Stage 4 실행 객체 구현
 
-- Phase 4.1 `core/optimizers.py` 코드 작성 및 `stage4/test_optimizers.py` 테스트 작성
-- Phase 4.2 `core/checkpoints.py` 코드 작성 및 `stage4/test_checkpoints.py` 테스트 작성
-- Phase 4.3 `core/trainer.py` 코드 작성 및 `stage4/test_trainer.py` 테스트 작성
-- Phase 4.4 `core/evaluator.py` 코드 작성 및 `stage4/test_evaluator.py` 테스트 작성
-- Phase 4.5 `core/predictor.py` 코드 작성 및 `stage4/test_predictor.py` 테스트 작성
-- Phase 4.6 `core/experiment.py` 코드 작성 및 `stage4/test_experiment.py` 테스트 작성
-- Phase 4.7 `core/visualizer.py` 코드 작성 및 `stage4/test_visualizer.py` 테스트 작성
+- Phase 4.1 옵티마이저 구현: SGD, Adam, 파라미터 업데이트 규칙
+- Phase 4.2 체크포인트 구현: 파라미터 저장, 로딩, 경로 관리
+- Phase 4.3 Trainer 구현: 학습 루프, DataLoader 수신, fit 인터페이스
+- Phase 4.4 Evaluator 구현: 평가 루프, DataLoader 수신, evaluate 인터페이스
+- Phase 4.5 Predictor 구현: 예측 실행, task별 후처리, predict 인터페이스
+- Phase 4.6 Experiment 구현: 실행 객체 조립, 의존성 주입, 최상위 진입점
+- Phase 4.7 Visualizer 구현: 학습 로그, 예측 결과, 시각화 저장
 
 ### 5.6. Stage 5 클라이언트 코드 구현
 
-- Phase 5.1 `scripts/train.py` 코드 작성 및 `tests/stage5/test_train.py` 테스트 작성
-- Phase 5.2 `scripts/evaluate.py` 코드 작성 및 `tests/stage5/test_evaluate.py` 테스트 작성
-- Phase 5.3 `scripts/predict.py` 코드 작성 및 `tests/stage5/test_predict.py` 테스트 작성
-- Phase 5.4 `scripts/visualize.py` 코드 작성 및 `tests/stage5/test_visualize.py` 테스트 작성
+- Phase 5.1 학습 CLI 구현: 인자 파싱, experiment 조립, trainer 호출
+- Phase 5.2 평가 CLI 구현: 인자 파싱, experiment 조립, evaluator 호출
+- Phase 5.3 예측 CLI 구현: 인자 파싱, experiment 조립, predictor 호출
+- Phase 5.4 시각화 CLI 구현: 인자 파싱, experiment 조립, visualizer 호출
 
 ### 5.7. Stage 6 CuPy 기반 CNN 구현
 
-- Phase 6.1 `models/cnn.py` 코드 작성 및 `models/test_cnn.py` 테스트 작성
-- Phase 6.2 CNN 실행 객체 연동 테스트
+- Phase 6.1 CNN 모델 구현: CuPy 기반, forward, backward, 파라미터 갱신
+- Phase 6.2 CNN-core 통합 검증: core 인터페이스 호환, 통합 테스트
 
 ### 5.8. Stage 7 튜토리얼 문서화 및 전체 검증
 
-- Phase 7.1 Jupyter Book 챕터 작성
-- Phase 7.2 실행 예제와 결과 정리
-- Phase 7.3 후속 프레임워크 프로젝트 연계 기준 정리
+- Phase 7.1 튜토리얼 문서화: Jupyter Book 챕터, 코드 설명, 실습 예제
+- Phase 7.2 실행 결과 정리: task별 로그, 평가 결과, 시각화 출력
+- Phase 7.3 프레임워크 연계 준비: 인터페이스 규약 검토, 후속 프로젝트 체크리스트
 
 ## 6. 확정 구조
 
@@ -284,13 +284,13 @@ Stage 1 초기 구현에서 사용할 공통 진입점은 후속 프레임워크
 | --- | --- | --- | --- | --- |
 | `src/config.py` | `get_default_config()` | 없음 | `dict` | 기본 경로, seed, batch size, epoch, task, split 반환 |
 | `src/task.py` | `get_task_spec(task)` | `task: str` | `dict` | `output_dim`, activation, loss, metric, prediction_mode 반환 |
-| `src/task.py` | `transform_targets(labels, task)` | `labels: np.ndarray`, `task: str` | `np.ndarray` | task별 target 변환 — 각 Dataset 클래스 내부에서 호출 |
+| `src/task.py` | `transform_targets(labels, task)` | `labels: np.ndarray`, `task: str` | `np.ndarray` | task별 target 변환 - 각 Dataset 클래스 내부에서 호출 |
 | `src/data/mnist.py` | `load_mnist(split)` | `split: str` | `(images, labels)` tuple | 로컬 MNIST 원본 배열 로딩 |
 | `src/data/mnist.py` | `MnistDataset` | `split: str`, `task: str` | dataset instance | MNIST 로딩·정규화·task별 target 변환 담당 |
 | `src/data/dataloader.py` | `DataLoader` | `dataset`, `batch_size: int`, `shuffle: bool` | dataloader instance | 범용 배치·셔플 이터레이터 (`__len__`+`__getitem__` 프로토콜 요구) |
 | `src/models/mlp.py` | `MLP` | config 또는 명시적 차원 인자 | model instance | NumPy 기반 MLP 생성 |
 | `src/models/layers.py` | `Linear`, `Sigmoid`, `ReLU`, `Sequential` | 차원 또는 없음 | layer instance | from-scratch 레이어 구현 |
-| `src/models/activations.py` | `sigmoid`, `softmax`, `identity`, `relu` | `np.ndarray` | `np.ndarray` | 활성화 함수 — forward 전용 |
+| `src/models/activations.py` | `sigmoid`, `softmax`, `identity`, `relu` | `np.ndarray` | `np.ndarray` | 활성화 함수 - forward 전용 |
 | `src/models/losses.py` | `cross_entropy`, `binary_cross_entropy`, `mse` | `preds, targets: np.ndarray` | scalar | 손실 함수 및 평가 지표 |
 | `src/core/optimizers.py` | `SGD`, `Adam` | model instance, `lr: float` | optimizer instance | model.params/grads 기반 in-place 파라미터 업데이트 |
 | `src/core/trainer.py` | `Trainer` | model, optimizer, task spec | trainer instance | 학습 루프 실행 |

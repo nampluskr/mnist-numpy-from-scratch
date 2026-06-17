@@ -4,7 +4,7 @@ created: 2026-06-17
 updated: 2026-06-17
 ---
 
-# Phase 2.1 mnist
+# Phase 2.1 MNIST 원시 데이터 로딩: gz 파싱, train/test split, 정규화
 
 ## 1. 역할
 
@@ -21,10 +21,10 @@ updated: 2026-06-17
 
 | 항목 | 값 |
 |---|---|
-| 입력 `split` | `"train"` 또는 `"test"` — 그 외 값은 `ValueError` 발생 |
-| 입력 `dataset_dir` | 기본값 `None` — `None`이면 `get_default_config()["dataset_dir"]` 사용 |
-| 출력 `images` | shape `(N, 28, 28)`, dtype `uint8` — 정규화 없는 원본 픽셀값 |
-| 출력 `labels` | shape `(N,)`, dtype `uint8` — 원본 클래스 레이블 (0–9) |
+| 입력 `split` | `"train"` 또는 `"test"` - 그 외 값은 `ValueError` 발생 |
+| 입력 `dataset_dir` | 기본값 `None` - `None`이면 `get_default_config()["dataset_dir"]` 사용 |
+| 출력 `images` | shape `(N, 28, 28)`, dtype `uint8` - 정규화 없는 원본 픽셀값 |
+| 출력 `labels` | shape `(N,)`, dtype `uint8` - 원본 클래스 레이블 (0–9) |
 
 split별 파일 매핑은 다음과 같다.
 

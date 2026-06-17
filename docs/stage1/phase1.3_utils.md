@@ -4,7 +4,7 @@ created: 2026-06-17
 updated: 2026-06-17
 ---
 
-# Phase 1.3 utils
+# Phase 1.3 유틸리티 구현: 배치 처리, 난수 시드, 파일 I/O
 
 ## 1. 역할
 
@@ -13,7 +13,7 @@ updated: 2026-06-17
 
 ## 2. 구현
 
-### 2.1. batching.py — get_batches()
+### 2.1. batching.py - get_batches()
 
 `get_batches(*arrays, batch_size, shuffle=False)`는 하나 이상의 배열을 받아 mini-batch를 순서대로 yield하는 generator이다.
 
@@ -32,12 +32,12 @@ updated: 2026-06-17
 - 마지막 배치는 `batch_size`보다 작을 수 있다.
 - `shuffle=True`이면 모든 배열에 동일한 인덱스를 적용하므로 쌍 관계가 유지된다.
 
-### 2.2. random.py — set_seed()
+### 2.2. random.py - set_seed()
 
 `set_seed(seed)`는 numpy 난수 시드를 설정한다.
 실험 재현성을 확보하기 위해 학습 시작 전에 호출한다.
 
-### 2.3. io.py — save_params() / load_params()
+### 2.3. io.py - save_params() / load_params()
 
 `save_params(params, path)`는 문자열 키와 numpy 배열 값으로 구성된 dict를 `.npz` 파일로 저장한다.
 `load_params(path)`는 `.npz` 파일을 읽어 동일한 구조의 dict로 반환한다.

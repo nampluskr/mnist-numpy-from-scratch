@@ -38,7 +38,7 @@ task 스크립트는 manual · module 2종씩 3개 task에 걸쳐 총 6개이며
 
 common 폴더의 6개 모듈이 제공하는 요소를 모듈별로 정리한다.
 
-### 2.1. mnist.py — 데이터 로딩
+### 2.1. mnist.py - 데이터 로딩
 
 `mnist.py`는 로컬 gzip 파일에서 이미지와 레이블을 읽어 numpy 배열로 반환하는 함수와 one-hot 인코딩 헬퍼를 제공한다.
 
@@ -48,7 +48,7 @@ common 폴더의 6개 모듈이 제공하는 요소를 모듈별로 정리한다
 | `load_labels` | `(data_dir, split="train")` | `(N,)` uint8 |
 | `one_hot` | `(x, num_classes)` | `(N, num_classes)` float64 |
 
-### 2.2. functions.py — 활성화 함수·손실 함수·지표·기울기
+### 2.2. functions.py - 활성화 함수·손실 함수·지표·기울기
 
 `functions.py`는 forward 전용 활성화 함수, 손실 함수, 평가 지표, 수동 backward에 사용하는 기울기 함수를 제공한다.
 
@@ -78,7 +78,7 @@ common 폴더의 6개 모듈이 제공하는 요소를 모듈별로 정리한다
 | `r2_score(preds, targets)` | 예측값, 정규화 레이블 | scalar | 1e-8 보정 |
 | `rmse(preds, targets)` | 예측값, 정규화 레이블 | scalar | mse의 루트 |
 
-### 2.3. modules.py — 레이어 모듈
+### 2.3. modules.py - 레이어 모듈
 
 `modules.py`는 `Module` 기반 클래스와 `params`/`grads` 리스트를 통해 optimizer와 연동하는 레이어를 제공한다.
 
@@ -92,7 +92,7 @@ common 폴더의 6개 모듈이 제공하는 요소를 모듈별로 정리한다
 
 `Linear.backward`는 `grad_w[...] = ...` 형식으로 in-place 저장하며, `params`/`grads` 리스트가 동일 배열 객체를 가리키기 때문에 optimizer가 별도 수집 없이 업데이트할 수 있다.
 
-### 2.4. optimizers.py — 파라미터 업데이트
+### 2.4. optimizers.py - 파라미터 업데이트
 
 `optimizers.py`는 `model.params`와 `model.grads`를 수신하여 in-place 업데이트를 수행하는 두 옵티마이저를 제공한다.
 
@@ -103,7 +103,7 @@ common 폴더의 6개 모듈이 제공하는 요소를 모듈별로 정리한다
 
 두 클래스 모두 `step()` 메서드로 업데이트를 실행하며 반환값이 없다.
 
-### 2.5. dataloader.py — 배치 이터레이터
+### 2.5. dataloader.py - 배치 이터레이터
 
 `dataloader.py`는 이미지 배열과 레이블 배열을 직접 수신하는 배치 이터레이터를 제공한다.
 
@@ -113,7 +113,7 @@ common 폴더의 6개 모듈이 제공하는 요소를 모듈별로 정리한다
 
 `__len__`은 `num_batches`를 반환하고, `__iter__`는 epoch마다 인덱스를 생성하여 배치를 yield한다.
 
-### 2.6. trainer.py — 학습·평가·예측 실행
+### 2.6. trainer.py - 학습·평가·예측 실행
 
 `trainer.py`는 task별 Classifier 클래스와 공통 루프 함수를 제공한다.
 
@@ -192,7 +192,7 @@ preds = predict(clf, x)
 | 파라미터 업데이트 | `w -= lr * grad` 직접 | `optimizer.step()` |
 | 데이터 순회 | for 루프 직접 | `Dataloader`, `train()`, `evaluate()` |
 | 예측 출력 | 스크립트 내 직접 처리 | `predict()` 함수 위임 |
-| 코드 재사용성 | 낮음 — task마다 전체 복사 | 높음 — common 모듈 조합 |
+| 코드 재사용성 | 낮음 - task마다 전체 복사 | 높음 - common 모듈 조합 |
 
 ## 4. task별 차이
 

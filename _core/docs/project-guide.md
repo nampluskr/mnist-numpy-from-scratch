@@ -24,7 +24,7 @@ updated: 2026-06-15
 | `_core/` | 프로젝트 운영 규칙, 커맨드, 가이드, 세션 |
 | `data/` | 데이터 경로 또는 설명 |
 | `src/` | 소스 코드 루트 |
-| `scripts/` | `src/core/` 실행 객체를 호출하는 CLI 진입점 — 학습·평가·예측·시각화 |
+| `scripts/` | `src/core/` 실행 객체를 호출하는 CLI 진입점 - 학습·평가·예측·시각화 |
 | `notebooks/` | Jupyter 노트북 |
 | `tests/` | 테스트 코드 |
 | `configs/` | 설정 파일 |
