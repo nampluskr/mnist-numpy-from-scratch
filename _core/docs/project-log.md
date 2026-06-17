@@ -13,3 +13,6 @@ updated: 2026-06-15
 |---|---|---|
 | 2026-06-15 | 워크스페이스 초기화 — `_core/legacy/refs/`의 PROJECT.md, PROJECT-TODO.md 내용을 `_core/docs/project-spec.md`, `_core/docs/project-todo.md`에 반영 | project-todo.md는 전체 미완료 상태로 초기화 |
 | 2026-06-15 | CLAUDE.md, project-guide.md 플레이스홀더 채움 (프로젝트명, 목적, 날짜) | |
+| 2026-06-17 | Phase 1.1 완료 — requirements.txt, src/config.py, tests/stage1/test_config.py, docs/stage1/phase1.1_config.md | |
+| 2026-06-17 | 환경 확정 — numpy_env (Python 3.11), jupyterlab, ipykernel 설치 및 커널 등록 | |
+| 2026-06-17 | 구조 확정 — stage 폴더명 0패딩 제거, tests/__init__.py 금지, pyproject.toml 삭제, conftest.py 경로 설정 | coding-rules.md §8 반영 |

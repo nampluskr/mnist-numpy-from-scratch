@@ -1,5 +1,5 @@
 ---
-tags: [stage00, implementation, tdd, conventions]
+tags: [stage0, implementation, tdd, conventions]
 created: 2026-06-15
 updated: 2026-06-15
 ---

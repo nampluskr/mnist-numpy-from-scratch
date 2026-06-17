@@ -1,5 +1,5 @@
 ---
-tags: [stage00, legacy, review]
+tags: [stage0, legacy, review]
 created: 2026-06-15
 updated: 2026-06-15
 ---

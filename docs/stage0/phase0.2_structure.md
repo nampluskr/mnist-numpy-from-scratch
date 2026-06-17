@@ -1,5 +1,5 @@
 ---
-tags: [stage00, structure, src, tests]
+tags: [stage0, structure, src, tests]
 created: 2026-06-15
 updated: 2026-06-15
 ---

@@ -1,2 +1,5 @@
-# 기본 의존성 — 프로젝트에 맞게 수정하세요
 numpy
+pytest
+matplotlib
+jupyterlab
+ipykernel
