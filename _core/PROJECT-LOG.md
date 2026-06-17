@@ -53,3 +53,29 @@ updated: 2026-06-18
 | 2026-06-18 | Phase 7.6 완료 - 후속 PyTorch, TensorFlow, JAX 프로젝트 연계를 위한 interface 규약과 PyTorch 마이그레이션 체크리스트 작성 | CNN 평가는 중지 상태로 기록 |
 | 2026-06-18 | 프로젝트 운영 문서 규칙 정합화 - PROJECT-TODO.md Phase 헤더 번호 체계, 도입 문장, Obsidian 내부 링크 정리 | PROJECT-SPEC.md 및 docs Phase H1 제목 동기화 |
 | 2026-06-18 | docs/stage7 구조 정리 - task별 하위 폴더 제거, phase7.3~7.5 튜토리얼 문서를 stage7 바로 아래로 이동 | PROJECT-TODO.md와 세션 핸드오프 경로 참조 갱신 |
+
+## 260618 Stage 7 CNN 검증 및 문서화
+
+**완료 항목**
+- Phase 7.2 CNN output 3종 생성 결과 확인 및 result 문서 작성
+- Phase 7.3~7.5 CNN tutorial 문서 작성
+- CuPy checkpoint 저장/로드 호환 수정
+- 루트 지침 문서의 Python 실행 환경 기준을 3개 conda environment 기준으로 갱신
+
+**산출물**
+
+| 파일/산출물 | 내용 |
+|---|---|
+| `docs/stage7/phase7.2_results.md` | MLP/CNN 6종 experiment 평가 결과와 산출물 경로 정리 |
+| `docs/stage7/phase7.3_tutorial-cnn.md` | multiclass CNN 실행 절차와 평가 결과 정리 |
+| `docs/stage7/phase7.4_tutorial-cnn.md` | binary CNN 실행 절차와 평가 결과 정리 |
+| `docs/stage7/phase7.5_tutorial-cnn.md` | regression CNN 실행 절차와 평가 결과 정리 |
+| `src/core/checkpoints.py` | CuPy parameter를 NumPy `.npz`로 저장하고 load 시 대상 parameter module로 변환 |
+| `_core/PROJECT-TODO.md` | Phase 7.2~7.5 CNN 관련 항목 완료 처리 |
+
+**결정사항**
+
+| 항목 | 결정 내용 |
+|---|---|
+| Python 실행 환경 | MLP는 `numpy_py311`, `cupy_py311_cuda118`, `cupy_py311_cuda121` 중 목적에 맞게 실행하고 CNN은 `cupy_py311_cuda118` 또는 `cupy_py311_cuda121`에서 실행한다. |
+| CNN 결과 수집 | Codex 환경에서는 GPU device가 노출되지 않아 사용자 WSL terminal의 `cupy_py311_cuda121` 실행 결과를 기준으로 문서화한다. |

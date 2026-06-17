@@ -79,7 +79,10 @@ data/ → notebooks/ → src/ → scripts/ → experiments/ → outputs/
 - `scripts/` 를 통해 `experiments/` 에서 학습·추론·시각화를 실행하고, 결과는 `outputs/` 에 저장한다.
 - 새 소스 파일을 만들 때 첫 줄에 파일명과 한 줄 영어 설명을 주석으로 기록한다.
 - 루트 폴더 구조는 변경하지 않는다.
-- Python 실행 환경은 conda 환경 `numpy_env` 를 사용한다. 모든 Python 명령은 `conda run -n numpy_env` 를 통해 실행한다.
+- Python 실행 환경은 README.md와 `_core/docs/wsl-conda-env-setup.md`에 정의된 conda 환경을 사용한다.
+- MLP는 `numpy_py311`, `cupy_py311_cuda118`, `cupy_py311_cuda121` 중 실행 목적에 맞는 환경에서 실행한다.
+- CNN은 CuPy 기반 모델이므로 `cupy_py311_cuda118` 또는 `cupy_py311_cuda121` 환경에서 실행한다.
+- 모든 Python 명령은 `conda run -n {환경명}` 형식으로 실행한다.
 
 ## 6. 참조 경로
 

@@ -229,11 +229,12 @@ argument parsing, experiment 조립, visualizer 호출을 포함한 visualizatio
 
 ### 7.1. Phase 6.0 CuPy environment 구성
 
-conda numpy_env, cupy-cuda118 설치, environment 검증을 위한 작업은 다음과 같다.
+`numpy_py311`, `cupy_py311_cuda118`, `cupy_py311_cuda121` environment 검증을 위한 작업은 다음과 같다.
 
-- [x] `requirements.txt`에 `cupy-cuda11x` 추가
-- [x] `conda run -n numpy_env pip install cupy-cuda11x` 설치 확인
-- [x] `python -c "import cupy; print(cupy.__version__)"` 환경 검증
+- [x] README.md에 3개 conda environment 생성 기준 작성
+- [x] `numpy_py311` CPU 기반 NumPy 실행 환경 확인
+- [x] `cupy_py311_cuda118` CUDA 11.8 기준 CuPy 실행 환경 확인
+- [x] `cupy_py311_cuda121` CUDA 12 계열 CuPy 실행 환경 확인
 - [x] [[docs/stage6/phase6.0_cupy-setup|phase6.0_cupy-setup.md]] 문서 작성
 
 ### 7.2. Phase 6.1 CNN model 구현
@@ -275,33 +276,33 @@ scripts --model flag 추가와 stage5 test update를 위한 CLI 확장 작업은
 6종 experiment 실행, outputs 저장, results 문서 작성을 위한 작업은 다음과 같다.
 
 - [x] `outputs/multiclass/mlp/` (`training_log.png`, `predictions.png`, `model.npz`)
-- [ ] `outputs/multiclass/cnn/` (`training_log.png`, `predictions.png`, `model.npz`)
+- [x] `outputs/multiclass/cnn/` (`training_log.png`, `predictions.png`, `model.npz`)
 - [x] `outputs/binary/mlp/` (`training_log.png`, `predictions.png`, `model.npz`)
-- [ ] `outputs/binary/cnn/` (`training_log.png`, `predictions.png`, `model.npz`)
+- [x] `outputs/binary/cnn/` (`training_log.png`, `predictions.png`, `model.npz`)
 - [x] `outputs/regression/mlp/` (`training_log.png`, `predictions.png`, `model.npz`)
-- [ ] `outputs/regression/cnn/` (`training_log.png`, `predictions.png`, `model.npz`)
-- [ ] [[docs/stage7/phase7.2_results|phase7.2_results.md]] 문서 작성
+- [x] `outputs/regression/cnn/` (`training_log.png`, `predictions.png`, `model.npz`)
+- [x] [[docs/stage7/phase7.2_results|phase7.2_results.md]] 문서 작성
 
 ### 8.3. Phase 7.3 Multiclass tutorial
 
 Multiclass MLP 및 CNN tutorial 작성을 위한 작업은 다음과 같다.
 
 - [x] [[docs/stage7/phase7.3_tutorial-mlp|phase7.3_tutorial-mlp.md]] 문서 작성
-- [ ] [[docs/stage7/phase7.3_tutorial-cnn|phase7.3_tutorial-cnn.md]] 문서 작성
+- [x] [[docs/stage7/phase7.3_tutorial-cnn|phase7.3_tutorial-cnn.md]] 문서 작성
 
 ### 8.4. Phase 7.4 Binary tutorial
 
 Binary MLP 및 CNN tutorial 작성을 위한 작업은 다음과 같다.
 
 - [x] [[docs/stage7/phase7.4_tutorial-mlp|phase7.4_tutorial-mlp.md]] 문서 작성
-- [ ] [[docs/stage7/phase7.4_tutorial-cnn|phase7.4_tutorial-cnn.md]] 문서 작성
+- [x] [[docs/stage7/phase7.4_tutorial-cnn|phase7.4_tutorial-cnn.md]] 문서 작성
 
 ### 8.5. Phase 7.5 Regression tutorial
 
 Regression MLP 및 CNN tutorial 작성을 위한 작업은 다음과 같다.
 
 - [x] [[docs/stage7/phase7.5_tutorial-mlp|phase7.5_tutorial-mlp.md]] 문서 작성
-- [ ] [[docs/stage7/phase7.5_tutorial-cnn|phase7.5_tutorial-cnn.md]] 문서 작성
+- [x] [[docs/stage7/phase7.5_tutorial-cnn|phase7.5_tutorial-cnn.md]] 문서 작성
 
 ### 8.6. Phase 7.6 framework 연계 준비
 
