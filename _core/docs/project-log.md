@@ -1,7 +1,7 @@
 ---
 tags: [project, docs]
 created: 2026-06-15
-updated: 2026-06-15
+updated: 2026-06-17
 ---
 
 # project-log.md
@@ -16,3 +16,5 @@ updated: 2026-06-15
 | 2026-06-17 | Phase 1.1 완료 — requirements.txt, src/config.py, tests/stage1/test_config.py, docs/stage1/phase1.1_config.md | |
 | 2026-06-17 | 환경 확정 — numpy_env (Python 3.11), jupyterlab, ipykernel 설치 및 커널 등록 | |
 | 2026-06-17 | 구조 확정 — stage 폴더명 0패딩 제거, tests/__init__.py 금지, pyproject.toml 삭제, conftest.py 경로 설정 | coding-rules.md §8 반영 |
+| 2026-06-17 | Phase 2.3 완료 — src/data/dataloader.py, tests/stage2/test_dataloader.py (13개), docs/stage2/phase2.3_dataloader.md | Stage 2 전체 54개 테스트 통과 |
+| 2026-06-17 | session-end.md Step 6 추가 — 종료 브리핑 후 사용자 승인을 받아 커밋·푸시 진행하는 절차 추가 | |
