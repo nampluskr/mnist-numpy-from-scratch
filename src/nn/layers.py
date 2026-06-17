@@ -8,6 +8,7 @@ class Module:
     def __init__(self):
         self.params = []
         self.grads = []
+        self.training = True
 
     def __call__(self, x):
         return self.forward(x)
@@ -17,6 +18,12 @@ class Module:
 
     def backward(self, dout):
         raise NotImplementedError
+
+    def train(self):
+        self.training = True
+
+    def eval(self):
+        self.training = False
 
 
 class Linear(Module):
@@ -77,3 +84,13 @@ class Sequential(Module):
         for layer in reversed(self.layers):
             dout = layer.backward(dout)
         return dout
+
+    def train(self):
+        self.training = True
+        for layer in self.layers:
+            layer.train()
+
+    def eval(self):
+        self.training = False
+        for layer in self.layers:
+            layer.eval()

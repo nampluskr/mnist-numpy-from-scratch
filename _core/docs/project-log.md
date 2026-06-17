@@ -40,3 +40,5 @@ updated: 2026-06-17
 | 2026-06-17 | Phase 5.2 완료 - scripts/evaluate.py, tests/stage5/test_evaluate.py (19개), docs/stage5/phase5.2_evaluate.md | |
 | 2026-06-17 | Phase 5.3 완료 - scripts/predict.py, tests/stage5/test_predict.py (19개), docs/stage5/phase5.3_predict.md | |
 | 2026-06-17 | Phase 5.4 완료 - scripts/visualize.py, tests/stage5/test_visualize.py (26개), docs/stage5/phase5.4_visualize.md | Stage 5 전체 87개 테스트 통과 |
+| 2026-06-17 | Phase 6.1 완료 - src/nn/layers.py (training/train/eval 추가), src/nn/conv.py (im2col/col2im + Conv2d/MaxPool2d/Flatten/Dropout), src/models/cnn.py, tests/stage6/test_cnn.py (42개), docs/stage6/phase6.1_cnn.md | CuPy/numpy 양용, fallback 지원 |
+| 2026-06-17 | Phase 6.2 완료 - src/core/experiment.py (model 분기 추가), tests/stage6/test_experiment.py (31개), docs/stage6/phase6.2_cnn-integration.md | Stage 6 전체 73개 테스트 통과, 전체 422개 통과 |

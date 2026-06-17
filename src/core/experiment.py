@@ -5,6 +5,7 @@ from src.task import get_task_spec
 from src.data.mnist import MnistDataset
 from src.data.dataloader import DataLoader
 from src.models.mlp import MLP
+from src.models.cnn import CNN
 from src.core.optimizers import SGD
 from src.core.trainer import Trainer
 from src.core.evaluator import Evaluator
@@ -27,7 +28,11 @@ class Experiment:
         self.train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
         self.test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False)
 
-        self.model = MLP(task=task, seed=config["seed"])
+        model_type = config.get("model", "mlp")
+        if model_type == "cnn":
+            self.model = CNN(task=task, seed=config["seed"])
+        else:
+            self.model = MLP(task=task, seed=config["seed"])
         optimizer = SGD(self.model, lr=config.get("lr", 0.01))
         self.trainer = Trainer(self.model, optimizer, task_spec)
         self.evaluator = Evaluator(self.model, task_spec)
