@@ -1,4 +1,4 @@
-# visualize.py: CLI entry point for training MLP and visualizing training log and predictions.
+# visualize.py: CLI entry point for training MLP/CNN and visualizing training log and predictions.
 
 import argparse
 
@@ -12,9 +12,10 @@ from src.data.mnist import MnistDataset
 
 def parse_args():
     defaults = get_default_config()
-    parser = argparse.ArgumentParser(description="Train MLP and visualize results")
+    parser = argparse.ArgumentParser(description="Train MLP/CNN and visualize results")
     parser.add_argument("--task", default=defaults["task"],
                         choices=["multiclass", "binary", "regression"])
+    parser.add_argument("--model", default="mlp", choices=["mlp", "cnn"])
     parser.add_argument("--epochs", type=int, default=defaults["num_epochs"])
     parser.add_argument("--batch_size", type=int, default=defaults["batch_size"])
     parser.add_argument("--lr", type=float, default=0.01)
@@ -30,6 +31,7 @@ def build_config(args):
     return {
         "dataset_dir": args.dataset_dir,
         "task": args.task,
+        "model": args.model,
         "batch_size": args.batch_size,
         "num_epochs": args.epochs,
         "seed": args.seed,

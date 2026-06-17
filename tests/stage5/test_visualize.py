@@ -10,6 +10,18 @@ import pytest
 from scripts.visualize import main, build_config, _decode_labels
 
 
+def _cupy_gpu_available():
+    try:
+        import cupy
+        cupy.pad(cupy.ones((2, 2), dtype=cupy.float32), 1)
+        return True
+    except Exception:
+        return False
+
+
+_skip_no_gpu = pytest.mark.skipif(not _cupy_gpu_available(), reason="CuPy GPU not available")
+
+
 # --- synthetic MNIST gz helpers ---
 
 def make_image_gz(path, n=40):
@@ -35,9 +47,10 @@ def mnist_dir(tmp_path):
     return str(tmp_path)
 
 
-def make_args(mnist_dir, task="multiclass", epochs=1, output_dir=None, n_samples=8):
+def make_args(mnist_dir, task="multiclass", epochs=1, output_dir=None, n_samples=8, model="mlp"):
     return argparse.Namespace(
         task=task,
+        model=model,
         epochs=epochs,
         batch_size=8,
         lr=0.01,
@@ -81,6 +94,31 @@ class TestDecodeLabels:
         labels = _decode_labels(raw, "regression")
         assert labels[0] == 0
         assert labels[1] == 9
+
+
+# --- --model 플래그 ---
+
+class TestVisualizeModel:
+    def test_model_key_in_config(self, mnist_dir):
+        args = make_args(mnist_dir, model="mlp")
+        config = build_config(args)
+        assert config["model"] == "mlp"
+
+    def test_cnn_model_key_in_config(self, mnist_dir):
+        args = make_args(mnist_dir, model="cnn")
+        config = build_config(args)
+        assert config["model"] == "cnn"
+
+    @_skip_no_gpu
+    def test_cnn_returns_dict(self, mnist_dir, tmp_path):
+        result = main(make_args(mnist_dir, model="cnn", output_dir=str(tmp_path)))
+        assert isinstance(result, dict)
+
+    @_skip_no_gpu
+    def test_cnn_files_created(self, mnist_dir, tmp_path):
+        main(make_args(mnist_dir, model="cnn", output_dir=str(tmp_path)))
+        assert (tmp_path / "training_log.png").exists()
+        assert (tmp_path / "predictions.png").exists()
 
 
 # --- main() 반환값 ---

@@ -62,7 +62,7 @@ class CNN:
         x_xp = self._xp.asarray(x).reshape(-1, 1, 28, 28)
         x_xp = self.conv_net(x_xp)
         x_xp = self.flatten(x_xp)
-        x_np = np.asarray(x_xp)        # CuPy → numpy 경계
+        x_np = x_xp.get() if hasattr(x_xp, "get") else np.asarray(x_xp)  # CuPy → numpy 경계
         x_np = self.dropout(x_np)
         return self.fc_net(x_np)
 

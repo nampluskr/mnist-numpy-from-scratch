@@ -74,9 +74,9 @@ class Conv2d(Module):
         # He init — numpy로 생성 후 xp로 변환 (seed 재현성 확보)
         rng = np.random.default_rng(seed)
         scale = np.sqrt(2.0 / (in_channels * kernel_size * kernel_size))
-        w_np = rng.standard_normal(
+        w_np = (rng.standard_normal(
             (out_channels, in_channels, kernel_size, kernel_size)
-        ).astype(np.float32) * scale
+        ) * scale).astype(np.float32)
         self.w = xp.asarray(w_np)
         self.b = xp.zeros(out_channels, dtype=np.float32)
         self.grad_w = xp.zeros_like(self.w)

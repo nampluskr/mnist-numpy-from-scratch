@@ -1,4 +1,4 @@
-# predict.py: CLI entry point for running predictions on MNIST test samples.
+# predict.py: CLI entry point for running predictions with MLP/CNN on MNIST test samples.
 
 import argparse
 
@@ -12,9 +12,10 @@ from src.data.mnist import MnistDataset
 
 def parse_args():
     defaults = get_default_config()
-    parser = argparse.ArgumentParser(description="Predict with MLP on MNIST test samples")
+    parser = argparse.ArgumentParser(description="Predict with MLP/CNN on MNIST test samples")
     parser.add_argument("--task", default=defaults["task"],
                         choices=["multiclass", "binary", "regression"])
+    parser.add_argument("--model", default="mlp", choices=["mlp", "cnn"])
     parser.add_argument("--seed", type=int, default=defaults["seed"])
     parser.add_argument("--dataset_dir", default=defaults["dataset_dir"])
     parser.add_argument("--checkpoint", default=None,
@@ -28,6 +29,7 @@ def build_config(args):
     return {
         "dataset_dir": args.dataset_dir,
         "task": args.task,
+        "model": args.model,
         "batch_size": args.n,
         "num_epochs": 0,
         "seed": args.seed,

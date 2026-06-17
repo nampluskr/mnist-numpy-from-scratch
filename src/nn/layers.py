@@ -31,7 +31,7 @@ class Linear(Module):
         super().__init__()
         rng = np.random.default_rng(seed)
         scale = np.sqrt(2.0 / in_features)  # He init
-        self.w = rng.standard_normal((in_features, out_features)).astype(np.float32) * scale
+        self.w = (rng.standard_normal((in_features, out_features)) * scale).astype(np.float32)
         self.b = np.zeros(out_features, dtype=np.float32)
         self.grad_w = np.zeros_like(self.w)
         self.grad_b = np.zeros_like(self.b)

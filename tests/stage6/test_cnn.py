@@ -7,6 +7,11 @@ from src.nn.conv import im2col, col2im, Conv2d, MaxPool2d, Flatten, Dropout
 from src.models.cnn import CNN
 
 
+def to_np(x):
+    """CuPy 또는 numpy 배열을 numpy로 변환한다."""
+    return x.get() if hasattr(x, "get") else np.asarray(x)
+
+
 # ---------------------------------------------------------------------------
 # im2col / col2im
 # ---------------------------------------------------------------------------
@@ -112,7 +117,7 @@ class TestConv2d:
         layer = Conv2d(1, 4, 3, padding=1, seed=0)
         x = np.random.randn(2, 1, 8, 8).astype(np.float32)
         out = layer.forward(x)
-        assert np.asarray(out).dtype == np.float32
+        assert to_np(out).dtype == np.float32
 
 
 # ---------------------------------------------------------------------------
@@ -290,7 +295,7 @@ class TestCNNBackward:
         x = np.random.randn(4, 784).astype(np.float32)
         out = cnn.forward(x)
         cnn.backward(np.ones_like(out))
-        all_zero = all(np.all(np.asarray(g) == 0) for g in cnn.grads)
+        all_zero = all(np.all(to_np(g) == 0) for g in cnn.grads)
         assert not all_zero
 
 
@@ -310,18 +315,18 @@ class TestCNNParamsGrads:
 
     def test_params_shapes_match_grads(self, cnn):
         for p, g in zip(cnn.params, cnn.grads):
-            assert np.asarray(p).shape == np.asarray(g).shape
+            assert to_np(p).shape == to_np(g).shape
 
     def test_params_updated_by_sgd(self, cnn):
         from src.core.optimizers import SGD
         optimizer = SGD(cnn, lr=0.01)
         x = np.random.randn(4, 784).astype(np.float32)
 
-        params_before = [np.asarray(p).copy() for p in cnn.params]
+        params_before = [to_np(p).copy() for p in cnn.params]
         out = cnn.forward(x)
         cnn.backward(np.ones_like(out))
         optimizer.step()
-        params_after = [np.asarray(p) for p in cnn.params]
+        params_after = [to_np(p) for p in cnn.params]
 
         changed = any(
             not np.allclose(b, a) for b, a in zip(params_before, params_after)

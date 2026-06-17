@@ -10,6 +10,18 @@ import pytest
 from scripts.train import main, build_config
 
 
+def _cupy_gpu_available():
+    try:
+        import cupy
+        cupy.pad(cupy.ones((2, 2), dtype=cupy.float32), 1)
+        return True
+    except Exception:
+        return False
+
+
+_skip_no_gpu = pytest.mark.skipif(not _cupy_gpu_available(), reason="CuPy GPU not available")
+
+
 # --- synthetic MNIST gz helpers ---
 
 def make_image_gz(path, n=40):
@@ -35,9 +47,10 @@ def mnist_dir(tmp_path):
     return str(tmp_path)
 
 
-def make_args(mnist_dir, task="multiclass", epochs=2, checkpoint=None):
+def make_args(mnist_dir, task="multiclass", epochs=2, checkpoint=None, model="mlp"):
     return argparse.Namespace(
         task=task,
+        model=model,
         epochs=epochs,
         batch_size=8,
         lr=0.01,
@@ -97,6 +110,30 @@ class TestTrainMain:
     def test_test_log_keys(self, mnist_dir, task):
         logs = main(make_args(mnist_dir, task=task))
         assert set(logs[0]["test"].keys()) == {"loss", "metric", "num_samples"}
+
+
+# --- --model 플래그 ---
+
+class TestTrainModel:
+    def test_model_key_in_config(self, mnist_dir):
+        args = make_args(mnist_dir, model="mlp")
+        config = build_config(args)
+        assert config["model"] == "mlp"
+
+    def test_cnn_model_key_in_config(self, mnist_dir):
+        args = make_args(mnist_dir, model="cnn")
+        config = build_config(args)
+        assert config["model"] == "cnn"
+
+    @_skip_no_gpu
+    def test_cnn_returns_list(self, mnist_dir):
+        logs = main(make_args(mnist_dir, model="cnn", epochs=1))
+        assert isinstance(logs, list)
+
+    @_skip_no_gpu
+    def test_cnn_log_has_train_test(self, mnist_dir):
+        logs = main(make_args(mnist_dir, model="cnn", epochs=1))
+        assert "train" in logs[0] and "test" in logs[0]
 
 
 # --- 체크포인트 저장 ---

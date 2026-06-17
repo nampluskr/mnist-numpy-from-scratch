@@ -11,6 +11,18 @@ from scripts.predict import main, build_config
 from scripts.train import main as train_main
 
 
+def _cupy_gpu_available():
+    try:
+        import cupy
+        cupy.pad(cupy.ones((2, 2), dtype=cupy.float32), 1)
+        return True
+    except Exception:
+        return False
+
+
+_skip_no_gpu = pytest.mark.skipif(not _cupy_gpu_available(), reason="CuPy GPU not available")
+
+
 # --- synthetic MNIST gz helpers ---
 
 def make_image_gz(path, n=40):
@@ -36,9 +48,10 @@ def mnist_dir(tmp_path):
     return str(tmp_path)
 
 
-def make_args(mnist_dir, task="multiclass", n=8, checkpoint=None):
+def make_args(mnist_dir, task="multiclass", n=8, checkpoint=None, model="mlp"):
     return argparse.Namespace(
         task=task,
+        model=model,
         seed=0,
         dataset_dir=mnist_dir,
         checkpoint=checkpoint,
@@ -46,9 +59,10 @@ def make_args(mnist_dir, task="multiclass", n=8, checkpoint=None):
     )
 
 
-def make_train_args(mnist_dir, task="multiclass", checkpoint=None):
+def make_train_args(mnist_dir, task="multiclass", checkpoint=None, model="mlp"):
     return argparse.Namespace(
         task=task,
+        model=model,
         epochs=1,
         batch_size=8,
         lr=0.01,
@@ -104,6 +118,30 @@ class TestPredictMain:
         # test set has 20 samples, requesting 100 should clip to 20
         result = main(make_args(mnist_dir, task=task, n=100))
         assert len(result["predictions"]) == 20
+
+
+# --- --model 플래그 ---
+
+class TestPredictModel:
+    def test_model_key_in_config(self, mnist_dir):
+        args = make_args(mnist_dir, model="mlp")
+        config = build_config(args)
+        assert config["model"] == "mlp"
+
+    def test_cnn_model_key_in_config(self, mnist_dir):
+        args = make_args(mnist_dir, model="cnn")
+        config = build_config(args)
+        assert config["model"] == "cnn"
+
+    @_skip_no_gpu
+    def test_cnn_returns_dict(self, mnist_dir):
+        result = main(make_args(mnist_dir, model="cnn"))
+        assert isinstance(result, dict)
+
+    @_skip_no_gpu
+    def test_cnn_predictions_count(self, mnist_dir):
+        result = main(make_args(mnist_dir, model="cnn", n=5))
+        assert len(result["predictions"]) == 5
 
 
 # --- 체크포인트 로딩 ---

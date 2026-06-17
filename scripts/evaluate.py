@@ -1,4 +1,4 @@
-# evaluate.py: CLI entry point for evaluating MLP on MNIST test set.
+# evaluate.py: CLI entry point for evaluating MLP/CNN on MNIST test set.
 
 import argparse
 
@@ -9,9 +9,10 @@ from src.core import checkpoints
 
 def parse_args():
     defaults = get_default_config()
-    parser = argparse.ArgumentParser(description="Evaluate MLP on MNIST test set")
+    parser = argparse.ArgumentParser(description="Evaluate MLP/CNN on MNIST test set")
     parser.add_argument("--task", default=defaults["task"],
                         choices=["multiclass", "binary", "regression"])
+    parser.add_argument("--model", default="mlp", choices=["mlp", "cnn"])
     parser.add_argument("--batch_size", type=int, default=defaults["batch_size"])
     parser.add_argument("--seed", type=int, default=defaults["seed"])
     parser.add_argument("--dataset_dir", default=defaults["dataset_dir"])
@@ -24,6 +25,7 @@ def build_config(args):
     return {
         "dataset_dir": args.dataset_dir,
         "task": args.task,
+        "model": args.model,
         "batch_size": args.batch_size,
         "num_epochs": 0,
         "seed": args.seed,

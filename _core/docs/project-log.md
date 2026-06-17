@@ -44,3 +44,7 @@ updated: 2026-06-17
 | 2026-06-17 | Phase 6.2 완료 - src/core/experiment.py (model 분기 추가), tests/stage6/test_experiment.py (31개), docs/stage6/phase6.2_cnn-integration.md | Stage 6 전체 73개 테스트 통과, 전체 422개 통과 |
 | 2026-06-17 | Phase 6.0 완료 - requirements.txt cupy-cuda11x 추가, numpy_env 설치 및 검증(CuPy 13.6.0 / CUDA 11.8), docs/stage6/phase6.0_cupy-setup.md | cupy-cuda118 미존재, cupy-cuda11x 사용 |
 | 2026-06-17 | CLAUDE.md §5 핵심 행동 규칙에 Python 실행 환경(numpy_env) 명시 추가 | |
+| 2026-06-18 | Phase 7.1 완료 - scripts/*.py --model 플래그 추가(mlp/cnn), tests/stage5 TestXxxModel 클래스 추가(GPU 없을 때 skip), docs/stage7/phase7.1_cli-extension.md | 95 passed, 8 skipped (CuPy GPU skip) |
+| 2026-06-18 | CuPy 환경 교체 - cupy-cuda11x → cupy-cuda12x[ctk] (CUDA 12.8 드라이버 호환), requirements.txt 갱신 | CUDA 12.8 드라이버에 nvrtc 11.x 미존재 |
+| 2026-06-18 | dtype float32 버그 수정 - src/nn/layers.py Linear, src/nn/conv.py Conv2d 초기화 시 scale(float64) 곱 후 astype(float32) 순서 변경 | float32 * float64 업캐스트 방지 |
+| 2026-06-18 | CuPy 14.x 호환 수정 - src/models/cnn.py np.asarray() → .get(), tests/stage6/test_cnn.py to_np() 헬퍼 추가 | 176 passed (stage5+stage6 전체) |

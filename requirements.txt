@@ -3,4 +3,4 @@ pytest
 matplotlib
 jupyterlab
 ipykernel
-cupy-cuda11x
+cupy-cuda12x[ctk]
