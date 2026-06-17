@@ -48,3 +48,5 @@ updated: 2026-06-17
 | 2026-06-18 | CuPy 환경 교체 - cupy-cuda11x → cupy-cuda12x[ctk] (CUDA 12.8 드라이버 호환), requirements.txt 갱신 | CUDA 12.8 드라이버에 nvrtc 11.x 미존재 |
 | 2026-06-18 | dtype float32 버그 수정 - src/nn/layers.py Linear, src/nn/conv.py Conv2d 초기화 시 scale(float64) 곱 후 astype(float32) 순서 변경 | float32 * float64 업캐스트 방지 |
 | 2026-06-18 | CuPy 14.x 호환 수정 - src/models/cnn.py np.asarray() → .get(), tests/stage6/test_cnn.py to_np() 헬퍼 추가 | 176 passed (stage5+stage6 전체) |
+| 2026-06-18 | Phase 7.2 부분 완료 - multiclass, binary, regression MLP output 3종 생성 및 checkpoint 평가 | CNN output과 results 문서는 미진행 |
+| 2026-06-18 | Phase 7.3~7.5 MLP 튜토리얼 작성 - multiclass, binary, regression MLP 평가 결과와 실행 절차 문서화 | CNN 튜토리얼은 미진행 |

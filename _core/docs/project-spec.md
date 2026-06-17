@@ -1,7 +1,7 @@
 ---
 tags: [project, docs]
 created: 2026-06-08
-updated: 2026-06-17
+updated: 2026-06-17 (Stage 6 Phase 6.0 추가, Stage 7 Phase 재정의)
 ---
 
 # project-spec.md
@@ -90,14 +90,18 @@ updated: 2026-06-17
 
 ### 5.7. Stage 6 CuPy 기반 CNN 구현
 
+- Phase 6.0 CuPy 환경 구성: conda numpy_env, cupy-cuda118 설치, 환경 검증
 - Phase 6.1 CNN 모델 구현: CuPy 기반, forward, backward, 파라미터 갱신
 - Phase 6.2 CNN-core 통합 검증: core 인터페이스 호환, 통합 테스트
 
-### 5.8. Stage 7 튜토리얼 문서화 및 전체 검증
+### 5.8. Stage 7 문서화 · 검증
 
-- Phase 7.1 튜토리얼 문서화: Jupyter Book 챕터, 코드 설명, 실습 예제
-- Phase 7.2 실행 결과 정리: task별 로그, 평가 결과, 시각화 출력
-- Phase 7.3 프레임워크 연계 준비: 인터페이스 규약 검토, 후속 프로젝트 체크리스트
+- Phase 7.1 CLI 확장: scripts에 --model 플래그 추가, stage5 테스트 업데이트
+- Phase 7.2 실험 실행 및 결과 수집: 6종(3 task × 2 model) 실험 → outputs/ 저장, results 문서 작성
+- Phase 7.3 Multiclass 튜토리얼: docs/stage7/multiclass/ — MLP + CNN 튜토리얼
+- Phase 7.4 Binary 튜토리얼: docs/stage7/binary/ — MLP + CNN 튜토리얼
+- Phase 7.5 Regression 튜토리얼: docs/stage7/regression/ — MLP + CNN 튜토리얼
+- Phase 7.6 프레임워크 연계 준비: 인터페이스 규약 검토, PyTorch 마이그레이션 체크리스트
 
 ## 6. 확정 구조
 
