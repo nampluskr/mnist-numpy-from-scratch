@@ -64,10 +64,12 @@ updated: 2026-06-17
 - Phase 2.2 Dataset 클래스 구현: MnistDataset, task 변환, __getitem__
 - Phase 2.3 DataLoader 구현: 배치 생성, shuffle, 반복 순회
 
-### 5.4. Stage 3 NumPy 기반 MLP 구현
+### 5.4. Stage 3 NumPy nn 모듈 및 MLP 구현
 
-- Phase 3.1 MLP 모델 구현: forward, backward, 파라미터 갱신
-- Phase 3.2 신경망 구성요소 구현: layers, activations, losses
+- Phase 3.1 활성화 함수 구현: sigmoid, softmax, identity, relu (함수형, `src/nn/activations.py`)
+- Phase 3.2 레이어 모듈 구현: Linear, Sigmoid, ReLU, Sequential (`src/nn/layers.py`)
+- Phase 3.3 손실 함수 및 지표 구현: cross_entropy, binary_cross_entropy, mse, accuracy 계열 (`src/nn/losses.py`)
+- Phase 3.4 MLP 모델 구현: `src/nn/` 모듈 조립, forward, backward, 파라미터 갱신 (`src/models/mlp.py`)
 
 ### 5.5. Stage 4 실행 객체 구현
 
@@ -129,6 +131,11 @@ src/
 ├── __init__.py
 ├── config.py
 ├── task.py
+├── nn/                  ← numpy-only: torch.nn이 제공하는 구성요소를 직접 구현
+│   ├── __init__.py
+│   ├── activations.py
+│   ├── layers.py
+│   └── losses.py
 ├── data/
 │   ├── __init__.py
 │   ├── mnist.py
@@ -136,10 +143,7 @@ src/
 ├── models/
 │   ├── __init__.py
 │   ├── mlp.py
-│   ├── cnn.py
-│   ├── layers.py
-│   ├── activations.py
-│   └── losses.py
+│   └── cnn.py
 ├── core/
 │   ├── __init__.py
 │   ├── optimizers.py
@@ -162,13 +166,13 @@ src/
 | --- | --- |
 | `src/config.py` | 기본 경로, 기본 split, 기본 task, 기본 실행 설정을 정의한다. |
 | `src/task.py` | task별 output_dim, loss, metric, prediction_mode 규약을 단일 진입점으로 관리한다. `transform_targets`는 각 Dataset 클래스가 내부에서 호출하는 헬퍼로 사용한다. |
+| `src/nn/activations.py` | `sigmoid`, `softmax`, `identity`, `relu` 활성화 함수를 구현한다. numpy-only (`torch.nn.functional` 대응). |
+| `src/nn/layers.py` | `Linear`, `Sigmoid`, `ReLU`, `Sequential` 등 레이어 모듈을 구현한다. numpy-only (`torch.nn` 대응). |
+| `src/nn/losses.py` | `cross_entropy`, `binary_cross_entropy`, `mse` 손실 함수와 `accuracy`, `binary_accuracy`, `r2_score` 지표를 구현한다. numpy-only (`torch.nn` 대응). |
 | `src/data/mnist.py` | 로컬 MNIST `*.gz` 파일 로딩(`load_mnist`)과 `MnistDataset` 클래스를 제공한다. task별 target 변환은 `MnistDataset` 내부에서 처리한다. |
 | `src/data/dataloader.py` | 범용 `DataLoader` 클래스를 제공한다. `__len__`과 `__getitem__`을 구현한 Dataset이면 모두 수용한다. |
-| `src/models/mlp.py` | NumPy 기반 MLP 생성, forward, backward, update를 구현한다. |
+| `src/models/mlp.py` | NumPy 기반 MLP 생성, forward, backward, update를 구현한다. `src/nn/` 모듈을 조립하여 구성한다. |
 | `src/models/cnn.py` | CuPy 기반 CNN 생성, forward, backward, update를 구현한다. |
-| `src/models/layers.py` | `Linear`, `Sigmoid`, `ReLU`, `Sequential` 등 레이어 모듈을 구현한다. |
-| `src/models/activations.py` | `sigmoid`, `softmax`, `identity`, `relu` 활성화 함수를 구현한다. |
-| `src/models/losses.py` | `cross_entropy`, `binary_cross_entropy`, `mse` 손실 함수와 `accuracy`, `binary_accuracy`, `r2_score` 지표를 구현한다. |
 | `src/core/optimizers.py` | `SGD`, `Adam` 옵티마이저를 구현한다. model.params/grads 기반 in-place 업데이트를 수행한다. |
 | `src/core/checkpoints.py` | 모델 파라미터를 파일로 저장하고 불러온다. |
 | `src/core/trainer.py` | 학습 루프를 실행한다. `DataLoader`를 수신하여 loss/metric을 집계한다. |
@@ -262,7 +266,7 @@ task별 차이와 구현 대상 파일의 매핑 기준은 아래와 같다.
 | output activation | `softmax` | `sigmoid` | `identity` | `src/task.py`, `src/models/mlp.py` |
 | loss | `cross_entropy` | `binary_cross_entropy` | `mse` | `src/task.py`, `src/core/trainer.py`, `src/core/evaluator.py` |
 | metric | `accuracy` | `binary_accuracy` | `r2_score` | `src/task.py`, `src/core/trainer.py`, `src/core/evaluator.py` |
-| output gradient | `(preds - y) / batch_size` | `(preds - y) / batch_size` | `2 * (preds - y) / batch_size` | `src/models/` 하위 구현 |
+| output gradient | `(preds - y) / batch_size` | `(preds - y) / batch_size` | `2 * (preds - y) / batch_size` | `src/nn/` 하위 구현 |
 | prediction 후처리 | `argmax` | `prob >= 0.5` | `round(clip(raw * 9.0, 0, 9))` | `src/core/predictor.py` |
 
 파일 단위 구현 계획은 공통 책임과 task 규약을 분리하는 방향으로 유지한다.
@@ -288,10 +292,12 @@ Stage 1 초기 구현에서 사용할 공통 진입점은 후속 프레임워크
 | `src/data/mnist.py` | `load_mnist(split)` | `split: str` | `(images, labels)` tuple | 로컬 MNIST 원본 배열 로딩 |
 | `src/data/mnist.py` | `MnistDataset` | `split: str`, `task: str` | dataset instance | MNIST 로딩·정규화·task별 target 변환 담당 |
 | `src/data/dataloader.py` | `DataLoader` | `dataset`, `batch_size: int`, `shuffle: bool` | dataloader instance | 범용 배치·셔플 이터레이터 (`__len__`+`__getitem__` 프로토콜 요구) |
-| `src/models/mlp.py` | `MLP` | config 또는 명시적 차원 인자 | model instance | NumPy 기반 MLP 생성 |
-| `src/models/layers.py` | `Linear`, `Sigmoid`, `ReLU`, `Sequential` | 차원 또는 없음 | layer instance | from-scratch 레이어 구현 |
-| `src/models/activations.py` | `sigmoid`, `softmax`, `identity`, `relu` | `np.ndarray` | `np.ndarray` | 활성화 함수 - forward 전용 |
-| `src/models/losses.py` | `cross_entropy`, `binary_cross_entropy`, `mse` | `preds, targets: np.ndarray` | scalar | 손실 함수 및 평가 지표 |
+| `src/nn/activations.py` | `sigmoid`, `softmax`, `identity`, `relu` | `np.ndarray` | `np.ndarray` | 활성화 함수 - forward 전용 (numpy-only) |
+| `src/nn/layers.py` | `Linear`, `Sigmoid`, `ReLU`, `Sequential` | 차원 또는 없음 | layer instance | from-scratch 레이어 구현 (numpy-only) |
+| `src/nn/losses.py` | `cross_entropy`, `binary_cross_entropy`, `mse` | `logits, targets: np.ndarray` | scalar | 손실 함수 - logit 입력, activation 내부 처리 (numpy-only) |
+| `src/nn/losses.py` | `cross_entropy_grad`, `binary_cross_entropy_grad`, `mse_grad` | `logits, targets: np.ndarray` | `np.ndarray` | d(loss)/d(logits) 계산 - trainer에서 backward 입력으로 사용 (numpy-only) |
+| `src/nn/losses.py` | `accuracy`, `binary_accuracy`, `r2_score` | `logits, targets: np.ndarray` | scalar | 평가 지표 - logit 입력 (numpy-only) |
+| `src/models/mlp.py` | `MLP` | `task: str`, `seed: int` | model instance | `src.nn` 모듈 조립, raw logit 출력 |
 | `src/core/optimizers.py` | `SGD`, `Adam` | model instance, `lr: float` | optimizer instance | model.params/grads 기반 in-place 파라미터 업데이트 |
 | `src/core/trainer.py` | `Trainer` | model, optimizer, task spec | trainer instance | 학습 루프 실행 |
 | `src/core/evaluator.py` | `Evaluator` | model, task spec | evaluator instance | 평가 루프 실행 |
@@ -313,7 +319,8 @@ Stage 1 초기 구현에서 사용할 공통 진입점은 후속 프레임워크
 - `DataLoader`는 `__len__`과 `__getitem__`을 구현한 Dataset이면 종류에 관계없이 수용한다.
 - `get_task_spec(task)`는 최소한 `task`, `output_dim`, `target_dtype`, `prediction_mode` 키를 포함한다.
 - `transform_targets(labels, task)`는 `task.py`에 유지하며 각 Dataset 클래스 내부에서 호출한다.
-- `MLP.forward(x)`는 `(N, output_dim)` prediction 배열을 반환한다.
+- `MLP.forward(x)`는 `(N, output_dim)` raw logit 배열을 반환한다. activation은 `src.nn.losses` 함수가 처리한다.
+- `MLP.params`와 `MLP.grads`는 list이다. `params[0]`이 첫 번째 `Linear`의 `w`에 해당한다.
 - `Linear.backward(dout)`는 상위 레이어로 전달할 gradient를 반환하며, `grad_w`, `grad_b`를 인스턴스에 in-place 저장한다.
 - `SGD.step()`, `Adam.step()`은 model.params 를 in-place 업데이트하며 반환값이 없다.
 - `Trainer.fit(train_loader)`는 `DataLoader`를 수신하며 epoch별 로그 dict 목록 또는 요약 dict를 반환한다.

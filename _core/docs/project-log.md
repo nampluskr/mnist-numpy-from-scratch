@@ -26,3 +26,5 @@ updated: 2026-06-17
 | 2026-06-17 | Phase 명칭 전면 개선 - project-todo.md, project-spec.md Phase 1.1~7.3 명칭을 "동사구: 항목 나열" 형식으로 개선, 10개 phase 문서 H1 반영 | |
 | 2026-06-17 | em dash 전면 제거 및 문서 규칙 추가 - 19개 파일 `—` → ` - ` 치환, docs-rules.md에 키보드 입력 불가 문자 사용 금지 조항 추가 | |
 | 2026-06-17 | Phase 명 구분자 변경 - phase 헤딩 행의 ` - `를 `: `로 변경 (project-todo.md, project-spec.md, docs/stage*/phase*.md) | |
+| 2026-06-17 | src 구조 재설계 - models/ 하위 layers/activations/losses를 nn/ 패키지로 분리, torch.nn 대응 명시, project-spec.md §5.4·§6.2·§6.5·§6.6 갱신 | PyTorch 방식 통일 결정 |
+| 2026-06-17 | Stage 3 전면 재구성 - Phase 2→4개 분리(activations/layers/losses/mlp), src/nn/ 4파일 신규, mlp.py Sequential 기반 재작성, tests/stage3 테스트 69개 통과 | logit 출력, *_grad 함수 도입 |
