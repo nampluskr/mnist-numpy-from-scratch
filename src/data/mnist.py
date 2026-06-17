@@ -1,4 +1,4 @@
-# mnist.py: MNIST dataset loader from local gzip files.
+# mnist.py: MNIST dataset loader and dataset class from local gzip files.
 
 import gzip
 import os
@@ -7,6 +7,7 @@ import struct
 import numpy as np
 
 from src.config import get_default_config
+from src.task import get_task_spec, transform_targets
 
 _SPLIT_FILES = {
     "train": ("train-images-idx3-ubyte.gz", "train-labels-idx1-ubyte.gz"),
@@ -42,3 +43,17 @@ def load_mnist(split, dataset_dir=None):
     images = _load_images(os.path.join(dataset_dir, img_file))
     labels = _load_labels(os.path.join(dataset_dir, lbl_file))
     return images, labels
+
+
+class MnistDataset:
+    def __init__(self, split, task, dataset_dir=None):
+        images, labels = load_mnist(split, dataset_dir=dataset_dir)
+        self.images = images.reshape(-1, 784).astype(np.float32) / 255.0
+        self.targets = transform_targets(labels, task)
+        self.task_spec = get_task_spec(task)
+
+    def __len__(self):
+        return len(self.images)
+
+    def __getitem__(self, idx):
+        return self.images[idx], self.targets[idx]
