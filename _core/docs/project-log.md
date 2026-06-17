@@ -22,3 +22,4 @@ updated: 2026-06-17
 | 2026-06-17 | Stage 0 문서 전면 재작성 — "재검토" 프레임 제거, 레거시 분석·구현 계획·테스트 계획 수립 중심으로 재편 | phase0.1~0.3 |
 | 2026-06-17 | project-spec.md 전면 업데이트 — src/models/ 하위 구성요소, core/optimizers.py 추가, tests stage 단위 구조, 인터페이스 규약 확장 | |
 | 2026-06-17 | project-todo.md 재구성 — Stage 0 미완료 초기화(다음 세션 재진행), Stage 4 Phase 4.1 optimizers 추가 및 재번호 | |
+| 2026-06-17 | Stage 0 Phase 0.1~0.3 전면 재작성 — phase0.1_legacy-analysis.md, phase0.2_implementation-plan.md, phase0.3_test-plan.md 신규 작성, 기존 3개 파일 삭제 | Stage 0 전체 완료 |
