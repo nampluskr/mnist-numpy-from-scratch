@@ -1,7 +1,7 @@
 ---
 tags: [project, agent-config]
 created: 2026-06-08
-updated: 2026-06-15
+updated: 2026-06-17
 ---
 
 # CLAUDE.md — mnist-numpy-from-scratch
@@ -79,6 +79,7 @@ data/ → notebooks/ → src/ → scripts/ → experiments/ → outputs/
 - `scripts/` 를 통해 `experiments/` 에서 학습·추론·시각화를 실행하고, 결과는 `outputs/` 에 저장한다.
 - 새 소스 파일을 만들 때 첫 줄에 한 줄 한국어 주석으로 파일 역할을 기록한다.
 - 루트 폴더 구조는 변경하지 않는다.
+- Python 실행 환경은 conda 환경 `numpy_env` 를 사용한다. 모든 Python 명령은 `conda run -n numpy_env` 를 통해 실행한다.
 
 ## 6. 참조 경로
 
