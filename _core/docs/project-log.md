@@ -29,3 +29,6 @@ updated: 2026-06-17
 | 2026-06-17 | src 구조 재설계 - models/ 하위 layers/activations/losses를 nn/ 패키지로 분리, torch.nn 대응 명시, project-spec.md §5.4·§6.2·§6.5·§6.6 갱신 | PyTorch 방식 통일 결정 |
 | 2026-06-17 | Stage 3 전면 재구성 - Phase 2→4개 분리(activations/layers/losses/mlp), src/nn/ 4파일 신규, mlp.py Sequential 기반 재작성, tests/stage3 테스트 69개 통과 | logit 출력, *_grad 함수 도입 |
 | 2026-06-17 | Stage 3 문서 4개 작성 - phase3.1_activations.md, phase3.2_layers.md, phase3.3_losses.md, phase3.4_mlp.md, 구 버전 phase3.1_mlp.md 삭제 | Stage 3 전체 완료 |
+| 2026-06-17 | Phase 4.1 완료 - src/core/optimizers.py (SGD, Adam), tests/stage4/test_optimizers.py (12개), docs/stage4/phase4.1_optimizers.md | |
+| 2026-06-17 | Phase 4.2 완료 - src/core/checkpoints.py (save/load), tests/stage4/test_checkpoints.py (7개), docs/stage4/phase4.2_checkpoints.md | |
+| 2026-06-17 | Phase 4.3 완료 - src/core/trainer.py (Trainer.fit), tests/stage4/test_trainer.py (16개), docs/stage4/phase4.3_trainer.md | |
