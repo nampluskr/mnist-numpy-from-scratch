@@ -8,7 +8,7 @@
 
 Phase 2.2를 TDD 순서로 완료했다.
 `test_dataset.py` 28개 테스트를 먼저 작성하여 ImportError로 실패 확인 후, `MnistDataset` 클래스를 `src/data/mnist.py`에 추가하여 전체 통과시켰다.
-`project-todo.md` Phase 2.2 체크박스를 완료 처리했다.
+`PROJECT-TODO.md` Phase 2.2 체크박스를 완료 처리했다.
 
 ## 2. 사용자 요청 및 의도
 
@@ -44,8 +44,8 @@ Phase 2.2를 TDD 순서로 완료했다.
 이 내용을 기반으로 Phase 2.3 `DataLoader` 구현부터 진행해 주세요.
 
 작업 전 확인 파일:
-- 프로젝트 명세: `_core/docs/project-spec.md` §6.2, §6.6
-- 진행 현황: `_core/docs/project-todo.md` Phase 2.3
+- 프로젝트 명세: `_core/PROJECT-SPEC.md` §6.2, §6.6
+- 진행 현황: `_core/PROJECT-TODO.md` Phase 2.3
 - 핸드오프: `_core/sessions/260617-144014_session-handoff.md`
 
 `DataLoader` 구현 규약:

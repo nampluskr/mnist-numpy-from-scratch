@@ -53,5 +53,5 @@ updated: 2026-06-17
 
 참고 파일:
 - 핸드오프: _core/sessions/260617-165449_session-handoff.md
-- 구현 명세: _core/docs/project-spec.md
-- 할일 목록: _core/docs/project-todo.md
+- 구현 명세: _core/PROJECT-SPEC.md
+- 할일 목록: _core/PROJECT-TODO.md

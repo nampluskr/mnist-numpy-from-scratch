@@ -4,7 +4,7 @@ created: 2026-06-17
 updated: 2026-06-17
 ---
 
-# Phase 2.2 Dataset 클래스 구현: MnistDataset, task 변환, __getitem__
+# Phase 2.2 Dataset 클래스 구현
 
 ## 1. 역할
 

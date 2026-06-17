@@ -4,7 +4,7 @@ created: 2026-06-17
 updated: 2026-06-17
 ---
 
-# Phase 6.1 CNN 모델 구현
+# Phase 6.1 CNN model 구현
 
 ## 1. 개요
 

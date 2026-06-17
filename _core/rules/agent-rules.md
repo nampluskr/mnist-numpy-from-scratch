@@ -1,7 +1,7 @@
 ---
 tags: [project, rules]
 created: 2026-06-14
-updated: 2026-06-14
+updated: 2026-06-18
 ---
 
 # agent-rules.md
@@ -12,7 +12,7 @@ updated: 2026-06-14
 
 - 프로젝트 루트 내 모든 파일 읽기·수정·생성
 - `_core/sessions/` 에 핸드오프 문서 생성
-- `_core/docs/project-log.md` 갱신
+- `_core/PROJECT-LOG.md` 갱신
 
 ## 2. 금지 행동
 

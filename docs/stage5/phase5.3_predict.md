@@ -4,7 +4,7 @@ created: 2026-06-17
 updated: 2026-06-17
 ---
 
-# Phase 5.3 예측 CLI 구현: 인자 파싱, experiment 조립, predictor 호출
+# Phase 5.3 prediction CLI 구현
 
 ## 1. 역할
 

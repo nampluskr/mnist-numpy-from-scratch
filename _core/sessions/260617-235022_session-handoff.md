@@ -6,14 +6,14 @@
 
 ## 1. 세션 핵심 요약
 
-이번 세션에서는 코드 구현 없이 Stage 6~7 계획을 재정의했다. Stage 6에 Phase 6.0(CuPy 환경 구성)을 신규 추가하고, Stage 7을 기존 3 Phase에서 6 Phase로 세분화했다. project-spec.md §5.7~5.8과 project-todo.md Stage 6~7 섹션을 갱신했다.
+이번 세션에서는 코드 구현 없이 Stage 6~7 계획을 재정의했다. Stage 6에 Phase 6.0(CuPy 환경 구성)을 신규 추가하고, Stage 7을 기존 3 Phase에서 6 Phase로 세분화했다. PROJECT-SPEC.md §5.7~5.8과 PROJECT-TODO.md Stage 6~7 섹션을 갱신했다.
 
 ## 2. 완료 항목
 
 | 파일 | 내용 |
 |---|---|
-| `_core/docs/project-spec.md` | §5.7 Stage 6에 Phase 6.0 추가, §5.8 Stage 7을 6 Phase로 전면 교체 |
-| `_core/docs/project-todo.md` | Stage 6에 Phase 6.0 Task 삽입, Stage 7 전면 교체 (3 Phase → 6 Phase) |
+| `_core/PROJECT-SPEC.md` | §5.7 Stage 6에 Phase 6.0 추가, §5.8 Stage 7을 6 Phase로 전면 교체 |
+| `_core/PROJECT-TODO.md` | Stage 6에 Phase 6.0 Task 삽입, Stage 7 전면 교체 (3 Phase → 6 Phase) |
 | `_core/sessions/260617-235022_session-handoff.md` | 이 문서 |
 
 ## 3. 미결 사항
@@ -105,6 +105,6 @@ Stage 7 Phase는 이번 세션에서 6개로 재정의했습니다.
 
 참고 파일:
 - 핸드오프: `_core/sessions/260617-235022_session-handoff.md`
-- 할일: `_core/docs/project-todo.md`
-- 스펙: `_core/docs/project-spec.md`
+- 할일: `_core/PROJECT-TODO.md`
+- 스펙: `_core/PROJECT-SPEC.md`
 - 계획 상세: `/home/nampl/.claude/plans/stage-7-iterative-hummingbird.md`

@@ -4,7 +4,7 @@ created: 2026-06-18
 updated: 2026-06-18
 ---
 
-# Phase 7.1 CLI 확장: scripts --model 플래그 추가, stage5 테스트 업데이트
+# Phase 7.1 CLI 확장
 
 ## 1. 역할
 

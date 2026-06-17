@@ -4,7 +4,7 @@ created: 2026-06-17
 updated: 2026-06-17
 ---
 
-# Phase 4.6 Experiment 구현: 실행 객체 조립, 의존성 주입, 최상위 진입점
+# Phase 4.6 Experiment 구현
 
 ## 1. 역할
 

@@ -1,18 +1,18 @@
 ---
 tags: [project, commands]
 created: 2026-06-15
-updated: 2026-06-15
+updated: 2026-06-18
 ---
 
 # 커스텀 명령어: `project-init` / `프로젝트 초기화`
 
 `project-init 실행` 또는 `@project-init.md 실행`으로 호출한다.
 프로젝트 시작 시 또는 진행 중 대화형으로 프로젝트 정보를 수집하여
-`_core/docs/project-spec.md` → `_core/docs/project-todo.md` → `README.md` 순으로 작성하거나 갱신한다.
+`_core/PROJECT-SPEC.md` → `_core/PROJECT-TODO.md` → `README.md` 순으로 작성하거나 갱신한다.
 
 ## 1. 실행 모드 판단
 
-명령어 실행 시 먼저 `_core/docs/project-spec.md` 존재 여부를 확인한다.
+명령어 실행 시 먼저 `_core/PROJECT-SPEC.md` 존재 여부를 확인한다.
 
 - **신규 모드**: 파일이 없거나 플레이스홀더(`{{...}}`) 상태인 경우 → 전체 항목을 새로 수집하여 작성
 - **업데이트 모드**: 실제 내용이 있는 경우 → 현재 값을 보여주며 변경할 항목만 수집하여 갱신
@@ -60,7 +60,7 @@ Stage 2 {Stage명}
 ```
 
 사용자 피드백을 반영하여 수정하고, "확인" 입력 시 다음 단계로 넘어간다.
-진행 단계 확정 후 AI가 각 Phase에 맞는 Task를 직접 작성하여 `project-todo.md` 초안을 생성한다.
+진행 단계 확정 후 AI가 각 Phase에 맞는 Task를 직접 작성하여 `PROJECT-TODO.md` 초안을 생성한다.
 
 ## 3. 확인 및 수정
 
@@ -86,7 +86,7 @@ Subject code: ...
 
 ## 4. 파일 작성 규칙
 
-### project-spec.md
+### PROJECT-SPEC.md
 
 `_core/rules/docs-rules.md` 규칙을 준수하여 작성한다.
 
@@ -129,7 +129,7 @@ updated: YYYY-MM-DD
 - Phase 2.1 {Phase명}
 ```
 
-### project-todo.md
+### PROJECT-TODO.md
 
 ```markdown
 ---
@@ -176,7 +176,7 @@ Stage - Phase - Task 단위로 체크박스를 관리한다.
 완료되었습니다.
 
 작성된 파일:
-- _core/docs/project-spec.md: 목적 / 배경 / 범위 / 제약 / {N}개 Stage
-- _core/docs/project-todo.md: {N}개 Stage, {M}개 Phase, {K}개 Task
+- _core/PROJECT-SPEC.md: 목적 / 배경 / 범위 / 제약 / {N}개 Stage
+- _core/PROJECT-TODO.md: {N}개 Stage, {M}개 Phase, {K}개 Task
 - README.md: 프로젝트명 / 설명 / 태그 갱신
 ```

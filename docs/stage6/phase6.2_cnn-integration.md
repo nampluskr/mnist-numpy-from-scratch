@@ -4,7 +4,7 @@ created: 2026-06-17
 updated: 2026-06-17
 ---
 
-# Phase 6.2 CNN-core 통합 검증
+# Phase 6.2 CNN-core integration 검증
 
 ## 1. 개요
 

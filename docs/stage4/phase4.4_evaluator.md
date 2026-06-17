@@ -4,7 +4,7 @@ created: 2026-06-17
 updated: 2026-06-17
 ---
 
-# Phase 4.4 Evaluator 구현: 평가 루프, DataLoader 수신, evaluate 인터페이스
+# Phase 4.4 Evaluator 구현
 
 ## 1. 역할
 

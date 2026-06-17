@@ -4,7 +4,7 @@ created: 2026-06-17
 updated: 2026-06-17
 ---
 
-# Phase 5.1 학습 CLI 구현: 인자 파싱, experiment 조립, trainer 호출
+# Phase 5.1 training CLI 구현
 
 ## 1. 역할
 

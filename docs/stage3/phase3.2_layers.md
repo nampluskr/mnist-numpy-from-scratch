@@ -4,7 +4,7 @@ created: 2026-06-17
 updated: 2026-06-17
 ---
 
-# Phase 3.2 레이어 모듈 구현: Linear, Sigmoid, ReLU, Sequential
+# Phase 3.2 layer module 구현
 
 ## 1. 역할
 

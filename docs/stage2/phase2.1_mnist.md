@@ -4,7 +4,7 @@ created: 2026-06-17
 updated: 2026-06-17
 ---
 
-# Phase 2.1 MNIST 원시 데이터 로딩: gz 파싱, train/test split, 정규화
+# Phase 2.1 MNIST raw data loading
 
 ## 1. 역할
 

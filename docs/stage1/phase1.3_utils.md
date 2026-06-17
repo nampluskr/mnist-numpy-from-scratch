@@ -4,7 +4,7 @@ created: 2026-06-17
 updated: 2026-06-17
 ---
 
-# Phase 1.3 유틸리티 구현: 배치 처리, 난수 시드, 파일 I/O
+# Phase 1.3 utility 구현
 
 ## 1. 역할
 

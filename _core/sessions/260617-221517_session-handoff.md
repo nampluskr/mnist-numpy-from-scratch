@@ -6,7 +6,7 @@
 
 ## 1. 세션 핵심 요약
 
-Stage 3 문서 4개(phase3.1_activations.md, phase3.2_layers.md, phase3.3_losses.md, phase3.4_mlp.md)를 신규 작성했다. 재설계 이전 구 버전인 `phase3.1_mlp.md`를 삭제하여 docs/stage3/가 현재 구조와 일치하도록 정리했다. project-todo.md Stage 3 docs 항목 전체 완료 처리, project-log.md 갱신 완료.
+Stage 3 문서 4개(phase3.1_activations.md, phase3.2_layers.md, phase3.3_losses.md, phase3.4_mlp.md)를 신규 작성했다. 재설계 이전 구 버전인 `phase3.1_mlp.md`를 삭제하여 docs/stage3/가 현재 구조와 일치하도록 정리했다. PROJECT-TODO.md Stage 3 docs 항목 전체 완료 처리, PROJECT-LOG.md 갱신 완료.
 
 ## 2. 완료 항목
 
@@ -17,8 +17,8 @@ Stage 3 문서 4개(phase3.1_activations.md, phase3.2_layers.md, phase3.3_losses
 | `docs/stage3/phase3.3_losses.md` | 손실/gradient/지표 함수, logit 입력 + activation 내부 처리, 21개 테스트 |
 | `docs/stage3/phase3.4_mlp.md` | Sequential 조합 MLP, params/grads 인덱스 구조, 13개 테스트 |
 | `docs/stage3/phase3.1_mlp.md` | 삭제 (재설계 이전 구 버전) |
-| `_core/docs/project-todo.md` | Stage 3 docs 4개 항목 완료 처리 |
-| `_core/docs/project-log.md` | 이번 세션 이력 추가 |
+| `_core/PROJECT-TODO.md` | Stage 3 docs 4개 항목 완료 처리 |
+| `_core/PROJECT-LOG.md` | 이번 세션 이력 추가 |
 
 ## 3. 미결 사항
 
@@ -55,5 +55,5 @@ Stage 3 전체(코드, 테스트, 문서)가 완료된 상태입니다.
 
 참고 파일:
 - 핸드오프: `_core/sessions/260617-221517_session-handoff.md`
-- 할일: `_core/docs/project-todo.md`
-- 스펙: `_core/docs/project-spec.md`
+- 할일: `_core/PROJECT-TODO.md`
+- 스펙: `_core/PROJECT-SPEC.md`

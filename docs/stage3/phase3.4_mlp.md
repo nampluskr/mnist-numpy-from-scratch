@@ -4,7 +4,7 @@ created: 2026-06-17
 updated: 2026-06-17
 ---
 
-# Phase 3.4 MLP 모델 구현: src/nn 모듈 조립, forward, backward, 파라미터 갱신
+# Phase 3.4 MLP model 구현
 
 ## 1. 역할
 

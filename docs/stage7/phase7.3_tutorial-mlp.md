@@ -4,7 +4,7 @@ created: 2026-06-18
 updated: 2026-06-18
 ---
 
-# Phase 7.3 Multiclass 튜토리얼: MLP
+# Phase 7.3 Multiclass tutorial
 
 ## 1. 과제 개요
 

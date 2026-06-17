@@ -4,7 +4,7 @@ created: 2026-06-17
 updated: 2026-06-17
 ---
 
-# Phase 4.5 Predictor 구현: 예측 실행, task별 후처리, predict 인터페이스
+# Phase 4.5 Predictor 구현
 
 ## 1. 역할
 

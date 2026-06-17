@@ -4,7 +4,7 @@ created: 2026-06-17
 updated: 2026-06-17
 ---
 
-# Phase 6.0 CuPy 환경 구성
+# Phase 6.0 CuPy environment 구성
 
 ## 1. 개요
 

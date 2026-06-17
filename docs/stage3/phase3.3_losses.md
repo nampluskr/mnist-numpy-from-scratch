@@ -4,7 +4,7 @@ created: 2026-06-17
 updated: 2026-06-17
 ---
 
-# Phase 3.3 손실 함수 및 지표 구현: cross_entropy, binary_cross_entropy, mse, accuracy 계열
+# Phase 3.3 loss 및 metric 구현
 
 ## 1. 역할
 

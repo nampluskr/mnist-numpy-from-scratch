@@ -1,14 +1,14 @@
 ---
 tags: [project, commands]
 created: 2026-06-15
-updated: 2026-06-15
+updated: 2026-06-18
 ---
 
 # 커스텀 명령어: `project-update` / `프로젝트 업데이트`
 
 `project-update 실행` 또는 `@project-update.md 실행`으로 호출한다.
 자유 형식으로 입력된 수정 내용을 파악하여
-`_core/docs/project-spec.md` / `_core/docs/project-todo.md` / `README.md` 중 해당 파일만 선택적으로 갱신한다.
+`_core/PROJECT-SPEC.md` / `_core/PROJECT-TODO.md` / `README.md` 중 해당 파일만 선택적으로 갱신한다.
 
 `project-init` 이 순서대로 정보를 수집하는 초기 설정 명령어라면,
 `project-update` 는 진행 중 언제든 자유롭게 수정 사항을 반영하는 명령어이다.
@@ -19,7 +19,7 @@ updated: 2026-06-15
 
 ```
 어떤 내용을 수정할까요?
-project-spec.md, project-todo.md, README.md 중 변경할 내용을 자유롭게 말씀해 주세요.
+PROJECT-SPEC.md, PROJECT-TODO.md, README.md 중 변경할 내용을 자유롭게 말씀해 주세요.
 
 예시:
 - "목적을 바꿨어. 이제 딥러닝 모델 비교가 메인이야"
@@ -35,12 +35,12 @@ project-spec.md, project-todo.md, README.md 중 변경할 내용을 자유롭게
 
 | 수정 대상 | 대상 파일 |
 |---|---|
-| 목적 / 배경 / 범위 / 제약 사항 / 진행 단계 (Stage·Phase) | `_core/docs/project-spec.md` |
-| Task 추가·삭제 / Stage·Phase 신규 추가 | `_core/docs/project-todo.md` |
+| 목적 / 배경 / 범위 / 제약 사항 / 진행 단계 (Stage·Phase) | `_core/PROJECT-SPEC.md` |
+| Task 추가·삭제 / Stage·Phase 신규 추가 | `_core/PROJECT-TODO.md` |
 | 프로젝트명 / 한 줄 설명 / Subject 태그 | `README.md` |
 
 하나의 입력으로 여러 파일에 걸친 수정도 처리한다.
-Stage·Phase 신규 추가는 `project-spec.md` 단계 섹션과 `project-todo.md` 를 함께 갱신한다.
+Stage·Phase 신규 추가는 `PROJECT-SPEC.md` 단계 섹션과 `PROJECT-TODO.md` 를 함께 갱신한다.
 
 ### Step 2. 현재 값 확인 및 변경 내용 제시
 
@@ -65,7 +65,7 @@ Stage·Phase 신규 추가는 `project-spec.md` 단계 섹션과 `project-todo.m
 - frontmatter `updated` 필드를 오늘 날짜로 자동 갱신한다.
 - `_core/rules/docs-rules.md` 규칙을 준수하여 작성한다.
 
-**project-todo.md 특별 규칙**:
+**PROJECT-TODO.md 특별 규칙**:
 - Task 추가 시 Phase 가 지정되면 해당 Phase 끝에 삽입한다.
 - Phase 가 지정되지 않으면 미완료 항목이 있는 첫 번째 Phase 끝에 삽입한다.
 - Task 완료 체크(`- [x]`)는 `project-update` 로 수행하지 않는다.
@@ -76,8 +76,8 @@ Stage·Phase 신규 추가는 `project-spec.md` 단계 섹션과 `project-todo.m
 완료되었습니다.
 
 변경된 파일:
-- _core/docs/project-spec.md: {변경 섹션} 수정
-- _core/docs/project-todo.md: Phase X.X 에 Task 추가
+- _core/PROJECT-SPEC.md: {변경 섹션} 수정
+- _core/PROJECT-TODO.md: Phase X.X 에 Task 추가
 ```
 
 변경된 파일이 없는 경우 그 이유를 설명한다.

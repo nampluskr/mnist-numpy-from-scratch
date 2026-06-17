@@ -4,7 +4,7 @@ created: 2026-06-17
 updated: 2026-06-17
 ---
 
-# Phase 4.7 Visualizer 구현: 학습 로그, 예측 결과, 시각화 저장
+# Phase 4.7 Visualizer 구현
 
 ## 1. 역할
 

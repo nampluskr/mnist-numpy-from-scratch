@@ -38,14 +38,14 @@ Phase 1.1을 완료하고, 프로젝트 구조와 실행 환경에 관한 여러
 
 | # | 항목 | 현재 상태 | 결정 필요 내용 |
 |---|---|---|---|
-| 1 | `project-todo.md`의 Phase 1.2 이후 테스트 경로 | `tests/test_task.py` 등 stage 폴더 미반영 | `tests/stage1/test_task.py` 등으로 일괄 수정 필요 |
+| 1 | `PROJECT-TODO.md`의 Phase 1.2 이후 테스트 경로 | `tests/test_task.py` 등 stage 폴더 미반영 | `tests/stage1/test_task.py` 등으로 일괄 수정 필요 |
 | 2 | `_core/docs/subject-guide.md` 내용 | 미작성 | 주제 분류 체계 필요 시 작성 |
 
 ## 5. 다음 작업 목록
 
 | 우선순위 | 작업 | 관련 파일 |
 |---|---|---|
-| 1 | `project-todo.md` Phase 1.2~1.3 테스트 경로 수정 | `_core/docs/project-todo.md` |
+| 1 | `PROJECT-TODO.md` Phase 1.2~1.3 테스트 경로 수정 | `_core/PROJECT-TODO.md` |
 | 2 | `src/task.py` 구현 | `src/task.py` |
 | 3 | `tests/stage1/test_task.py` 작성 및 실행 | `tests/stage1/test_task.py` |
 | 4 | `docs/stage1/phase1.2_task.md` 작성 | `docs/stage1/phase1.2_task.md` |
@@ -57,9 +57,9 @@ Phase 1.1을 완료하고, 프로젝트 구조와 실행 환경에 관한 여러
 이 내용을 기반으로 Phase 1.2 `src/task.py` 구현부터 진행해 주세요.
 
 작업 전 확인 파일:
-- 프로젝트 명세: `_core/docs/project-spec.md` §6.5 (task별 차이), §6.6 (공통 함수명과 입출력 규약)
+- 프로젝트 명세: `_core/PROJECT-SPEC.md` §6.5 (task별 차이), §6.6 (공통 함수명과 입출력 규약)
 - 레거시 참조: `_core/legacy/src/`의 3개 파일 (multiclass, binary, regression)
-- 진행 현황: `_core/docs/project-todo.md` Phase 1.2
+- 진행 현황: `_core/PROJECT-TODO.md` Phase 1.2
 - 핸드오프: `_core/sessions/260617-134447_session-handoff.md`
 
 `get_task_spec(task)` 반환 dict 최소 포함 키:

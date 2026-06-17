@@ -7,7 +7,7 @@ updated: 2026-06-17
 # 커스텀 명령어: `session-end` / `세션 종료`
 
 `session-end 실행` 또는 `@session-end.md 실행`으로 호출한다.
-세션 종료 전 완료 Task 확인, `project-todo.md` 업데이트, `project-log.md` 갱신, 세션 핸드오프 문서 작성을 순서대로 수행한다.
+세션 종료 전 완료 Task 확인, `PROJECT-TODO.md` 업데이트, `PROJECT-LOG.md` 갱신, 세션 핸드오프 문서 작성을 순서대로 수행한다.
 모든 문서 작업 완료 후 종료 브리핑을 출력하고, 사용자의 승인을 받아 커밋 및 푸시를 진행한다.
 
 ## 1. 실행 절차
@@ -17,14 +17,14 @@ updated: 2026-06-17
 1. `git status` 로 이번 세션에서 변경된 파일 목록을 확인한다.
 2. 완료된 Task 를 사용자에게 확인한다.
 
-### Step 2. project-todo.md 업데이트
+### Step 2. PROJECT-TODO.md 업데이트
 
-`_core/docs/project-todo.md` 에서 사용자가 확인한 완료 항목을 `[ ]` → `[x]` 로 변경한다.
+`_core/PROJECT-TODO.md` 에서 사용자가 확인한 완료 항목을 `[ ]` → `[x]` 로 변경한다.
 완료되지 않은 항목은 그대로 유지한다.
 
-### Step 3. project-log.md 갱신
+### Step 3. PROJECT-LOG.md 갱신
 
-`_core/docs/project-log.md` 에 이번 세션에서 완료된 항목을 아래 형식으로 추가한다.
+`_core/PROJECT-LOG.md` 에 이번 세션에서 완료된 항목을 아래 형식으로 추가한다.
 
 ```markdown
 ## YYMMDD {세션 제목}
@@ -69,8 +69,8 @@ updated: 2026-06-17
 - 미결 사항: ...          ← 없으면 이 항목 생략
 
 [ 저장된 파일 ]
-- project-todo.md 업데이트 완료
-- project-log.md 갱신 완료
+- PROJECT-TODO.md 업데이트 완료
+- PROJECT-LOG.md 갱신 완료
 - 핸드오프: _core/sessions/{파일명}
 
 [ 다음 세션 시작 지시문 ]

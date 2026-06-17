@@ -4,7 +4,7 @@ created: 2026-06-17
 updated: 2026-06-17
 ---
 
-# Phase 4.3 Trainer 구현: 학습 루프, DataLoader 수신, fit 인터페이스
+# Phase 4.3 Trainer 구현
 
 ## 1. 역할
 

@@ -18,8 +18,8 @@ updated: 2026-06-17
 | `docs/stage0/phase0.1_legacy-review.md` | 레거시 구성(6+6), common 모듈 상세, 두 가지 패턴, task별 차이, 구현 매핑 전면 재작성 |
 | `docs/stage0/phase0.2_structure.md` | src 구조(optimizers 추가), tests 구조(stage 단위), scripts-core 관계 재작성 |
 | `docs/stage0/phase0.3_implementation-order.md` | Stage별 순서, 인터페이스 규약(optimizer 포함), TDD 원칙, pytest 명령 재작성 |
-| `_core/docs/project-spec.md` | src 구조(layers·activations·losses·optimizers 추가), tests stage 단위 구조, 인터페이스 규약 전면 업데이트 |
-| `_core/docs/project-todo.md` | Stage 0 미완료 초기화(다음 세션 재진행), Stage 4 Phase 4.1 optimizers 추가 및 4.2~4.7 재번호 |
+| `_core/PROJECT-SPEC.md` | src 구조(layers·activations·losses·optimizers 추가), tests stage 단위 구조, 인터페이스 규약 전면 업데이트 |
+| `_core/PROJECT-TODO.md` | Stage 0 미완료 초기화(다음 세션 재진행), Stage 4 Phase 4.1 optimizers 추가 및 4.2~4.7 재번호 |
 
 ## 2. 주요 결정사항
 

@@ -6,7 +6,7 @@
 
 ## 1. 세션 핵심 요약
 
-Stage 4의 Phase 4.4~4.7을 구현했다. `src/core/` 패키지에 evaluator, predictor, experiment, visualizer 4개 파일을 신규 작성하고 각 파일에 대응하는 테스트와 문서를 완성했다. 테스트 66개 전체 통과 (Stage 4 누적 101개). project-todo.md Phase 4.4~4.7 완료 처리, project-log.md 갱신 완료.
+Stage 4의 Phase 4.4~4.7을 구현했다. `src/core/` 패키지에 evaluator, predictor, experiment, visualizer 4개 파일을 신규 작성하고 각 파일에 대응하는 테스트와 문서를 완성했다. 테스트 66개 전체 통과 (Stage 4 누적 101개). PROJECT-TODO.md Phase 4.4~4.7 완료 처리, PROJECT-LOG.md 갱신 완료.
 
 ## 2. 완료 항목
 
@@ -24,8 +24,8 @@ Stage 4의 Phase 4.4~4.7을 구현했다. `src/core/` 패키지에 evaluator, pr
 | `docs/stage4/phase4.5_predictor.md` | Predictor 문서 |
 | `docs/stage4/phase4.6_experiment.md` | Experiment 문서 |
 | `docs/stage4/phase4.7_visualizer.md` | Visualizer 문서 |
-| `_core/docs/project-todo.md` | Phase 4.4~4.7 완료 처리 |
-| `_core/docs/project-log.md` | 이번 세션 이력 4개 추가 |
+| `_core/PROJECT-TODO.md` | Phase 4.4~4.7 완료 처리 |
+| `_core/PROJECT-LOG.md` | 이번 세션 이력 4개 추가 |
 
 ## 3. 미결 사항
 
@@ -70,5 +70,5 @@ Stage 4 전체(optimizers, checkpoints, trainer, evaluator, predictor, experimen
 
 참고 파일:
 - 핸드오프: `_core/sessions/260617-223749_session-handoff.md`
-- 할일: `_core/docs/project-todo.md`
-- 스펙: `_core/docs/project-spec.md`
+- 할일: `_core/PROJECT-TODO.md`
+- 스펙: `_core/PROJECT-SPEC.md`

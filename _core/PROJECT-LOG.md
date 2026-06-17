@@ -1,17 +1,17 @@
 ---
 tags: [project, docs]
 created: 2026-06-15
-updated: 2026-06-17
+updated: 2026-06-18
 ---
 
-# project-log.md
+# PROJECT-LOG.md
 
 이 프로젝트의 주요 작업 이력을 기록한다.
 에이전트가 주요 변경 후 갱신한다.
 
 | Date | 작업 내용 | 비고 |
 |---|---|---|
-| 2026-06-15 | 워크스페이스 초기화 - `_core/legacy/refs/`의 PROJECT.md, PROJECT-TODO.md 내용을 `_core/docs/project-spec.md`, `_core/docs/project-todo.md`에 반영 | project-todo.md는 전체 미완료 상태로 초기화 |
+| 2026-06-15 | 워크스페이스 초기화 - `_core/legacy/refs/`의 PROJECT.md, PROJECT-TODO.md 내용을 `_core/PROJECT-SPEC.md`, `_core/PROJECT-TODO.md`에 반영 | PROJECT-TODO.md는 전체 미완료 상태로 초기화 |
 | 2026-06-15 | CLAUDE.md, project-guide.md 플레이스홀더 채움 (프로젝트명, 목적, 날짜) | |
 | 2026-06-17 | Phase 1.1 완료 - requirements.txt, src/config.py, tests/stage1/test_config.py, docs/stage1/phase1.1_config.md | |
 | 2026-06-17 | 환경 확정 - numpy_env (Python 3.11), jupyterlab, ipykernel 설치 및 커널 등록 | |
@@ -20,13 +20,13 @@ updated: 2026-06-17
 | 2026-06-17 | session-end.md Step 6 추가 - 종료 브리핑 후 사용자 승인을 받아 커밋·푸시 진행하는 절차 추가 | |
 | 2026-06-17 | 레거시 코드 전체 구조 추가 - task 스크립트 6개(manual·module 각 3종) + common 모듈 6개, numpy_env 실행 검증 완료 | 기존 단일 파일 3개 삭제 |
 | 2026-06-17 | Stage 0 문서 전면 재작성 - "재검토" 프레임 제거, 레거시 분석·구현 계획·테스트 계획 수립 중심으로 재편 | phase0.1~0.3 |
-| 2026-06-17 | project-spec.md 전면 업데이트 - src/models/ 하위 구성요소, core/optimizers.py 추가, tests stage 단위 구조, 인터페이스 규약 확장 | |
-| 2026-06-17 | project-todo.md 재구성 - Stage 0 미완료 초기화(다음 세션 재진행), Stage 4 Phase 4.1 optimizers 추가 및 재번호 | |
+| 2026-06-17 | PROJECT-SPEC.md 전면 업데이트 - src/models/ 하위 구성요소, core/optimizers.py 추가, tests stage 단위 구조, 인터페이스 규약 확장 | |
+| 2026-06-17 | PROJECT-TODO.md 재구성 - Stage 0 미완료 초기화(다음 세션 재진행), Stage 4 Phase 4.1 optimizers 추가 및 재번호 | |
 | 2026-06-17 | Stage 0 Phase 0.1~0.3 전면 재작성 - phase0.1_legacy-analysis.md, phase0.2_implementation-plan.md, phase0.3_test-plan.md 신규 작성, 기존 3개 파일 삭제 | Stage 0 전체 완료 |
-| 2026-06-17 | Phase 명칭 전면 개선 - project-todo.md, project-spec.md Phase 1.1~7.3 명칭을 "동사구: 항목 나열" 형식으로 개선, 10개 phase 문서 H1 반영 | |
+| 2026-06-17 | Phase 명칭 전면 개선 - PROJECT-TODO.md, PROJECT-SPEC.md Phase 1.1~7.3 명칭을 "동사구: 항목 나열" 형식으로 개선, 10개 phase 문서 H1 반영 | |
 | 2026-06-17 | em dash 전면 제거 및 문서 규칙 추가 - 19개 파일 `—` → ` - ` 치환, docs-rules.md에 키보드 입력 불가 문자 사용 금지 조항 추가 | |
-| 2026-06-17 | Phase 명 구분자 변경 - phase 헤딩 행의 ` - `를 `: `로 변경 (project-todo.md, project-spec.md, docs/stage*/phase*.md) | |
-| 2026-06-17 | src 구조 재설계 - models/ 하위 layers/activations/losses를 nn/ 패키지로 분리, torch.nn 대응 명시, project-spec.md §5.4·§6.2·§6.5·§6.6 갱신 | PyTorch 방식 통일 결정 |
+| 2026-06-17 | Phase 명 구분자 변경 - phase 헤딩 행의 ` - `를 `: `로 변경 (PROJECT-TODO.md, PROJECT-SPEC.md, docs/stage*/phase*.md) | |
+| 2026-06-17 | src 구조 재설계 - models/ 하위 layers/activations/losses를 nn/ 패키지로 분리, torch.nn 대응 명시, PROJECT-SPEC.md §5.4·§6.2·§6.5·§6.6 갱신 | PyTorch 방식 통일 결정 |
 | 2026-06-17 | Stage 3 전면 재구성 - Phase 2→4개 분리(activations/layers/losses/mlp), src/nn/ 4파일 신규, mlp.py Sequential 기반 재작성, tests/stage3 테스트 69개 통과 | logit 출력, *_grad 함수 도입 |
 | 2026-06-17 | Stage 3 문서 4개 작성 - phase3.1_activations.md, phase3.2_layers.md, phase3.3_losses.md, phase3.4_mlp.md, 구 버전 phase3.1_mlp.md 삭제 | Stage 3 전체 완료 |
 | 2026-06-17 | Phase 4.1 완료 - src/core/optimizers.py (SGD, Adam), tests/stage4/test_optimizers.py (12개), docs/stage4/phase4.1_optimizers.md | |
@@ -50,3 +50,6 @@ updated: 2026-06-17
 | 2026-06-18 | CuPy 14.x 호환 수정 - src/models/cnn.py np.asarray() → .get(), tests/stage6/test_cnn.py to_np() 헬퍼 추가 | 176 passed (stage5+stage6 전체) |
 | 2026-06-18 | Phase 7.2 부분 완료 - multiclass, binary, regression MLP output 3종 생성 및 checkpoint 평가 | CNN output과 results 문서는 미진행 |
 | 2026-06-18 | Phase 7.3~7.5 MLP 튜토리얼 작성 - multiclass, binary, regression MLP 평가 결과와 실행 절차 문서화 | CNN 튜토리얼은 미진행 |
+| 2026-06-18 | Phase 7.6 완료 - 후속 PyTorch, TensorFlow, JAX 프로젝트 연계를 위한 interface 규약과 PyTorch 마이그레이션 체크리스트 작성 | CNN 평가는 중지 상태로 기록 |
+| 2026-06-18 | 프로젝트 운영 문서 규칙 정합화 - PROJECT-TODO.md Phase 헤더 번호 체계, 도입 문장, Obsidian 내부 링크 정리 | PROJECT-SPEC.md 및 docs Phase H1 제목 동기화 |
+| 2026-06-18 | docs/stage7 구조 정리 - task별 하위 폴더 제거, phase7.3~7.5 튜토리얼 문서를 stage7 바로 아래로 이동 | PROJECT-TODO.md와 세션 핸드오프 경로 참조 갱신 |

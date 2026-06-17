@@ -4,7 +4,7 @@ created: 2026-06-17
 updated: 2026-06-17
 ---
 
-# Phase 3.1 활성화 함수 구현: sigmoid, softmax, relu, identity
+# Phase 3.1 activation 구현
 
 ## 1. 역할
 

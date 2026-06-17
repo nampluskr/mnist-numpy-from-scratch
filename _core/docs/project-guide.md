@@ -1,7 +1,7 @@
 ---
 tags: [project, docs]
 created: 2026-06-08
-updated: 2026-06-15
+updated: 2026-06-18
 ---
 
 # project-guide.md
@@ -46,6 +46,9 @@ updated: 2026-06-15
 
 ```text
 _core/
+├── PROJECT-SPEC.md
+├── PROJECT-TODO.md
+├── PROJECT-LOG.md
 ├── rules/
 │   ├── agent-rules.md
 │   ├── docs-rules.md
@@ -61,9 +64,6 @@ _core/
 │   └── commit-message.md
 ├── docs/
 │   ├── project-guide.md   # 이 파일
-│   ├── project-spec.md
-│   ├── project-todo.md
-│   ├── project-log.md
 │   ├── subject-guide.md
 │   └── coding-guide.md    # coding-template 전용
 └── sessions/

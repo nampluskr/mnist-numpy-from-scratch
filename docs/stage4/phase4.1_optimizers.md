@@ -4,7 +4,7 @@ created: 2026-06-17
 updated: 2026-06-17
 ---
 
-# Phase 4.1 옵티마이저 구현: SGD, Adam
+# Phase 4.1 optimizer 구현
 
 ## 1. 역할
 

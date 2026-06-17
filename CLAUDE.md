@@ -92,9 +92,9 @@ data/ → notebooks/ → src/ → scripts/ → experiments/ → outputs/
 | 코딩 가이드 | `_core/docs/coding-guide.md` |
 | 주제 분류 | `_core/docs/subject-guide.md` |
 | 프로젝트 가이드 | `_core/docs/project-guide.md` |
-| 프로젝트 명세 | `_core/docs/project-spec.md` |
-| 할일 관리 | `_core/docs/project-todo.md` |
-| 작업 이력 | `_core/docs/project-log.md` |
+| 프로젝트 명세 | `_core/PROJECT-SPEC.md` |
+| 할일 관리 | `_core/PROJECT-TODO.md` |
+| 작업 이력 | `_core/PROJECT-LOG.md` |
 | 세션 시작 | `_core/commands/session-start.md` |
 | 세션 종료 | `_core/commands/session-end.md` |
 | 세션 핸드오프 | `_core/commands/session-handoff.md` |

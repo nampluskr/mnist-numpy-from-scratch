@@ -4,7 +4,7 @@ created: 2026-06-17
 updated: 2026-06-17
 ---
 
-# Phase 4.2 체크포인트 구현: 파라미터 저장, 로딩, 경로 관리
+# Phase 4.2 checkpoint 구현
 
 ## 1. 역할
 

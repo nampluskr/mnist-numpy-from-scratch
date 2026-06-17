@@ -6,7 +6,7 @@
 
 ## 1. 세션 핵심 요약
 
-Dataset/DataLoader 클래스 도입 방향을 설계 토론으로 확정하고 project-spec.md와 project-todo.md에 반영했다.
+Dataset/DataLoader 클래스 도입 방향을 설계 토론으로 확정하고 PROJECT-SPEC.md와 PROJECT-TODO.md에 반영했다.
 구현은 진행하지 않았으며, Stage 2를 3개 Phase로 재정의하고 Trainer/Evaluator 인터페이스 변경 사항을 spec에 명시했다.
 
 ## 2. 사용자 요청 및 의도
@@ -16,7 +16,7 @@ Dataset/DataLoader 클래스 도입 방향을 설계 토론으로 확정하고 p
 | Dataset/DataLoader 클래스 도입 검토 | PyTorch 시리즈와 동일한 인터페이스 구조 확보 |
 | Dataset/DataLoader 분리 여부 결정 | 범용 DataLoader + 데이터셋 전용 XXXDataset 패턴 채택 |
 | Task 처리 위치 결정 | Dataset 내부에서 task 변환 담당, task.py는 규약(spec)만 유지 |
-| project-spec.md / project-todo.md 갱신 | 구현 전 사용자 검토 완료 |
+| PROJECT-SPEC.md / PROJECT-TODO.md 갱신 | 구현 전 사용자 검토 완료 |
 
 ## 3. 확정된 결정사항
 
@@ -52,8 +52,8 @@ Dataset/DataLoader 클래스 도입 방향을 설계 토론으로 확정하고 p
 이 내용을 기반으로 Phase 2.2 `MnistDataset` 구현부터 진행해 주세요.
 
 작업 전 확인 파일:
-- 프로젝트 명세: `_core/docs/project-spec.md` §5.3, §6.2, §6.6
-- 진행 현황: `_core/docs/project-todo.md` Phase 2.2, 2.3
+- 프로젝트 명세: `_core/PROJECT-SPEC.md` §5.3, §6.2, §6.6
+- 진행 현황: `_core/PROJECT-TODO.md` Phase 2.2, 2.3
 - 핸드오프: `_core/sessions/260617-143421_session-handoff.md`
 
 `MnistDataset` 구현 규약:

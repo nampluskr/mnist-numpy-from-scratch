@@ -1,10 +1,10 @@
 ---
 tags: [project, docs]
 created: 2026-06-08
-updated: 2026-06-17 (Stage 6 Phase 6.0 추가, Stage 7 Phase 재정의)
+updated: 2026-06-18
 ---
 
-# project-spec.md
+# PROJECT-SPEC.md
 
 이 프로젝트의 목적, 배경, 범위, 제약 사항, 진행 단계를 정의한다.
 사용자가 작성하며, 에이전트는 요청 시에만 갱신한다.
@@ -48,60 +48,76 @@ updated: 2026-06-17 (Stage 6 Phase 6.0 추가, Stage 7 Phase 재정의)
 
 ### 5.1. Stage 0 레거시 코드 분석 및 계획 수립
 
-- Phase 0.1 레거시 코드 분석: 코드 구조, 두 가지 구현 패턴, task별 차이 파악
-- Phase 0.2 구현 계획 수립: 레거시-src 매핑, src 패키지 구조, Stage별 구현 순서 확정
-- Phase 0.3 테스트 계획 수립: tests 폴더 구조, 인터페이스 규약, TDD 원칙 확정
+Stage 0의 Phase는 다음과 같다.
+
+- Phase 0.1 레거시 코드 분석
+- Phase 0.2 구현 계획 수립
+- Phase 0.3 테스트 계획 수립
 
 ### 5.2. Stage 1 기본 설정 및 과제 규약 구현
 
-- Phase 1.1 환경 설정 구성: 기본 경로, 실행 기본값, 하이퍼파라미터
-- Phase 1.2 과제 규약 정의: target 변환, loss 함수, metric 계산
-- Phase 1.3 유틸리티 구현: 배치 처리, 난수 시드, 파일 I/O
+Stage 1의 Phase는 다음과 같다.
+
+- Phase 1.1 config 구성
+- Phase 1.2 과제 규약 정의
+- Phase 1.3 utility 구현
 
 ### 5.3. Stage 2 MNIST 데이터 로더 구현
 
-- Phase 2.1 MNIST 원시 데이터 로딩: gz 파싱, train/test split, 정규화
-- Phase 2.2 Dataset 클래스 구현: MnistDataset, task 변환, __getitem__
-- Phase 2.3 DataLoader 구현: 배치 생성, shuffle, 반복 순회
+Stage 2의 Phase는 다음과 같다.
+
+- Phase 2.1 MNIST raw data loading
+- Phase 2.2 Dataset 클래스 구현
+- Phase 2.3 DataLoader 구현
 
 ### 5.4. Stage 3 NumPy nn 모듈 및 MLP 구현
 
-- Phase 3.1 활성화 함수 구현: sigmoid, softmax, identity, relu (함수형, `src/nn/activations.py`)
-- Phase 3.2 레이어 모듈 구현: Linear, Sigmoid, ReLU, Sequential (`src/nn/layers.py`)
-- Phase 3.3 손실 함수 및 지표 구현: cross_entropy, binary_cross_entropy, mse, accuracy 계열 (`src/nn/losses.py`)
-- Phase 3.4 MLP 모델 구현: `src/nn/` 모듈 조립, forward, backward, 파라미터 갱신 (`src/models/mlp.py`)
+Stage 3의 Phase는 다음과 같다.
+
+- Phase 3.1 activation 구현
+- Phase 3.2 layer module 구현
+- Phase 3.3 loss 및 metric 구현
+- Phase 3.4 MLP model 구현
 
 ### 5.5. Stage 4 실행 객체 구현
 
-- Phase 4.1 옵티마이저 구현: SGD, Adam, 파라미터 업데이트 규칙
-- Phase 4.2 체크포인트 구현: 파라미터 저장, 로딩, 경로 관리
-- Phase 4.3 Trainer 구현: 학습 루프, DataLoader 수신, fit 인터페이스
-- Phase 4.4 Evaluator 구현: 평가 루프, DataLoader 수신, evaluate 인터페이스
-- Phase 4.5 Predictor 구현: 예측 실행, task별 후처리, predict 인터페이스
-- Phase 4.6 Experiment 구현: 실행 객체 조립, 의존성 주입, 최상위 진입점
-- Phase 4.7 Visualizer 구현: 학습 로그, 예측 결과, 시각화 저장
+Stage 4의 Phase는 다음과 같다.
+
+- Phase 4.1 optimizer 구현
+- Phase 4.2 checkpoint 구현
+- Phase 4.3 Trainer 구현
+- Phase 4.4 Evaluator 구현
+- Phase 4.5 Predictor 구현
+- Phase 4.6 Experiment 구현
+- Phase 4.7 Visualizer 구현
 
 ### 5.6. Stage 5 클라이언트 코드 구현
 
-- Phase 5.1 학습 CLI 구현: 인자 파싱, experiment 조립, trainer 호출
-- Phase 5.2 평가 CLI 구현: 인자 파싱, experiment 조립, evaluator 호출
-- Phase 5.3 예측 CLI 구현: 인자 파싱, experiment 조립, predictor 호출
-- Phase 5.4 시각화 CLI 구현: 인자 파싱, experiment 조립, visualizer 호출
+Stage 5의 Phase는 다음과 같다.
+
+- Phase 5.1 training CLI 구현
+- Phase 5.2 evaluation CLI 구현
+- Phase 5.3 prediction CLI 구현
+- Phase 5.4 visualization CLI 구현
 
 ### 5.7. Stage 6 CuPy 기반 CNN 구현
 
-- Phase 6.0 CuPy 환경 구성: conda numpy_env, cupy-cuda118 설치, 환경 검증
-- Phase 6.1 CNN 모델 구현: CuPy 기반, forward, backward, 파라미터 갱신
-- Phase 6.2 CNN-core 통합 검증: core 인터페이스 호환, 통합 테스트
+Stage 6의 Phase는 다음과 같다.
 
-### 5.8. Stage 7 문서화 · 검증
+- Phase 6.0 CuPy environment 구성
+- Phase 6.1 CNN model 구현
+- Phase 6.2 CNN-core integration 검증
 
-- Phase 7.1 CLI 확장: scripts에 --model 플래그 추가, stage5 테스트 업데이트
-- Phase 7.2 실험 실행 및 결과 수집: 6종(3 task × 2 model) 실험 → outputs/ 저장, results 문서 작성
-- Phase 7.3 Multiclass 튜토리얼: docs/stage7/multiclass/ — MLP + CNN 튜토리얼
-- Phase 7.4 Binary 튜토리얼: docs/stage7/binary/ — MLP + CNN 튜토리얼
-- Phase 7.5 Regression 튜토리얼: docs/stage7/regression/ — MLP + CNN 튜토리얼
-- Phase 7.6 프레임워크 연계 준비: 인터페이스 규약 검토, PyTorch 마이그레이션 체크리스트
+### 5.8. Stage 7 documentation 및 verification
+
+Stage 7의 Phase는 다음과 같다.
+
+- Phase 7.1 CLI 확장
+- Phase 7.2 experiment 실행 및 result 수집
+- Phase 7.3 Multiclass tutorial
+- Phase 7.4 Binary tutorial
+- Phase 7.5 Regression tutorial
+- Phase 7.6 framework 연계 준비
 
 ## 6. 확정 구조
 

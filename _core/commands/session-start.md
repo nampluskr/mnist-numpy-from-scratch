@@ -1,7 +1,7 @@
 ---
 tags: [project, commands]
 created: 2026-06-15
-updated: 2026-06-15
+updated: 2026-06-18
 ---
 
 # 커스텀 명령어: `session-start` / `세션 시작`
@@ -13,8 +13,8 @@ updated: 2026-06-15
 
 ### Step 1. 컨텍스트 로딩
 
-1. `_core/docs/project-spec.md` 를 읽어 프로젝트명, 목적, 진행 단계를 파악한다.
-2. `_core/docs/project-todo.md` 를 읽어 현재 미완료 Task 목록을 파악한다.
+1. `_core/PROJECT-SPEC.md` 를 읽어 프로젝트명, 목적, 진행 단계를 파악한다.
+2. `_core/PROJECT-TODO.md` 를 읽어 현재 미완료 Task 목록을 파악한다.
 
 ### Step 2. 직전 세션 핸드오프 확인
 

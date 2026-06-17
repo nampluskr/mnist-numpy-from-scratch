@@ -46,8 +46,8 @@ Stage 2 전체(54개 테스트)를 재실행하여 이상 없음을 확인했다
 이 내용을 기반으로 Phase 3.1 `MLP` 구현부터 진행해 주세요.
 
 작업 전 확인 파일:
-- 프로젝트 명세: `_core/docs/project-spec.md` §6.2, §6.5, §6.6
-- 진행 현황: `_core/docs/project-todo.md` Phase 3.1
+- 프로젝트 명세: `_core/PROJECT-SPEC.md` §6.2, §6.5, §6.6
+- 진행 현황: `_core/PROJECT-TODO.md` Phase 3.1
 - 핸드오프: `_core/sessions/260617-144907_session-handoff.md`
 
 `MLP` 구현 규약:

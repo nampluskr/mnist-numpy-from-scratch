@@ -36,8 +36,8 @@ Phase 7.1을 완료하고 CuPy 환경을 안정화했다.
 | `src/nn/layers.py` | Linear init dtype 버그 수정 |
 | `src/nn/conv.py` | Conv2d init dtype 버그 수정 |
 | `tests/stage6/test_cnn.py` | to_np() 헬퍼 추가, np.asarray() 교체 |
-| `_core/docs/project-todo.md` | Phase 7.1 체크박스 9개 완료 처리 |
-| `_core/docs/project-log.md` | 이번 세션 작업 이력 추가 |
+| `_core/PROJECT-TODO.md` | Phase 7.1 체크박스 9개 완료 처리 |
+| `_core/PROJECT-LOG.md` | 이번 세션 작업 이력 추가 |
 
 ## 3. 미결 사항
 
@@ -76,5 +76,5 @@ Stage 7  문서화 및 검증
 
 참고 파일:
 - 핸드오프: `_core/sessions/260618-001814_session-handoff.md`
-- 할일: `_core/docs/project-todo.md`
-- 스펙: `_core/docs/project-spec.md`
+- 할일: `_core/PROJECT-TODO.md`
+- 스펙: `_core/PROJECT-SPEC.md`

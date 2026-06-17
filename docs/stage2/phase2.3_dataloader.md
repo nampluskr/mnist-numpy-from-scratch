@@ -4,7 +4,7 @@ created: 2026-06-17
 updated: 2026-06-17
 ---
 
-# Phase 2.3 DataLoader 구현: 배치 생성, shuffle, 반복 순회
+# Phase 2.3 DataLoader 구현
 
 ## 1. 역할
 

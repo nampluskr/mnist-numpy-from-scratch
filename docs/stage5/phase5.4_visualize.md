@@ -4,7 +4,7 @@ created: 2026-06-17
 updated: 2026-06-17
 ---
 
-# Phase 5.4 시각화 CLI 구현: 인자 파싱, experiment 조립, visualizer 호출
+# Phase 5.4 visualization CLI 구현
 
 ## 1. 역할
 
