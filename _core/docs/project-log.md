@@ -36,3 +36,7 @@ updated: 2026-06-17
 | 2026-06-17 | Phase 4.5 완료 - src/core/predictor.py (Predictor.predict), tests/stage4/test_predictor.py (15개), docs/stage4/phase4.5_predictor.md | argmax/threshold/round_clip 3가지 후처리 |
 | 2026-06-17 | Phase 4.6 완료 - src/core/experiment.py (Experiment.run), tests/stage4/test_experiment.py (24개), docs/stage4/phase4.6_experiment.md | synthetic MNIST gz 기반 통합 테스트 |
 | 2026-06-17 | Phase 4.7 완료 - src/core/visualizer.py (Visualizer), tests/stage4/test_visualizer.py (11개), docs/stage4/phase4.7_visualizer.md | Stage 4 전체 101개 테스트 통과 |
+| 2026-06-17 | Phase 5.1 완료 - scripts/train.py, tests/stage5/test_train.py (23개), docs/stage5/phase5.1_train.md | |
+| 2026-06-17 | Phase 5.2 완료 - scripts/evaluate.py, tests/stage5/test_evaluate.py (19개), docs/stage5/phase5.2_evaluate.md | |
+| 2026-06-17 | Phase 5.3 완료 - scripts/predict.py, tests/stage5/test_predict.py (19개), docs/stage5/phase5.3_predict.md | |
+| 2026-06-17 | Phase 5.4 완료 - scripts/visualize.py, tests/stage5/test_visualize.py (26개), docs/stage5/phase5.4_visualize.md | Stage 5 전체 87개 테스트 통과 |
