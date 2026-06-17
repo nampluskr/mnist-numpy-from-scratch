@@ -1,7 +1,7 @@
 ---
 tags: [project, docs]
 created: 2026-06-08
-updated: 2026-06-15
+updated: 2026-06-17
 ---
 
 # project-spec.md
@@ -60,8 +60,9 @@ updated: 2026-06-15
 
 ### 5.3. Stage 2 MNIST 데이터 로더 구현
 
-- Phase 2.1 `data/mnist.py` 코드 작성 및 `data/test_mnist.py` 테스트 작성
-- Phase 2.2 데이터 로딩과 task 규약 통합 테스트
+- Phase 2.1 `data/mnist.py` 코드 작성 및 테스트 작성 — `load_mnist()` raw 로딩
+- Phase 2.2 `data/mnist.py` 확장 및 테스트 작성 — `MnistDataset` 클래스 추가
+- Phase 2.3 `data/dataloader.py` 코드 작성 및 테스트 작성 — 범용 `DataLoader` 클래스
 
 ### 5.4. Stage 3 NumPy 기반 MLP 구현
 
@@ -128,7 +129,8 @@ src/
 ├── config.py
 ├── data/
 │   ├── __init__.py
-│   └── mnist.py
+│   ├── mnist.py
+│   └── dataloader.py
 ├── task.py
 ├── models/
 │   ├── __init__.py
@@ -154,8 +156,9 @@ src/
 | 위치 | 책임 |
 | --- | --- |
 | `src/config.py` | 기본 경로, 기본 split, 기본 task, 기본 실행 설정을 정의한다. |
-| `src/data/mnist.py` | 로컬 MNIST `*.gz` 파일 로딩과 split 선택을 담당한다. |
-| `src/task.py` | task별 target, output, loss, metric 규약을 단일 진입점으로 관리한다. |
+| `src/data/mnist.py` | 로컬 MNIST `*.gz` 파일 로딩(`load_mnist`)과 `MnistDataset` 클래스를 제공한다. task별 target 변환은 `MnistDataset` 내부에서 처리한다. |
+| `src/data/dataloader.py` | 범용 `DataLoader` 클래스를 제공한다. `__len__`과 `__getitem__`을 구현한 Dataset이면 모두 수용한다. |
+| `src/task.py` | task별 output_dim, loss, metric, prediction_mode 규약을 단일 진입점으로 관리한다. `transform_targets`는 각 Dataset 클래스가 내부에서 호출하는 헬퍼로 사용한다. |
 | `src/models/` | MLP, CNN 모델 구조를 배치하며 프레임워크별 하위 구현 차이를 흡수한다. |
 | `src/core/` | `scripts/`에서 참조하는 실행 객체를 배치한다. |
 | `src/utils/` | batching, random seed, file I/O 등 공통 보조 기능을 배치한다. |
@@ -264,8 +267,10 @@ Stage 1 초기 구현에서 사용할 공통 진입점은 후속 프레임워크
 | --- | --- | --- | --- | --- |
 | `src/config.py` | `get_default_config()` | 없음 | `dict` | 기본 경로, seed, batch size, epoch, task, split 반환 |
 | `src/data/mnist.py` | `load_mnist(split)` | `split: str` | `(images, labels)` tuple | 로컬 MNIST 원본 배열 로딩 |
-| `src/task.py` | `get_task_spec(task)` | `task: str` | `dict` | `output_dim`, activation, loss, metric, target transform 정보 반환 |
-| `src/task.py` | `transform_targets(labels, task)` | `labels: np.ndarray`, `task: str` | `np.ndarray` | task별 target 변환 |
+| `src/data/mnist.py` | `MnistDataset` | `split: str`, `task: str` | dataset instance | MNIST 로딩·정규화·task별 target 변환 담당 |
+| `src/data/dataloader.py` | `DataLoader` | `dataset`, `batch_size: int`, `shuffle: bool` | dataloader instance | 범용 배치·셔플 이터레이터 (`__len__`+`__getitem__` 프로토콜 요구) |
+| `src/task.py` | `get_task_spec(task)` | `task: str` | `dict` | `output_dim`, activation, loss, metric, prediction_mode 반환 |
+| `src/task.py` | `transform_targets(labels, task)` | `labels: np.ndarray`, `task: str` | `np.ndarray` | task별 target 변환 — 각 Dataset 클래스 내부에서 호출 |
 | `src/models/mlp.py` | `MLP` | config 또는 명시적 차원 인자 | model instance | NumPy 기반 MLP 생성 |
 | `src/core/trainer.py` | `Trainer` | model, task spec, config | trainer instance | 학습 루프 실행 |
 | `src/core/evaluator.py` | `Evaluator` | model, task spec, config | evaluator instance | 평가 루프 실행 |
@@ -277,13 +282,21 @@ Stage 1 초기 구현에서 사용할 공통 진입점은 후속 프레임워크
 - `split` 값은 `"train"` 또는 `"test"`만 허용한다.
 - `task` 값은 `"multiclass"`, `"binary"`, `"regression"`만 허용한다.
 - `load_mnist(split)`의 `images`는 `(N, 28, 28)` `uint8`, `labels`는 `(N,)` `uint8` 원본 배열을 반환한다.
-- `transform_targets(labels, task)`는 학습 직전 사용 가능한 `float32` target 배열을 반환한다.
+- `MnistDataset(split, task)`의 `images`는 `(N, 784)` `float32` (reshape + /255 정규화 완료), `targets`는 task별 `float32` 배열이다.
+- `MnistDataset.__getitem__(idx)`는 `(image, target)` 단일 샘플 tuple을 반환한다.
+- `MnistDataset`의 task별 target 변환 규약은 다음과 같다.
+  - `multiclass`: `one_hot(labels, num_classes=10)` → shape `(N, 10)`
+  - `binary`: `(labels % 2)` (홀수=1, 짝수=0) → shape `(N, 1)`
+  - `regression`: `labels / 9.0` → shape `(N, 1)`
+- `DataLoader(dataset, batch_size, shuffle)`의 `__iter__`는 `(images_batch, targets_batch)` tuple을 yield한다.
+- `DataLoader`는 `__len__`과 `__getitem__`을 구현한 Dataset이면 종류에 관계없이 수용한다.
 - `get_task_spec(task)`는 최소한 `task`, `output_dim`, `target_dtype`, `prediction_mode` 키를 포함한다.
+- `transform_targets(labels, task)`는 `task.py`에 유지하며 각 Dataset 클래스 내부에서 호출한다.
 - `MLP.forward(x)`는 `(N, output_dim)` prediction 배열을 반환한다.
-- `Trainer.fit(train_images, train_targets)`는 epoch별 로그 dict 목록 또는 요약 dict를 반환한다.
-- `Evaluator.evaluate(test_images, test_targets)`는 `loss`, `metric`, `num_samples`를 포함한 dict를 반환한다.
+- `Trainer.fit(train_loader)`는 `DataLoader`를 수신하며 epoch별 로그 dict 목록 또는 요약 dict를 반환한다.
+- `Evaluator.evaluate(test_loader)`는 `DataLoader`를 수신하며 `loss`, `metric`, `num_samples`를 포함한 dict를 반환한다.
 - `Predictor.predict(images)`는 raw prediction과 decoded prediction을 함께 담은 dict를 반환한다.
-- `Experiment`는 config를 기준으로 data loader, task spec, model, trainer, evaluator, predictor를 조립하는 최상위 진입점 역할을 한다.
+- `Experiment`는 config를 기준으로 dataset, dataloader, task spec, model, trainer, evaluator, predictor를 조립하는 최상위 진입점 역할을 한다.
 
 ### 6.7. 실패 테스트 작성 원칙과 `pytest` 실행 기준
 
