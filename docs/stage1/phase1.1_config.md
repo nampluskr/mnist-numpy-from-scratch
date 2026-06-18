@@ -30,7 +30,7 @@ updated: 2026-06-17
 
 ## 3. 테스트
 
-`tests/test_config.py`에서 다음 항목을 검증한다.
+`tests/stage1/test_config.py`에서 다음 항목을 검증한다.
 
 - 반환 타입이 `dict`인지
 - 반환 키가 정확히 6개인지
@@ -39,10 +39,18 @@ updated: 2026-06-17
 테스트 실행 명령은 다음과 같다.
 
 ```bash
-pytest tests/test_config.py -q
+conda run -n numpy_py311 pytest tests/stage1/test_config.py -v
 ```
 
 ```text
 [Expected output]
-........ 8 passed in 0.11s
+tests/stage1/test_config.py::TestGetDefaultConfig::test_returns_dict PASSED
+tests/stage1/test_config.py::TestGetDefaultConfig::test_required_keys PASSED
+tests/stage1/test_config.py::TestGetDefaultConfig::test_dataset_dir PASSED
+tests/stage1/test_config.py::TestGetDefaultConfig::test_seed PASSED
+tests/stage1/test_config.py::TestGetDefaultConfig::test_batch_size PASSED
+tests/stage1/test_config.py::TestGetDefaultConfig::test_num_epochs PASSED
+tests/stage1/test_config.py::TestGetDefaultConfig::test_task PASSED
+tests/stage1/test_config.py::TestGetDefaultConfig::test_split PASSED
+8 passed in 0.11s
 ```

@@ -1,10 +1,11 @@
 # trainer.py: Training loop — one epoch over a DataLoader, returns loss/metric summary.
 
 from src.nn.losses import (
-    cross_entropy, cross_entropy_grad, accuracy,
-    binary_cross_entropy, binary_cross_entropy_grad, binary_accuracy,
-    mse, mse_grad, r2_score,
+    cross_entropy, cross_entropy_grad,
+    binary_cross_entropy, binary_cross_entropy_grad,
+    mse, mse_grad,
 )
+from src.nn.metrics import accuracy, binary_accuracy, r2_score
 
 _TASK_FNS = {
     "multiclass": (cross_entropy, cross_entropy_grad, accuracy),

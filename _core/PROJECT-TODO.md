@@ -117,13 +117,21 @@ Linear, Sigmoid, ReLU, Sequential layer module을 구현하기 위한 작업은 
 - [x] `tests/stage3/test_layers.py`
 - [x] [[docs/stage3/phase3.2_layers|phase3.2_layers.md]] 문서 작성
 
-### 4.3. Phase 3.3 loss 및 metric 구현
+### 4.3. Phase 3.3 loss 및 gradient 구현
 
-cross_entropy, binary_cross_entropy, mse, accuracy 계열 loss 및 metric을 구현하기 위한 작업은 다음과 같다.
+cross_entropy, binary_cross_entropy, mse 손실 함수와 gradient 함수를 구현하기 위한 작업은 다음과 같다.
 
 - [x] `src/nn/losses.py`
 - [x] `tests/stage3/test_losses.py`
 - [x] [[docs/stage3/phase3.3_losses|phase3.3_losses.md]] 문서 작성
+
+### 4.3.1. Phase 3.5 metric 구현
+
+accuracy, binary_accuracy, r2_score 평가 지표를 구현하기 위한 작업은 다음과 같다.
+
+- [x] `src/nn/metrics.py`
+- [x] `tests/stage3/test_metrics.py`
+- [x] [[docs/stage3/phase3.5_metrics|phase3.5_metrics.md]] 문서 작성
 
 ### 4.4. Phase 3.4 MLP model 구현
 

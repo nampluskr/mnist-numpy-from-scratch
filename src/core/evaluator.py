@@ -1,10 +1,11 @@
 # evaluator.py: Evaluation loop — one pass over a DataLoader, returns loss/metric summary.
 
 from src.nn.losses import (
-    cross_entropy, accuracy,
-    binary_cross_entropy, binary_accuracy,
-    mse, r2_score,
+    cross_entropy,
+    binary_cross_entropy,
+    mse,
 )
+from src.nn.metrics import accuracy, binary_accuracy, r2_score
 
 _TASK_FNS = {
     "multiclass": (cross_entropy, accuracy),

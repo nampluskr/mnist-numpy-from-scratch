@@ -1,7 +1,5 @@
 # dataloader.py: Generic mini-batch iterator for datasets with __len__ and __getitem__.
 
-import math
-
 import numpy as np
 
 
@@ -12,7 +10,7 @@ class DataLoader:
         self.shuffle = shuffle
 
     def __len__(self):
-        return math.ceil(len(self.dataset) / self.batch_size)
+        return (len(self.dataset) + self.batch_size - 1) // self.batch_size
 
     def __iter__(self):
         n = len(self.dataset)

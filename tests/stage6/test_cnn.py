@@ -242,11 +242,12 @@ class TestDropout:
 # CNN 모델
 # ---------------------------------------------------------------------------
 
-class TestCNNForward:
-    @pytest.fixture
-    def cnn(self):
-        return CNN(task="multiclass", seed=42)
+@pytest.fixture
+def cnn():
+    return CNN(task="multiclass", seed=0)
 
+
+class TestCNNForward:
     def test_output_shape_multiclass(self, cnn):
         x = np.random.randn(4, 784).astype(np.float32)
         out = cnn.forward(x)
@@ -281,10 +282,6 @@ class TestCNNForward:
 
 
 class TestCNNBackward:
-    @pytest.fixture
-    def cnn(self):
-        return CNN(task="multiclass", seed=42)
-
     def test_backward_runs_without_error(self, cnn):
         x = np.random.randn(4, 784).astype(np.float32)
         out = cnn.forward(x)
@@ -300,10 +297,6 @@ class TestCNNBackward:
 
 
 class TestCNNParamsGrads:
-    @pytest.fixture
-    def cnn(self):
-        return CNN(task="multiclass", seed=0)
-
     def test_params_is_list(self, cnn):
         assert isinstance(cnn.params, list)
 

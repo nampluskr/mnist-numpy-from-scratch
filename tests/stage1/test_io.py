@@ -2,6 +2,7 @@
 
 import os
 import tempfile
+
 import numpy as np
 
 from src.utils.io import save_params, load_params
@@ -13,33 +14,33 @@ PARAMS = {
 }
 
 
-def test_save_creates_file():
-    with tempfile.TemporaryDirectory() as tmp:
-        path = os.path.join(tmp, "params.npz")
-        save_params(PARAMS, path)
-        assert os.path.exists(path)
+class TestSaveParams:
+    def test_creates_file(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path = os.path.join(tmp, "params.npz")
+            save_params(PARAMS, path)
+            assert os.path.exists(path)
 
 
-def test_load_returns_dict():
-    with tempfile.TemporaryDirectory() as tmp:
-        path = os.path.join(tmp, "params.npz")
-        save_params(PARAMS, path)
-        loaded = load_params(path)
-        assert isinstance(loaded, dict)
+class TestLoadParams:
+    def test_returns_dict(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path = os.path.join(tmp, "params.npz")
+            save_params(PARAMS, path)
+            loaded = load_params(path)
+            assert isinstance(loaded, dict)
 
+    def test_roundtrip_keys(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path = os.path.join(tmp, "params.npz")
+            save_params(PARAMS, path)
+            loaded = load_params(path)
+            assert set(loaded.keys()) == set(PARAMS.keys())
 
-def test_save_load_roundtrip_keys():
-    with tempfile.TemporaryDirectory() as tmp:
-        path = os.path.join(tmp, "params.npz")
-        save_params(PARAMS, path)
-        loaded = load_params(path)
-        assert set(loaded.keys()) == set(PARAMS.keys())
-
-
-def test_save_load_roundtrip_values():
-    with tempfile.TemporaryDirectory() as tmp:
-        path = os.path.join(tmp, "params.npz")
-        save_params(PARAMS, path)
-        loaded = load_params(path)
-        for key in PARAMS:
-            np.testing.assert_array_equal(loaded[key], PARAMS[key])
+    def test_roundtrip_values(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path = os.path.join(tmp, "params.npz")
+            save_params(PARAMS, path)
+            loaded = load_params(path)
+            for key in PARAMS:
+                np.testing.assert_array_equal(loaded[key], PARAMS[key])

@@ -70,7 +70,7 @@ synthetic gz 파일(n=20, labels=0..9 반복)을 `tmp_path` fixture로 생성하
 실행 명령:
 
 ```bash
-conda run -n numpy_env pytest tests/stage2/test_dataset.py -v
+conda run -n numpy_py311 pytest tests/stage2/test_dataset.py -v
 ```
 
 ## 4. 설계 결정

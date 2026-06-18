@@ -70,26 +70,26 @@ task별 변환 규약은 다음과 같다.
 테스트 실행 명령은 다음과 같다.
 
 ```bash
-conda run -n numpy_env pytest tests/stage1/test_task.py -v
+conda run -n numpy_py311 pytest tests/stage1/test_task.py -v
 ```
 
 ```text
 [Expected output]
-tests/stage1/test_task.py::test_get_task_spec_returns_dict PASSED
-tests/stage1/test_task.py::test_get_task_spec_required_keys PASSED
-tests/stage1/test_task.py::test_get_task_spec_multiclass PASSED
-tests/stage1/test_task.py::test_get_task_spec_binary PASSED
-tests/stage1/test_task.py::test_get_task_spec_regression PASSED
-tests/stage1/test_task.py::test_get_task_spec_invalid_raises PASSED
-tests/stage1/test_task.py::test_transform_targets_multiclass_shape PASSED
-tests/stage1/test_task.py::test_transform_targets_multiclass_dtype PASSED
-tests/stage1/test_task.py::test_transform_targets_multiclass_one_hot PASSED
-tests/stage1/test_task.py::test_transform_targets_binary_shape PASSED
-tests/stage1/test_task.py::test_transform_targets_binary_dtype PASSED
-tests/stage1/test_task.py::test_transform_targets_binary_values PASSED
-tests/stage1/test_task.py::test_transform_targets_regression_shape PASSED
-tests/stage1/test_task.py::test_transform_targets_regression_dtype PASSED
-tests/stage1/test_task.py::test_transform_targets_regression_values PASSED
-tests/stage1/test_task.py::test_transform_targets_invalid_raises PASSED
+tests/stage1/test_task.py::TestGetTaskSpec::test_returns_dict PASSED
+tests/stage1/test_task.py::TestGetTaskSpec::test_required_keys PASSED
+tests/stage1/test_task.py::TestGetTaskSpec::test_multiclass PASSED
+tests/stage1/test_task.py::TestGetTaskSpec::test_binary PASSED
+tests/stage1/test_task.py::TestGetTaskSpec::test_regression PASSED
+tests/stage1/test_task.py::TestGetTaskSpec::test_invalid_raises PASSED
+tests/stage1/test_task.py::TestTransformTargets::test_multiclass_shape PASSED
+tests/stage1/test_task.py::TestTransformTargets::test_multiclass_dtype PASSED
+tests/stage1/test_task.py::TestTransformTargets::test_multiclass_one_hot PASSED
+tests/stage1/test_task.py::TestTransformTargets::test_binary_shape PASSED
+tests/stage1/test_task.py::TestTransformTargets::test_binary_dtype PASSED
+tests/stage1/test_task.py::TestTransformTargets::test_binary_values PASSED
+tests/stage1/test_task.py::TestTransformTargets::test_regression_shape PASSED
+tests/stage1/test_task.py::TestTransformTargets::test_regression_dtype PASSED
+tests/stage1/test_task.py::TestTransformTargets::test_regression_values PASSED
+tests/stage1/test_task.py::TestTransformTargets::test_invalid_raises PASSED
 16 passed in 0.25s
 ```

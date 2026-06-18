@@ -74,7 +74,7 @@ updated: 2026-06-17
 테스트 실행 명령은 다음과 같다.
 
 ```bash
-conda run -n numpy_env pytest tests/stage1/ -q
+conda run -n numpy_py311 pytest tests/stage1/ -q
 ```
 
 ```text

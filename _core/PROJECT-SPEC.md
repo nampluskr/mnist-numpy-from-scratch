@@ -155,7 +155,8 @@ src/
 │   ├── __init__.py
 │   ├── activations.py
 │   ├── layers.py
-│   └── losses.py
+│   ├── losses.py
+│   └── metrics.py
 ├── data/
 │   ├── __init__.py
 │   ├── mnist.py
@@ -188,7 +189,8 @@ src/
 | `src/task.py` | task별 output_dim, loss, metric, prediction_mode 규약을 단일 진입점으로 관리한다. `transform_targets`는 각 Dataset 클래스가 내부에서 호출하는 헬퍼로 사용한다. |
 | `src/nn/activations.py` | `sigmoid`, `softmax`, `identity`, `relu` 활성화 함수를 구현한다. numpy-only (`torch.nn.functional` 대응). |
 | `src/nn/layers.py` | `Linear`, `Sigmoid`, `ReLU`, `Sequential` 등 레이어 모듈을 구현한다. numpy-only (`torch.nn` 대응). |
-| `src/nn/losses.py` | `cross_entropy`, `binary_cross_entropy`, `mse` 손실 함수와 `accuracy`, `binary_accuracy`, `r2_score` 지표를 구현한다. numpy-only (`torch.nn` 대응). |
+| `src/nn/losses.py` | `cross_entropy`, `binary_cross_entropy`, `mse` 손실 함수와 이들의 gradient 함수를 구현한다. numpy-only (`torch.nn` 대응). |
+| `src/nn/metrics.py` | `accuracy`, `binary_accuracy`, `r2_score` 평가 지표를 구현한다. numpy-only. |
 | `src/data/mnist.py` | 로컬 MNIST `*.gz` 파일 로딩(`load_mnist`)과 `MnistDataset` 클래스를 제공한다. task별 target 변환은 `MnistDataset` 내부에서 처리한다. |
 | `src/data/dataloader.py` | 범용 `DataLoader` 클래스를 제공한다. `__len__`과 `__getitem__`을 구현한 Dataset이면 모두 수용한다. |
 | `src/models/mlp.py` | NumPy 기반 MLP 생성, forward, backward, update를 구현한다. `src/nn/` 모듈을 조립하여 구성한다. |
@@ -238,7 +240,8 @@ tests/
 │   ├── test_mlp.py
 │   ├── test_layers.py
 │   ├── test_activations.py
-│   └── test_losses.py
+│   ├── test_losses.py
+│   └── test_metrics.py
 ├── stage4/
 │   ├── test_optimizers.py
 │   ├── test_checkpoints.py
@@ -316,7 +319,7 @@ Stage 1 초기 구현에서 사용할 공통 진입점은 후속 프레임워크
 | `src/nn/layers.py` | `Linear`, `Sigmoid`, `ReLU`, `Sequential` | 차원 또는 없음 | layer instance | from-scratch 레이어 구현 (numpy-only) |
 | `src/nn/losses.py` | `cross_entropy`, `binary_cross_entropy`, `mse` | `logits, targets: np.ndarray` | scalar | 손실 함수 - logit 입력, activation 내부 처리 (numpy-only) |
 | `src/nn/losses.py` | `cross_entropy_grad`, `binary_cross_entropy_grad`, `mse_grad` | `logits, targets: np.ndarray` | `np.ndarray` | d(loss)/d(logits) 계산 - trainer에서 backward 입력으로 사용 (numpy-only) |
-| `src/nn/losses.py` | `accuracy`, `binary_accuracy`, `r2_score` | `logits, targets: np.ndarray` | scalar | 평가 지표 - logit 입력 (numpy-only) |
+| `src/nn/metrics.py` | `accuracy`, `binary_accuracy`, `r2_score` | `logits, targets: np.ndarray` | scalar | 평가 지표 - logit 입력 (numpy-only) |
 | `src/models/mlp.py` | `MLP` | `task: str`, `seed: int` | model instance | `src.nn` 모듈 조립, raw logit 출력 |
 | `src/core/optimizers.py` | `SGD`, `Adam` | model instance, `lr: float` | optimizer instance | model.params/grads 기반 in-place 파라미터 업데이트 |
 | `src/core/trainer.py` | `Trainer` | model, optimizer, task spec | trainer instance | 학습 루프 실행 |

@@ -1,7 +1,7 @@
 ---
 tags: [project, agent-config]
 created: 2026-06-08
-updated: 2026-06-17
+updated: 2026-06-18
 ---
 
 # CLAUDE.md — mnist-numpy-from-scratch
@@ -42,9 +42,9 @@ mnist-numpy-from-scratch/
 |---|---|
 | `_core/` | 프로젝트 운영 규칙, 커맨드, 가이드, 세션 |
 | `data/` | 데이터 경로 또는 설명 |
-| `src/` | 소스 코드 루트 — 재사용 가능한 모듈·클래스·함수 |
-| `scripts/` | `src/core/` 실행 객체를 호출하는 CLI 진입점 — 학습·평가·예측·시각화 |
-| `notebooks/` | Jupyter 노트북 — 탐색·시각화·프로토타입 |
+| `src/` | 소스 코드 루트 - 재사용 가능한 모듈·클래스·함수 |
+| `scripts/` | `src/core/` 실행 객체를 호출하는 CLI 진입점 - 학습·평가·예측·시각화 |
+| `notebooks/` | Jupyter 노트북 - 탐색·시각화·프로토타입 |
 | `tests/` | 테스트 코드 |
 | `configs/` | 설정 파일 |
 | `experiments/` | 실험 기록 및 실행 메타데이터 |
@@ -77,7 +77,7 @@ data/ → notebooks/ → src/ → scripts/ → experiments/ → outputs/
 - Python 스크립트 작성·수정 시 `_core/rules/python-rules.md` 를 따른다.
 - 탐색·프로토타입은 `notebooks/` 에서 시작하고, 재사용 코드는 `src/` 로 이동한다.
 - `scripts/` 를 통해 `experiments/` 에서 학습·추론·시각화를 실행하고, 결과는 `outputs/` 에 저장한다.
-- 새 소스 파일을 만들 때 첫 줄에 한 줄 한국어 주석으로 파일 역할을 기록한다.
+- 새 소스 파일을 만들 때 첫 줄에 파일명과 한 줄 영어 설명을 주석으로 기록한다.
 - 루트 폴더 구조는 변경하지 않는다.
 - Python 실행 환경은 README.md와 `_core/docs/wsl-conda-env-setup.md`에 정의된 conda 환경을 사용한다.
 - MLP는 `numpy_py311`, `cupy_py311_cuda118`, `cupy_py311_cuda121` 중 실행 목적에 맞는 환경에서 실행한다.
