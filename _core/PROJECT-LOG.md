@@ -1,7 +1,7 @@
 ---
 tags: [project, docs]
 created: 2026-06-15
-updated: 2026-06-19
+updated: 2026-06-20
 ---
 
 # PROJECT-LOG.md
@@ -212,6 +212,37 @@ updated: 2026-06-19
 | `notebooks/stage7/stage7-1_multiclass-experiment.ipynb` | MLP+CNN 10 epoch 비교, 예측 grid, checkpoint 재평가, CLI 명령 |
 | `notebooks/stage7/stage7-2_binary-experiment.ipynb` | target 변환 확인, sigmoid threshold, MLP vs CNN 비교, Multiclass 대비 차이 정리 |
 | `notebooks/stage7/stage7-3_regression-experiment.ipynb` | R² 학습 곡선, round_clip 후처리, 3종 task 최종 비교 막대그래프, 프레임워크 연계 인터페이스 정리 |
+
+## 260620 Stage 3 + Stage 4 통합 재편 (Stage 3~7 → Stage 3~6)
+
+**완료 항목**
+- Stage 3(nn + MLP)와 Stage 4(CuPy CNN)를 Stage 3으로 통합 (7 Phase 구성)
+- 기존 Stage 5~7을 Stage 4~6으로 재번호화
+- PROJECT-SPEC.md, PROJECT-TODO.md Phase 구성 전면 재편
+- tests/, notebooks/, docs/ 폴더 및 파일 git mv로 재배치
+
+**산출물**
+
+| 파일/산출물 | 내용 |
+|---|---|
+| `_core/PROJECT-SPEC.md` | §5.4 Stage 3 Phase 3.1~3.7 재편, §5.5 Stage 4(CNN) 삭제, §5.5~5.7 번호 재조정, §6.4/6.7/6.8 갱신 |
+| `_core/PROJECT-TODO.md` | §4 Stage 3 Phase 3.1~3.7 재편, §5 Stage 4 삭제, §5~7 번호 재조정 |
+| `tests/stage3/` | test_cnn.py, test_experiment.py 합류 (총 7개 파일) |
+| `tests/stage4/`, `tests/stage5/` | 기존 stage5/, stage6/ 재번호화 |
+| `notebooks/stage3/` | stage3-5_cnn-architecture.ipynb, stage3-6_cnn-training.ipynb 합류 |
+| `notebooks/stage4/`, `notebooks/stage5/`, `notebooks/stage6/` | 기존 stage5~7/ 재번호화 (파일명 포함) |
+| `docs/stage3/` | stage3.md 전면 재작성, phase3.6_conv.md·phase3.7_cnn.md 신규 작성 |
+| `docs/stage4/`, `docs/stage5/`, `docs/stage6/` | 기존 docs/stage5~7/ 이동 및 파일명·내부 번호 갱신 |
+| `docs/index.md` | Stage 4 행 삭제, Stage 5~7 → Stage 4~6 갱신 |
+
+**결정사항**
+
+| 항목 | 결정 내용 |
+|---|---|
+| Phase 4.2 (CNN-core integration) | 별도 Phase 불필요 — CNN Phase(Phase 3.5) 내 항목으로 흡수 |
+| experiment.py 위치 | Stage 4(실행 객체)에 유지. CNN 분기 추가는 Phase 3.5 항목으로 기술 |
+| scripts/*.py --model 플래그 | CLI Phase(Stage 5) 귀속 유지 |
+| 전체 Stage 수 | 0~6 (7개) |
 
 ## 260619 교육용 노트북 체계 구축 (Phase 1.4/2.4/3.6 일부)
 
