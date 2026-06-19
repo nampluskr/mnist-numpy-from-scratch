@@ -53,6 +53,7 @@ updated: 2026-06-19
 | 2026-06-18 | Phase 7.6 완료 - 후속 PyTorch, TensorFlow, JAX 프로젝트 연계를 위한 interface 규약과 PyTorch 마이그레이션 체크리스트 작성 | CNN 평가는 중지 상태로 기록 |
 | 2026-06-18 | 프로젝트 운영 문서 규칙 정합화 - PROJECT-TODO.md Phase 헤더 번호 체계, 도입 문장, Obsidian 내부 링크 정리 | PROJECT-SPEC.md 및 docs Phase H1 제목 동기화 |
 | 2026-06-18 | docs/stage7 구조 정리 - task별 하위 폴더 제거, phase7.3~7.5 튜토리얼 문서를 stage7 바로 아래로 이동 | PROJECT-TODO.md와 세션 핸드오프 경로 참조 갱신 |
+| 2026-06-19 | docs/ 포털 문서 9개 신규 작성 - docs/index.md(최상위 진입점) + docs/stageN/stageN.md(Stage 0~7 Chapter 소개 문서) | Obsidian 그래프 고립 노드 해소, Phase 링크 불릿 형식 적용 |
 
 ## 260618 Stage 7 CNN 검증 및 문서화
 
@@ -114,6 +115,37 @@ updated: 2026-06-19
 | Visualizer 책임 | `Visualizer`는 prediction 이미지 grid 저장만 담당한다. |
 | Training log plot | 학습 로그 그래프는 `src/utils/training_plots.py`의 helper 함수가 담당한다. |
 | 호환성 | 기존 `Visualizer.plot_training_log(...)` 메서드는 유지하지 않고 제거한다. |
+
+## 260619 docs/ 포털 문서 작성
+
+**완료 항목**
+- docs/index.md 최상위 진입 문서 작성 (8개 Stage 링크)
+- docs/stage0~stage7/stageN.md Stage Chapter 소개 문서 8개 작성
+- Phase 링크 형식 확정: `- [[filename|표시텍스트]]` 불릿 형식
+- Obsidian 그래프 구조 개선: 38개 고립 노드 -> index-stage-phase 계층 클러스터
+
+**산출물**
+
+| 파일/산출물 | 내용 |
+|---|---|
+| `docs/index.md` | 전체 문서 진입점 - 8개 Stage 링크 및 한 줄 요약 테이블 |
+| `docs/stage0/stage0.md` | Stage 0 Chapter 소개 - 3개 Phase 요약 및 링크 |
+| `docs/stage1/stage1.md` | Stage 1 Chapter 소개 - 3개 Phase 요약 및 링크 |
+| `docs/stage2/stage2.md` | Stage 2 Chapter 소개 - 3개 Phase 요약 및 링크 |
+| `docs/stage3/stage3.md` | Stage 3 Chapter 소개 - 5개 Phase 요약 및 링크 |
+| `docs/stage4/stage4.md` | Stage 4 Chapter 소개 - 7개 Phase 요약 및 링크 |
+| `docs/stage5/stage5.md` | Stage 5 Chapter 소개 - 4개 Phase 요약 및 링크 |
+| `docs/stage6/stage6.md` | Stage 6 Chapter 소개 - 3개 Phase 요약 및 링크 |
+| `docs/stage7/stage7.md` | Stage 7 Chapter 소개 - 6개 Phase(10개 문서) 요약 및 링크 |
+
+**결정사항**
+
+| 항목 | 결정 내용 |
+|---|---|
+| 최상위 진입 문서 파일명 | `docs/index.md` - Obsidian Folder Notes 플러그인 연계, 그래프 허브 역할 명확 |
+| Stage 소개 문서 파일명 | `docs/stageN/stageN.md` - 해당 폴더의 README 역할, Obsidian `[[stageN]]` 링크로 참조 |
+| Phase 링크 형식 | `- [[filename|표시텍스트]]` 불릿 형식 - `->` 대비 시각적으로 자연스러움 |
+| 링크 방향 | 상위 -> 하위 단방향 (docs-rules.md 준수), Phase 문서에 역방향 링크 없음 |
 
 ## 260619 Python 및 Markdown 규칙 보강과 코드 스타일 정합화
 
