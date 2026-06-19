@@ -8,6 +8,7 @@ from src.config import get_default_config
 from src.core.experiment import Experiment
 from src.core.visualizer import Visualizer
 from src.data.mnist import MnistDataset
+from src.utils.training_plots import plot_training_log
 
 
 def parse_args():
@@ -56,10 +57,10 @@ def main(args=None):
     exp = Experiment(config)
     logs = exp.run()
 
-    viz = Visualizer(output_dir=args.output_dir)
-    log_path = viz.plot_training_log(logs)
+    log_path = plot_training_log(logs, output_dir=args.output_dir)
     print(f"Training log saved: {log_path}")
 
+    viz = Visualizer(output_dir=args.output_dir)
     dataset = MnistDataset("test", args.task, dataset_dir=args.dataset_dir)
     n = min(args.n_samples, len(dataset))
     images = np.stack([dataset[i][0] for i in range(n)])

@@ -4,7 +4,7 @@ created: 2026-06-19
 updated: 2026-06-19
 ---
 
-# Phase 3.5 metric 함수 구현
+# Phase 3.4 metric 함수 구현
 
 ## 1. 역할
 

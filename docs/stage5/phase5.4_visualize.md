@@ -1,7 +1,7 @@
 ---
 tags: [stage5, scripts, visualize]
 created: 2026-06-17
-updated: 2026-06-17
+updated: 2026-06-19
 ---
 
 # Phase 5.4 visualization CLI 구현
@@ -9,6 +9,7 @@ updated: 2026-06-17
 ## 1. 역할
 
 `scripts/visualize.py`는 CLI 인자를 파싱하여 config를 구성하고, `Experiment`를 조립하여 학습을 실행한 뒤 training log와 prediction 결과를 PNG 파일로 저장하는 진입점이다.
+training log는 `src/utils/training_plots.py` helper가 저장하고, prediction 결과는 `Visualizer`가 저장한다.
 
 ## 2. 구현
 
@@ -42,9 +43,9 @@ config = build_config(args)
 exp = Experiment(config)
 logs = exp.run()
 
-viz = Visualizer(output_dir=args.output_dir)
-log_path = viz.plot_training_log(logs)
+log_path = plot_training_log(logs, output_dir=args.output_dir)
 
+viz = Visualizer(output_dir=args.output_dir)
 dataset = MnistDataset("test", task)
 images, labels = 샘플 추출 + decode
 result = exp.predictor.predict(images)
@@ -83,11 +84,12 @@ result = main(args)
 실행 명령:
 
 ```bash
-conda run -n numpy_env pytest tests/stage5/test_visualize.py -v
+conda run -n numpy_py311 pytest tests/stage5/test_visualize.py -v
 ```
 
 ## 4. 설계 결정
 
 - `_decode_labels`를 모듈 내 헬퍼로 분리하여 테스트에서 단독으로 검증 가능하게 한다.
+- training log 저장은 `src/utils/training_plots.py` helper를 호출하고, prediction 결과 저장은 `Visualizer`를 호출한다.
 - `visualize.py`는 학습을 내부에서 실행하는 단독 실행형 스크립트이다. 학습된 모델을 받아 시각화만 하는 워크플로는 `evaluate.py` + `visualizer.py` 조합으로 구성한다.
 - `n_samples`가 test set 크기를 초과하면 `min`으로 자동 클리핑한다.

@@ -1,7 +1,7 @@
 ---
 tags: [project, docs]
 created: 2026-06-08
-updated: 2026-06-18
+updated: 2026-06-19
 ---
 
 # PROJECT-SPEC.md
@@ -76,8 +76,9 @@ Stage 3의 Phase는 다음과 같다.
 
 - Phase 3.1 activation 구현
 - Phase 3.2 layer module 구현
-- Phase 3.3 loss 및 metric 구현
-- Phase 3.4 MLP model 구현
+- Phase 3.3 loss 및 gradient 구현
+- Phase 3.4 metric 구현
+- Phase 3.5 MLP model 구현
 
 ### 5.5. Stage 4 실행 객체 구현
 
@@ -178,6 +179,7 @@ src/
     ├── __init__.py
     ├── batching.py
     ├── random.py
+    ├── training_plots.py
     └── io.py
 ```
 
@@ -200,10 +202,11 @@ src/
 | `src/core/trainer.py` | 학습 루프를 실행한다. `DataLoader`를 수신하여 loss/metric을 집계한다. |
 | `src/core/evaluator.py` | 평가 루프를 실행한다. `DataLoader`를 수신하여 loss/metric을 집계한다. |
 | `src/core/predictor.py` | task별 예측 후처리를 수행한다. |
-| `src/core/visualizer.py` | 학습 로그, 예측 결과, 샘플 이미지를 시각화한다. |
+| `src/core/visualizer.py` | 예측 결과와 샘플 이미지를 시각화한다. |
 | `src/core/experiment.py` | dataset, dataloader, model, optimizer, trainer, evaluator, predictor를 조립하는 최상위 진입점이다. |
 | `src/utils/batching.py` | mini-batch 인덱스 생성과 shuffle을 담당한다. |
 | `src/utils/random.py` | 난수 시드를 고정한다. |
+| `src/utils/training_plots.py` | 학습 로그 loss/metric 곡선을 PNG 파일로 저장한다. |
 | `src/utils/io.py` | 파일 저장·로딩 보조 함수를 제공한다. |
 
 ### 6.3. `scripts`와 `core` 관계
@@ -215,7 +218,7 @@ src/
 | `scripts/train.py` | `src/core/experiment.py`, `src/core/trainer.py` |
 | `scripts/evaluate.py` | `src/core/experiment.py`, `src/core/evaluator.py` |
 | `scripts/predict.py` | `src/core/experiment.py`, `src/core/predictor.py` |
-| `scripts/visualize.py` | `src/core/experiment.py`, `src/core/visualizer.py` |
+| `scripts/visualize.py` | `src/core/experiment.py`, `src/core/visualizer.py`, `src/utils/training_plots.py` |
 
 ### 6.4. `tests` 폴더 구조
 
@@ -231,6 +234,7 @@ tests/
 │   ├── test_task.py
 │   ├── test_batching.py
 │   ├── test_random.py
+│   ├── test_training_plots.py
 │   └── test_io.py
 ├── stage2/
 │   ├── test_mnist.py

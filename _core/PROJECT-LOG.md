@@ -1,7 +1,7 @@
 ---
 tags: [project, docs]
 created: 2026-06-15
-updated: 2026-06-18
+updated: 2026-06-19
 ---
 
 # PROJECT-LOG.md
@@ -79,3 +79,38 @@ updated: 2026-06-18
 |---|---|
 | Python 실행 환경 | MLP는 `numpy_py311`, `cupy_py311_cuda118`, `cupy_py311_cuda121` 중 목적에 맞게 실행하고 CNN은 `cupy_py311_cuda118` 또는 `cupy_py311_cuda121`에서 실행한다. |
 | CNN 결과 수집 | Codex 환경에서는 GPU device가 노출되지 않아 사용자 WSL terminal의 `cupy_py311_cuda121` 실행 결과를 기준으로 문서화한다. |
+
+## 260619 Stage 3 문서 번호 정합화 및 Visualizer 책임 분리
+
+**완료 항목**
+- Stage 3 metric phase를 `Phase 3.4`로 정리하고 MLP phase를 `Phase 3.5`로 이동
+- `Visualizer`를 prediction 결과 시각화 전용 클래스로 축소
+- training log 시각화를 `src/utils/training_plots.py` helper 함수로 분리
+- 관련 테스트와 Stage 4/5 문서 갱신
+
+**산출물**
+
+| 파일/산출물 | 내용 |
+|---|---|
+| `docs/stage3/phase3.4_metrics.md` | metric 문서를 Phase 3.4 기준으로 rename |
+| `docs/stage3/phase3.5_mlp.md` | MLP 문서를 Phase 3.5 기준으로 rename |
+| `src/core/visualizer.py` | `plot_training_log` 제거, `plot_predictions` 전용 클래스 유지 |
+| `src/utils/training_plots.py` | `plot_training_log(logs, output_dir, filename)` helper 추가 |
+| `scripts/visualize.py` | training log helper와 `Visualizer` 조합 방식으로 변경 |
+| `tests/stage1/test_training_plots.py` | training log helper 테스트 추가 |
+| `tests/stage4/test_visualizer.py` | prediction visualization 테스트로 정리 |
+| `_core/PROJECT-SPEC.md`, `_core/PROJECT-TODO.md` | Stage 3 phase 번호와 visualizer 책임 설명 갱신 |
+
+**검증**
+
+| 명령 | 결과 |
+|---|---|
+| `conda run -n numpy_py311 pytest tests/stage1/test_training_plots.py tests/stage4/test_visualizer.py tests/stage5/test_visualize.py -v` | 39 passed, 2 skipped |
+
+**결정사항**
+
+| 항목 | 결정 내용 |
+|---|---|
+| Visualizer 책임 | `Visualizer`는 prediction 이미지 grid 저장만 담당한다. |
+| Training log plot | 학습 로그 그래프는 `src/utils/training_plots.py`의 helper 함수가 담당한다. |
+| 호환성 | 기존 `Visualizer.plot_training_log(...)` 메서드는 유지하지 않고 제거한다. |
