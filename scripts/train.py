@@ -1,5 +1,8 @@
 # train.py: CLI entry point for training MLP/CNN - parses args, assembles Experiment, runs training loop.
 
+import sys, os
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 import argparse
 
 from src.config import get_default_config

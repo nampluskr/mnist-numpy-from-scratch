@@ -54,6 +54,12 @@ updated: 2026-06-19
 | 2026-06-18 | 프로젝트 운영 문서 규칙 정합화 - PROJECT-TODO.md Phase 헤더 번호 체계, 도입 문장, Obsidian 내부 링크 정리 | PROJECT-SPEC.md 및 docs Phase H1 제목 동기화 |
 | 2026-06-18 | docs/stage7 구조 정리 - task별 하위 폴더 제거, phase7.3~7.5 튜토리얼 문서를 stage7 바로 아래로 이동 | PROJECT-TODO.md와 세션 핸드오프 경로 참조 갱신 |
 | 2026-06-19 | docs/ 포털 문서 9개 신규 작성 - docs/index.md(최상위 진입점) + docs/stageN/stageN.md(Stage 0~7 Chapter 소개 문서) | Obsidian 그래프 고립 노드 해소, Phase 링크 불릿 형식 적용 |
+| 2026-06-19 | 교육용 노트북 체계 구축 - PROJECT-SPEC.md §3·§5·§6.8 갱신, PROJECT-TODO.md Phase 1.4/2.4/3.6/4.8/5.5/6.3/7.7 추가, 노트북 4개 작성 | 총 16개 중 4개 완료 |
+| 2026-06-19 | Phase 3.6 완료 - stage3-2_layers.ipynb, stage3-3_losses-and-metrics.ipynb, stage3-4_mlp.ipynb 작성 | |
+| 2026-06-19 | Phase 4.8 완료 - stage4-1_optimizers.ipynb, stage4-2_trainer-and-evaluator.ipynb, stage4-3_experiment.ipynb 작성 | |
+| 2026-06-19 | Phase 5.5 완료 - stage5-1_cli-scripts.ipynb 작성 | 16개 중 11개 완료 |
+| 2026-06-19 | Phase 6.3 완료 - stage6-1_cnn-architecture.ipynb (im2col 원리, shape 추적, MLP 비교), stage6-2_cnn-training.ipynb (3종 task CNN 학습, CuPy fallback, MLP 비교) | 16개 중 13개 완료 |
+| 2026-06-19 | Phase 7.7 완료 - stage7-1_multiclass-experiment.ipynb, stage7-2_binary-experiment.ipynb, stage7-3_regression-experiment.ipynb 작성 | 16개 전체 완료 |
 
 ## 260618 Stage 7 CNN 검증 및 문서화
 
@@ -180,3 +186,50 @@ updated: 2026-06-19
 | 코드 로직 | 이번 변경은 로직을 바꾸지 않고 설명 텍스트와 들여쓰기만 정리한다. |
 | `np.savez` | named argument unpacking을 요구하는 외부 라이브러리 API는 `**dict` 금지 규칙의 예외로 둔다. |
 | 테스트 `__init__.py` | 빈 `tests/stage*/__init__.py` 파일 삭제는 별도 작업으로 남긴다. |
+
+## 260619 교육용 노트북 전체 완성 (Phase 6.3 / 7.7)
+
+**완료 항목**
+- Phase 6.3 노트북 2개 작성 (stage6-1, stage6-2)
+- Phase 7.7 노트북 3개 작성 (stage7-1, stage7-2, stage7-3)
+- 총 16개 교육용 노트북 전체 완성
+
+**산출물**
+
+| 파일/산출물 | 내용 |
+|---|---|
+| `notebooks/stage6/stage6-1_cnn-architecture.ipynb` | im2col 원리, Conv2d/MaxPool2d shape 추적, MLP 파라미터 비교, Dropout train/eval 검증 |
+| `notebooks/stage6/stage6-2_cnn-training.ipynb` | 3종 task CNN 학습, CuPy fallback 확인, MLP vs CNN 학습 곡선 비교 |
+| `notebooks/stage7/stage7-1_multiclass-experiment.ipynb` | MLP+CNN 10 epoch 비교, 예측 grid, checkpoint 재평가, CLI 명령 |
+| `notebooks/stage7/stage7-2_binary-experiment.ipynb` | target 변환 확인, sigmoid threshold, MLP vs CNN 비교, Multiclass 대비 차이 정리 |
+| `notebooks/stage7/stage7-3_regression-experiment.ipynb` | R² 학습 곡선, round_clip 후처리, 3종 task 최종 비교 막대그래프, 프레임워크 연계 인터페이스 정리 |
+
+## 260619 교육용 노트북 체계 구축 (Phase 1.4/2.4/3.6 일부)
+
+**완료 항목**
+- PROJECT-SPEC.md §3 범위, §5 진입부, §5.2~5.8 Phase 목록, §6.8 notebooks 구조 갱신
+- PROJECT-TODO.md Phase 1.4, 2.4, 3.6, 4.8, 5.5, 6.3, 7.7 섹션 신설
+- `notebooks/stage1/stage1-1_config-and-task.ipynb` 작성 (Phase 1.4)
+- `notebooks/stage2/stage2-1_mnist-loading.ipynb` 작성 (Phase 2.4)
+- `notebooks/stage2/stage2-2_dataset-and-dataloader.ipynb` 작성 (Phase 2.4)
+- `notebooks/stage3/stage3-1_activations.ipynb` 작성 (Phase 3.6)
+
+**산출물**
+
+| 파일/산출물 | 내용 |
+|---|---|
+| `_core/PROJECT-SPEC.md` | §3 노트북 항목 추가, §5 4단계 워크플로우 명시, §5.2~5.8 노트북 Phase 추가, §6.8 notebooks 폴더 구조 신설 |
+| `_core/PROJECT-TODO.md` | Phase 1.4/2.4/3.6/4.8/5.5/6.3/7.7 체크박스 항목 추가 |
+| `notebooks/stage1/stage1-1_config-and-task.ipynb` | config dict, 3 task spec 비교, target 변환, 분포 시각화 |
+| `notebooks/stage2/stage2-1_mnist-loading.ipynb` | load_mnist shape/dtype 확인, 샘플 grid, 픽셀 histogram |
+| `notebooks/stage2/stage2-2_dataset-and-dataloader.ipynb` | MnistDataset 3종 비교, DataLoader 배치/shuffle 검증 |
+| `notebooks/stage3/stage3-1_activations.ipynb` | 4종 활성화 함수 그래프, 수치 안정성, 배치 입출력 확인 |
+
+**결정사항**
+
+| 항목 | 결정 내용 |
+|---|---|
+| 노트북 위치 | 각 Stage 마지막 Phase (1.4/2.4/3.6/4.8/5.5/6.3/7.7) |
+| 파일명 규칙 | `stage{N}-{순번}_{kebab-case-keywords}.ipynb` |
+| 노트북 총 개수 | 16개 (Stage 1~7), 이번 세션 4개 완료 |
+| 실행 환경 | `numpy_py311` 기본, CNN은 CuPy try/except fallback |

@@ -6,6 +6,7 @@ updated: 2026-06-19
 
 # PROJECT-SPEC.md
 
+
 이 프로젝트의 목적, 배경, 범위, 제약 사항, 진행 단계를 정의한다.
 사용자가 작성하며, 에이전트는 요청 시에만 갱신한다.
 
@@ -31,6 +32,7 @@ updated: 2026-06-19
 - `scripts/` 폴더에 클라이언트 코드 `train.py`, `evaluate.py`, `predict.py`, `visualize.py`를 작성한다.
 - `tests/` 폴더 기반으로 `pytest`를 이용한 TDD 구조를 구현한다.
 - 튜토리얼 문서와 실행 가능한 예제 코드를 함께 작성한다.
+- 교육용 Jupyter 노트북을 `notebooks/` 폴더에 Stage별로 작성하여, 각 Stage의 코드를 직접 실행·시각화·검증하는 실습 커리큘럼을 제공한다.
 
 ## 4. 제약 사항
 
@@ -44,7 +46,7 @@ updated: 2026-06-19
 
 ## 5. 진행 단계
 
-프로젝트는 Stage 0에서 레거시 코드를 분석하여 구현 계획과 테스트 계획을 수립한 뒤, Stage 1부터 각 파일마다 코드 작성 Task와 테스트 작성 Task를 분리하여 진행한다.
+프로젝트는 Stage 0에서 레거시 코드를 분석하여 구현 계획과 테스트 계획을 수립한 뒤, Stage 1부터 코드 구현 → 테스트 → 문서 → 노트북 4단계 워크플로우로 진행한다.
 
 ### 5.1. Stage 0 레거시 코드 분석 및 계획 수립
 
@@ -61,6 +63,7 @@ Stage 1의 Phase는 다음과 같다.
 - Phase 1.1 config 구성
 - Phase 1.2 과제 규약 정의
 - Phase 1.3 utility 구현
+- Phase 1.4 Stage 1 노트북 작성
 
 ### 5.3. Stage 2 MNIST 데이터 로더 구현
 
@@ -69,6 +72,7 @@ Stage 2의 Phase는 다음과 같다.
 - Phase 2.1 MNIST raw data loading
 - Phase 2.2 Dataset 클래스 구현
 - Phase 2.3 DataLoader 구현
+- Phase 2.4 Stage 2 노트북 작성
 
 ### 5.4. Stage 3 NumPy nn 모듈 및 MLP 구현
 
@@ -79,6 +83,7 @@ Stage 3의 Phase는 다음과 같다.
 - Phase 3.3 loss 및 gradient 구현
 - Phase 3.4 metric 구현
 - Phase 3.5 MLP model 구현
+- Phase 3.6 Stage 3 노트북 작성
 
 ### 5.5. Stage 4 실행 객체 구현
 
@@ -91,6 +96,7 @@ Stage 4의 Phase는 다음과 같다.
 - Phase 4.5 Predictor 구현
 - Phase 4.6 Experiment 구현
 - Phase 4.7 Visualizer 구현
+- Phase 4.8 Stage 4 노트북 작성
 
 ### 5.6. Stage 5 클라이언트 코드 구현
 
@@ -100,6 +106,7 @@ Stage 5의 Phase는 다음과 같다.
 - Phase 5.2 evaluation CLI 구현
 - Phase 5.3 prediction CLI 구현
 - Phase 5.4 visualization CLI 구현
+- Phase 5.5 Stage 5 노트북 작성
 
 ### 5.7. Stage 6 CuPy 기반 CNN 구현
 
@@ -108,6 +115,7 @@ Stage 6의 Phase는 다음과 같다.
 - Phase 6.0 CuPy environment 구성
 - Phase 6.1 CNN model 구현
 - Phase 6.2 CNN-core integration 검증
+- Phase 6.3 Stage 6 노트북 작성
 
 ### 5.8. Stage 7 documentation 및 verification
 
@@ -119,6 +127,7 @@ Stage 7의 Phase는 다음과 같다.
 - Phase 7.4 Binary tutorial
 - Phase 7.5 Regression tutorial
 - Phase 7.6 framework 연계 준비
+- Phase 7.7 Stage 7 노트북 작성
 
 ## 6. 확정 구조
 
@@ -378,3 +387,59 @@ Stage 1부터는 구현보다 테스트가 먼저 작성되도록 TDD 순서를 
 | Stage 4 전체 | `pytest tests/stage4/ -q` |
 | 단일 파일 | `pytest tests/stage3/test_mlp.py -q` |
 | 전체 스모크 확인 | `pytest tests/ -q` |
+
+### 6.8. `notebooks` 폴더 구조
+
+교육용 Jupyter 노트북은 `notebooks/` 폴더에 Stage별로 배치하며, 각 Stage의 마지막 Phase로 노트북 작성 Phase를 둔다.
+
+```text
+notebooks/
+├── stage1/
+│   └── stage1-1_config-and-task.ipynb
+├── stage2/
+│   ├── stage2-1_mnist-loading.ipynb
+│   └── stage2-2_dataset-and-dataloader.ipynb
+├── stage3/
+│   ├── stage3-1_activations.ipynb
+│   ├── stage3-2_layers.ipynb
+│   ├── stage3-3_losses-and-metrics.ipynb
+│   └── stage3-4_mlp.ipynb
+├── stage4/
+│   ├── stage4-1_optimizers.ipynb
+│   ├── stage4-2_trainer-and-evaluator.ipynb
+│   └── stage4-3_experiment.ipynb
+├── stage5/
+│   └── stage5-1_cli-scripts.ipynb
+├── stage6/
+│   ├── stage6-1_cnn-architecture.ipynb
+│   └── stage6-2_cnn-training.ipynb
+└── stage7/
+    ├── stage7-1_multiclass-experiment.ipynb
+    ├── stage7-2_binary-experiment.ipynb
+    └── stage7-3_regression-experiment.ipynb
+```
+
+파일명 규칙은 `stage{N}-{순번}_{kebab-case-keywords}.ipynb`로 통일한다.
+
+각 노트북의 학습 단위와 핵심 내용은 아래와 같다.
+
+| 노트북 | 핵심 학습 내용 | 주요 그래프 |
+| --- | --- | --- |
+| `stage1-1_config-and-task` | config dict, 3 task spec 비교, target 변환 | target 분포 bar |
+| `stage2-1_mnist-loading` | `load_mnist`, shape/dtype, 픽셀 분포 | 샘플 16장 grid, histogram |
+| `stage2-2_dataset-and-dataloader` | `MnistDataset` 3종, `DataLoader` 배치 | target 시각화 |
+| `stage3-1_activations` | sigmoid/relu/softmax 수식 및 그래프 | 4종 함수 그래프 |
+| `stage3-2_layers` | `Linear` forward/backward, `Sequential` | shape 추적 표 |
+| `stage3-3_losses-and-metrics` | 3 loss 값+gradient, 3 metric 데모 | loss 곡선 비교 |
+| `stage3-4_mlp` | MLP params shape, 수동 step/epoch | 수동 학습 곡선 |
+| `stage4-1_optimizers` | SGD vs Adam, lr 민감도 비교 | 수렴 비교 그래프 |
+| `stage4-2_trainer-and-evaluator` | `Trainer.fit()`, `Evaluator.evaluate()`, task dispatch | 3 task log 비교 |
+| `stage4-3_experiment` | `Experiment`, `Predictor`, `Checkpoint` | 학습 곡선, 예측 grid |
+| `stage5-1_cli-scripts` | `scripts/*.py` `main(args)` 직접 호출 | visualize 출력 |
+| `stage6-1_cnn-architecture` | im2col 원리, CNN vs MLP 파라미터 비교 | shape 추적 |
+| `stage6-2_cnn-training` | CNN `Experiment`, CuPy fallback | 예측 grid, 비교 표 |
+| `stage7-1_multiclass-experiment` | multiclass MLP+CNN 전체 실험 | training curve, 예측 grid |
+| `stage7-2_binary-experiment` | binary MLP+CNN 전체 실험 | training curve, 예측 grid |
+| `stage7-3_regression-experiment` | regression MLP+CNN 전체 실험 | training curve, 예측 grid |
+
+노트북 형식은 마크다운(한국어 설명) + 코드(영어) + 그래프(`plt.show()` inline)를 원칙으로 한다. 실행 환경은 `numpy_py311`을 기본으로 하며, CNN 노트북은 CuPy `try/except` fallback을 사용한다.

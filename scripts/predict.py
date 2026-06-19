@@ -1,5 +1,8 @@
 # predict.py: CLI entry point for running predictions with MLP/CNN on MNIST test samples.
 
+import sys, os
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 import argparse
 
 import numpy as np

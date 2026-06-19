@@ -1,5 +1,8 @@
 # evaluate.py: CLI entry point for evaluating MLP/CNN on MNIST test set.
 
+import sys, os
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 import argparse
 
 from src.config import get_default_config

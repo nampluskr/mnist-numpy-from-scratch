@@ -1,5 +1,8 @@
 # visualize.py: CLI entry point for training MLP/CNN and visualizing training log and predictions.
 
+import sys, os
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 import argparse
 
 import numpy as np
