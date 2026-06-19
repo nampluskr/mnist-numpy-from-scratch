@@ -1,4 +1,4 @@
-# activations.py: 함수형 활성화 함수 (순전파 전용, torch.nn.functional 대응)
+# activations.py: Functional activation helpers for forward passes.
 
 import numpy as np
 

@@ -1,4 +1,4 @@
-# test_visualize.py: scripts/visualize.py main() 반환값 및 파일 생성 테스트
+# test_visualize.py: Unit tests for scripts/visualize.py main() and file creation.
 
 import argparse
 import gzip
@@ -96,7 +96,7 @@ class TestDecodeLabels:
         assert labels[1] == 9
 
 
-# --- --model 플래그 ---
+# --- --model flag ---
 
 class TestVisualizeModel:
     def test_model_key_in_config(self, mnist_dir):
@@ -121,7 +121,7 @@ class TestVisualizeModel:
         assert (tmp_path / "predictions.png").exists()
 
 
-# --- main() 반환값 ---
+# --- main() return value ---
 
 class TestVisualizeMain:
     @pytest.fixture(params=["multiclass", "binary", "regression"])

@@ -1,12 +1,12 @@
-# losses.py: 손실 함수 및 gradient (torch.nn / torch.nn.functional 대응)
-# cross_entropy / binary_cross_entropy 는 logit 을 입력으로 받아 activation 을 내부 처리
+# losses.py: Loss functions and gradients for raw logits.
+# cross_entropy and binary_cross_entropy apply activations internally.
 
 import numpy as np
 from .activations import softmax, sigmoid
 
 
 def cross_entropy(logits, targets):
-    """logit → softmax → NLL. targets: one-hot (N, C)."""
+    """logit -> softmax -> NLL. targets: one-hot (N, C)."""
     preds = softmax(logits)
     return -np.mean(np.sum(targets * np.log(preds + 1e-8), axis=1))
 
@@ -17,7 +17,7 @@ def cross_entropy_grad(logits, targets):
 
 
 def binary_cross_entropy(logits, targets):
-    """logit → sigmoid → BCE. targets: (N, 1)."""
+    """logit -> sigmoid -> BCE. targets: (N, 1)."""
     preds = np.clip(sigmoid(logits), 1e-8, 1 - 1e-8)
     return -np.mean(targets * np.log(preds) + (1 - targets) * np.log(1 - preds))
 

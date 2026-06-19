@@ -1,4 +1,4 @@
-# test_predictor.py: Predictor.predict() task별 후처리 테스트
+# test_predictor.py: Unit tests for task-specific Predictor.predict() post-processing.
 
 import numpy as np
 import pytest
@@ -65,7 +65,7 @@ class TestPredictorBinary:
         np.testing.assert_array_equal(result["predictions"], [0, 0])
 
     def test_zero_logit_gives_one(self):
-        # sigmoid(0) = 0.5 >= 0.5 → 1
+        # sigmoid(0) = 0.5 >= 0.5 gives 1.
         logits = np.array([[0.0]], dtype=np.float32)
         result = self._make(logits).predict(np.zeros((1, 784), dtype=np.float32))
         np.testing.assert_array_equal(result["predictions"], [1])
@@ -86,7 +86,7 @@ class TestPredictorRegression:
         return Predictor(FixedModel(logits), get_task_spec("regression"))
 
     def test_maps_to_digit_range(self):
-        # logit=0.5 → 0.5*9=4.5 → round=4 or 5 depending on Python rounding
+        # logit=0.5 gives 0.5*9=4.5, then Python rounding decides 4 or 5.
         logits = np.array([[0.0], [1.0 / 9.0], [9.0 / 9.0]], dtype=np.float32)
         result = self._make(logits).predict(np.zeros((3, 784), dtype=np.float32))
         assert all(0 <= p <= 9 for p in result["predictions"])

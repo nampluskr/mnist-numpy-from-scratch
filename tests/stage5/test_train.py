@@ -1,4 +1,4 @@
-# test_train.py: scripts/train.py main() 반환값 및 체크포인트 저장 테스트
+# test_train.py: Unit tests for scripts/train.py main() and checkpoint saving.
 
 import argparse
 import gzip
@@ -79,7 +79,7 @@ class TestBuildConfig:
         assert config["task"] == "binary"
 
 
-# --- main() 반환값 ---
+# --- main() return value ---
 
 class TestTrainMain:
     @pytest.fixture(params=["multiclass", "binary", "regression"])
@@ -112,7 +112,7 @@ class TestTrainMain:
         assert set(logs[0]["test"].keys()) == {"loss", "metric", "num_samples"}
 
 
-# --- --model 플래그 ---
+# --- --model flag ---
 
 class TestTrainModel:
     def test_model_key_in_config(self, mnist_dir):
@@ -136,7 +136,7 @@ class TestTrainModel:
         assert "train" in logs[0] and "test" in logs[0]
 
 
-# --- 체크포인트 저장 ---
+# --- checkpoint saving ---
 
 class TestTrainCheckpoint:
     def test_checkpoint_file_created(self, mnist_dir, tmp_path):

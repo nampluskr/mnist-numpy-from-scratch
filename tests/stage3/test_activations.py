@@ -1,4 +1,4 @@
-# test_activations.py: 활성화 함수 출력 형태, 범위, 수치 정확도 테스트
+# test_activations.py: Unit tests for activation shapes, ranges, and numeric behavior.
 
 import numpy as np
 import pytest

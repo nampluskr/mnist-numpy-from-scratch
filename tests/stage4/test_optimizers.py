@@ -1,4 +1,4 @@
-# test_optimizers.py: SGD, Adam 파라미터 업데이트 테스트
+# test_optimizers.py: Unit tests for SGD and Adam parameter updates.
 
 import numpy as np
 import pytest

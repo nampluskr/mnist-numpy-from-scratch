@@ -1,4 +1,4 @@
-# test_losses.py: 손실 함수 및 gradient 테스트 (logit 입력 기준)
+# test_losses.py: Unit tests for loss functions and gradients with raw logits.
 
 import numpy as np
 import pytest
@@ -29,7 +29,7 @@ class TestCrossEntropy:
         assert cross_entropy(logits, targets) >= 0.0
 
     def test_perfect_prediction_low_loss(self):
-        # 정답 클래스에 매우 큰 logit → loss ≈ 0
+        # A very large logit for the true class makes loss close to zero.
         logits = np.array([[10.0, -10.0], [-10.0, 10.0]], dtype=np.float32)
         targets = np.array([[1.0, 0.0], [0.0, 1.0]], dtype=np.float32)
         assert cross_entropy(logits, targets) < 0.01
@@ -44,7 +44,7 @@ class TestCrossEntropyGrad:
         assert grad.shape == logits.shape
 
     def test_grad_sums_to_zero(self, rng):
-        # softmax rows sum to 1, targets rows sum to 1 → row sums of grad = 0
+        # Softmax rows and target rows both sum to 1, so row sums of grad are 0.
         logits = rng.standard_normal((8, 10)).astype(np.float32)
         targets = np.zeros((8, 10), dtype=np.float32)
         targets[np.arange(8), rng.integers(0, 10, 8)] = 1.0
@@ -52,13 +52,13 @@ class TestCrossEntropyGrad:
         np.testing.assert_allclose(grad.sum(axis=1), np.zeros(8), atol=1e-6)
 
     def test_grad_scale_by_batch(self, rng):
-        # grad 의 스케일이 1/N
+        # Gradient scale is 1/N.
         N = 16
         logits = rng.standard_normal((N, 5)).astype(np.float32)
         targets = np.zeros((N, 5), dtype=np.float32)
         targets[np.arange(N), rng.integers(0, 5, N)] = 1.0
         grad = cross_entropy_grad(logits, targets)
-        assert abs(grad.sum()) < 1.0  # 합이 상대적으로 작음
+        assert abs(grad.sum()) < 1.0  # Sum stays relatively small.
 
 
 class TestBinaryCrossEntropy:
@@ -86,7 +86,7 @@ class TestBinaryCrossEntropyGrad:
         assert binary_cross_entropy_grad(logits, targets).shape == (8, 1)
 
     def test_positive_logit_positive_target_negative_grad(self):
-        # logit > 0 → sigmoid > 0.5, target=1 → grad < 0 불가, target=0 → grad > 0
+        # With target=0 and a positive logit, the gradient should be positive.
         logits = np.array([[2.0]], dtype=np.float32)
         targets = np.array([[0.0]], dtype=np.float32)
         grad = binary_cross_entropy_grad(logits, targets)

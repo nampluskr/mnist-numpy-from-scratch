@@ -1,4 +1,4 @@
-# trainer.py: Training loop — one epoch over a DataLoader, returns loss/metric summary.
+# trainer.py: Training loop for one epoch over a DataLoader.
 
 from src.nn.losses import (
     cross_entropy, cross_entropy_grad,

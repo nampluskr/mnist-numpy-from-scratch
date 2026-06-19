@@ -1,4 +1,4 @@
-# test_cnn.py: CNN 레이어 및 모델 단위 테스트
+# test_cnn.py: Unit tests for CNN layers and model behavior.
 
 import numpy as np
 import pytest
@@ -8,7 +8,7 @@ from src.models.cnn import CNN
 
 
 def to_np(x):
-    """CuPy 또는 numpy 배열을 numpy로 변환한다."""
+    """Convert CuPy or numpy arrays to numpy arrays."""
     return x.get() if hasattr(x, "get") else np.asarray(x)
 
 
@@ -18,7 +18,7 @@ def to_np(x):
 
 class TestIm2Col:
     def test_output_shape_no_padding(self):
-        # B=2, C=3, H=5, W=5, K=3, stride=1, padding=0 → out=3x3
+        # B=2, C=3, H=5, W=5, K=3, stride=1, padding=0 -> out=3x3
         x = np.ones((2, 3, 5, 5), dtype=np.float32)
         col, out_h, out_w = im2col(x, 3, stride=1, padding=0)
         assert col.shape == (2 * 3 * 3, 3 * 3 * 3)
@@ -26,7 +26,7 @@ class TestIm2Col:
         assert out_w == 3
 
     def test_output_shape_with_padding(self):
-        # B=2, C=1, H=4, W=4, K=3, stride=1, padding=1 → out=4x4
+        # B=2, C=1, H=4, W=4, K=3, stride=1, padding=1 -> out=4x4
         x = np.ones((2, 1, 4, 4), dtype=np.float32)
         col, out_h, out_w = im2col(x, 3, stride=1, padding=1)
         assert col.shape == (2 * 4 * 4, 1 * 3 * 3)
@@ -34,7 +34,7 @@ class TestIm2Col:
         assert out_w == 4
 
     def test_output_shape_stride2(self):
-        # B=1, C=1, H=6, W=6, K=2, stride=2, padding=0 → out=3x3
+        # B=1, C=1, H=6, W=6, K=2, stride=2, padding=0 -> out=3x3
         x = np.ones((1, 1, 6, 6), dtype=np.float32)
         col, out_h, out_w = im2col(x, 2, stride=2, padding=0)
         assert col.shape == (1 * 3 * 3, 1 * 2 * 2)
@@ -42,12 +42,12 @@ class TestIm2Col:
         assert out_w == 3
 
     def test_values_match_manual_extraction(self):
-        # 단순 케이스: B=1, C=1, H=3, W=3, K=2, stride=1, padding=0
+        # Simple case: B=1, C=1, H=3, W=3, K=2, stride=1, padding=0.
         x = np.arange(9, dtype=np.float32).reshape(1, 1, 3, 3)
         col, out_h, out_w = im2col(x, 2, stride=1, padding=0)
         # out: 2x2, col shape: (4, 4)
         assert col.shape == (4, 4)
-        # 첫 번째 패치: (0,0)~(1,1) = [0,1,3,4]
+        # First patch: (0,0) through (1,1) = [0,1,3,4].
         np.testing.assert_array_equal(col[0], [0, 1, 3, 4])
 
 
@@ -59,12 +59,12 @@ class TestCol2Im:
         assert dx.shape == x.shape
 
     def test_roundtrip_ones(self):
-        # 단일 채널 단일 배치에서 패딩 없이 각 위치 기여도 검증
+        # Check each position contribution for one batch and one channel without padding.
         x = np.ones((1, 1, 4, 4), dtype=np.float32)
         col, out_h, out_w = im2col(x, 2, stride=1, padding=0)
         dx = col2im(col, x.shape, 2, stride=1, padding=0)
         assert dx.shape == x.shape
-        # 모서리는 1번, 가장자리는 2번, 중앙은 4번 누적
+        # Corners accumulate once, edges twice, and center positions four times.
         assert float(dx[0, 0, 0, 0]) == pytest.approx(1.0)
         assert float(dx[0, 0, 1, 1]) == pytest.approx(4.0)
 
@@ -132,7 +132,7 @@ class TestMaxPool2d:
         assert out.shape == (2, 4, 4, 4)
 
     def test_forward_shape_odd_input(self):
-        # H=7 → (7-2)//2 + 1 = 3
+        # H=7 -> (7-2)//2 + 1 = 3
         layer = MaxPool2d(2, 2)
         x = np.random.randn(1, 1, 7, 7).astype(np.float32)
         out = layer.forward(x)
@@ -147,7 +147,7 @@ class TestMaxPool2d:
         assert dx.shape == x.shape
 
     def test_forward_selects_max(self):
-        # 2x2 영역에서 최대값만 선택되어야 함
+        # Only the max value in each 2x2 region should be selected.
         layer = MaxPool2d(2, 2)
         x = np.array([[[[1, 2, 3, 4],
                          [5, 6, 7, 8],
@@ -158,12 +158,12 @@ class TestMaxPool2d:
         np.testing.assert_array_equal(np.asarray(out), expected)
 
     def test_backward_gradient_to_max_position(self):
-        # gradient가 최대값 위치에만 전달되어야 함
+        # Gradient should flow only to the max position.
         layer = MaxPool2d(2, 2)
         x = np.array([[[[1, 2], [3, 4]]]], dtype=np.float32)
         out = layer.forward(x)
         dx = layer.backward(np.ones_like(out))
-        # max=4 위치 (0,0,1,1) 에만 gradient=1 전달
+        # Only the max=4 position (0,0,1,1) receives gradient=1.
         assert float(dx[0, 0, 1, 1]) == pytest.approx(1.0)
         assert float(dx[0, 0, 0, 0]) == pytest.approx(0.0)
 
@@ -203,7 +203,7 @@ class TestDropout:
         layer.training = True
         x = np.ones((100, 100), dtype=np.float32)
         out = layer.forward(x)
-        assert np.any(out == 0.0)          # 일부 뉴런 비활성화
+        assert np.any(out == 0.0)          # Some activations are disabled.
 
     def test_forward_training_scales_output(self):
         np.random.seed(0)
@@ -211,7 +211,7 @@ class TestDropout:
         layer.training = True
         x = np.ones((1000, 10), dtype=np.float32)
         out = layer.forward(x)
-        # inverted dropout: 활성 뉴런은 1/(1-p)=2로 스케일 업
+        # Inverted dropout scales active activations by 1/(1-p)=2.
         active = out[out > 0]
         np.testing.assert_allclose(active, 2.0, atol=1e-5)
 
@@ -239,7 +239,7 @@ class TestDropout:
 
 
 # ---------------------------------------------------------------------------
-# CNN 모델
+# CNN model
 # ---------------------------------------------------------------------------
 
 @pytest.fixture
@@ -286,7 +286,7 @@ class TestCNNBackward:
         x = np.random.randn(4, 784).astype(np.float32)
         out = cnn.forward(x)
         grad = np.ones_like(out)
-        cnn.backward(grad)  # 예외 없이 실행
+        cnn.backward(grad)  # Runs without error.
 
     def test_grads_updated_after_backward(self, cnn):
         x = np.random.randn(4, 784).astype(np.float32)
@@ -335,7 +335,7 @@ class TestCNNTrainEval:
         model.eval()
         out1 = model.forward(x)
         out2 = model.forward(x)
-        np.testing.assert_array_equal(out1, out2)  # eval 시 결정론적
+        np.testing.assert_array_equal(out1, out2)  # Eval is deterministic.
 
     def test_train_enables_dropout(self):
         model = CNN(task="multiclass", seed=0)
@@ -343,7 +343,7 @@ class TestCNNTrainEval:
 
         model.train()
         outs = [model.forward(x) for _ in range(10)]
-        # training 시 dropout으로 인해 출력이 달라야 함
+        # Training mode should vary outputs due to dropout.
         all_same = all(np.allclose(outs[0], o) for o in outs[1:])
         assert not all_same
 

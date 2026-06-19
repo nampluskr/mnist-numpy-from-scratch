@@ -1,4 +1,4 @@
-# test_mnist.py: Tests for src/data/mnist.py — load_mnist interface and behavior.
+# test_mnist.py: Tests for src/data/mnist.py load_mnist interface and behavior.
 
 import gzip
 import os

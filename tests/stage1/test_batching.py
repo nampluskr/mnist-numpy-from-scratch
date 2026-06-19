@@ -35,7 +35,7 @@ class TestGetBatches:
 
     def test_last_batch_smaller(self):
         batches = list(get_batches(x, batch_size=BATCH_SIZE))
-        # N=20, batch_size=6 → batches of size 6,6,6,2
+        # N=20, batch_size=6 -> batches of size 6,6,6,2.
         assert batches[-1].shape[0] == N % BATCH_SIZE
 
     def test_covers_all_samples(self):
@@ -49,7 +49,7 @@ class TestGetBatches:
     def test_multiple_arrays_consistent_shuffle(self):
         np.random.seed(0)
         for xb, yb in get_batches(x, y, batch_size=BATCH_SIZE, shuffle=True):
-            # each row of xb sums to 3*i, 3*i+1, 3*i+2 → sum = 9*i+3
+            # Each row of xb sums to 3*i, 3*i+1, 3*i+2 -> sum = 9*i+3.
             # y value equals the original row index
             for j in range(len(xb)):
                 expected_idx = int(yb[j])

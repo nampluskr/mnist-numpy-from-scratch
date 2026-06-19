@@ -97,7 +97,7 @@ class TestMnistDataset:
         assert set(np.unique(ds.targets)).issubset({0.0, 1.0})
 
     def test_targets_odd_is_one_binary(self, mnist_dir):
-        # labels are 0..9 repeated — odd labels → 1, even → 0
+        # Labels are 0..9 repeated. Odd labels map to 1, even labels map to 0.
         ds = MnistDataset("train", "binary", dataset_dir=mnist_dir)
         assert ds.targets[1, 0] == 1.0
         assert ds.targets[0, 0] == 0.0
@@ -118,9 +118,9 @@ class TestMnistDataset:
 
     def test_targets_values_regression(self, mnist_dir):
         ds = MnistDataset("train", "regression", dataset_dir=mnist_dir)
-        # label 9 (index 9) → 9/9 = 1.0
+        # Label 9 at index 9 maps to 9/9 = 1.0.
         assert pytest.approx(ds.targets[9, 0], abs=1e-6) == 1.0
-        # label 0 (index 0) → 0/9 = 0.0
+        # Label 0 at index 0 maps to 0/9 = 0.0.
         assert pytest.approx(ds.targets[0, 0], abs=1e-6) == 0.0
 
     # __getitem__

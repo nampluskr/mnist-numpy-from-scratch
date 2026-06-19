@@ -24,10 +24,10 @@ updated: 2026-06-19
 | 2026-06-17 | PROJECT-TODO.md 재구성 - Stage 0 미완료 초기화(다음 세션 재진행), Stage 4 Phase 4.1 optimizers 추가 및 재번호 | |
 | 2026-06-17 | Stage 0 Phase 0.1~0.3 전면 재작성 - phase0.1_legacy-analysis.md, phase0.2_implementation-plan.md, phase0.3_test-plan.md 신규 작성, 기존 3개 파일 삭제 | Stage 0 전체 완료 |
 | 2026-06-17 | Phase 명칭 전면 개선 - PROJECT-TODO.md, PROJECT-SPEC.md Phase 1.1~7.3 명칭을 "동사구: 항목 나열" 형식으로 개선, 10개 phase 문서 H1 반영 | |
-| 2026-06-17 | em dash 전면 제거 및 문서 규칙 추가 - 19개 파일 `—` → ` - ` 치환, docs-rules.md에 키보드 입력 불가 문자 사용 금지 조항 추가 | |
+| 2026-06-17 | em dash 전면 제거 및 문서 규칙 추가 - 19개 파일의 em dash를 ` - `로 치환, docs-rules.md에 키보드 입력 불가 문자 사용 금지 조항 추가 | |
 | 2026-06-17 | Phase 명 구분자 변경 - phase 헤딩 행의 ` - `를 `: `로 변경 (PROJECT-TODO.md, PROJECT-SPEC.md, docs/stage*/phase*.md) | |
 | 2026-06-17 | src 구조 재설계 - models/ 하위 layers/activations/losses를 nn/ 패키지로 분리, torch.nn 대응 명시, PROJECT-SPEC.md §5.4·§6.2·§6.5·§6.6 갱신 | PyTorch 방식 통일 결정 |
-| 2026-06-17 | Stage 3 전면 재구성 - Phase 2→4개 분리(activations/layers/losses/mlp), src/nn/ 4파일 신규, mlp.py Sequential 기반 재작성, tests/stage3 테스트 69개 통과 | logit 출력, *_grad 함수 도입 |
+| 2026-06-17 | Stage 3 전면 재구성 - Phase 2개를 4개로 분리(activations/layers/losses/mlp), src/nn/ 4파일 신규, mlp.py Sequential 기반 재작성, tests/stage3 테스트 69개 통과 | logit 출력, *_grad 함수 도입 |
 | 2026-06-17 | Stage 3 문서 4개 작성 - phase3.1_activations.md, phase3.2_layers.md, phase3.3_losses.md, phase3.4_mlp.md, 구 버전 phase3.1_mlp.md 삭제 | Stage 3 전체 완료 |
 | 2026-06-17 | Phase 4.1 완료 - src/core/optimizers.py (SGD, Adam), tests/stage4/test_optimizers.py (12개), docs/stage4/phase4.1_optimizers.md | |
 | 2026-06-17 | Phase 4.2 완료 - src/core/checkpoints.py (save/load), tests/stage4/test_checkpoints.py (7개), docs/stage4/phase4.2_checkpoints.md | |
@@ -45,9 +45,9 @@ updated: 2026-06-19
 | 2026-06-17 | Phase 6.0 완료 - requirements.txt cupy-cuda11x 추가, numpy_env 설치 및 검증(CuPy 13.6.0 / CUDA 11.8), docs/stage6/phase6.0_cupy-setup.md | cupy-cuda118 미존재, cupy-cuda11x 사용 |
 | 2026-06-17 | CLAUDE.md §5 핵심 행동 규칙에 Python 실행 환경(numpy_env) 명시 추가 | |
 | 2026-06-18 | Phase 7.1 완료 - scripts/*.py --model 플래그 추가(mlp/cnn), tests/stage5 TestXxxModel 클래스 추가(GPU 없을 때 skip), docs/stage7/phase7.1_cli-extension.md | 95 passed, 8 skipped (CuPy GPU skip) |
-| 2026-06-18 | CuPy 환경 교체 - cupy-cuda11x → cupy-cuda12x[ctk] (CUDA 12.8 드라이버 호환), requirements.txt 갱신 | CUDA 12.8 드라이버에 nvrtc 11.x 미존재 |
+| 2026-06-18 | CuPy 환경 교체 - cupy-cuda11x에서 cupy-cuda12x[ctk]로 변경 (CUDA 12.8 드라이버 호환), requirements.txt 갱신 | CUDA 12.8 드라이버에 nvrtc 11.x 미존재 |
 | 2026-06-18 | dtype float32 버그 수정 - src/nn/layers.py Linear, src/nn/conv.py Conv2d 초기화 시 scale(float64) 곱 후 astype(float32) 순서 변경 | float32 * float64 업캐스트 방지 |
-| 2026-06-18 | CuPy 14.x 호환 수정 - src/models/cnn.py np.asarray() → .get(), tests/stage6/test_cnn.py to_np() 헬퍼 추가 | 176 passed (stage5+stage6 전체) |
+| 2026-06-18 | CuPy 14.x 호환 수정 - src/models/cnn.py np.asarray() 호출을 .get()으로 변경, tests/stage6/test_cnn.py to_np() 헬퍼 추가 | 176 passed (stage5+stage6 전체) |
 | 2026-06-18 | Phase 7.2 부분 완료 - multiclass, binary, regression MLP output 3종 생성 및 checkpoint 평가 | CNN output과 results 문서는 미진행 |
 | 2026-06-18 | Phase 7.3~7.5 MLP 튜토리얼 작성 - multiclass, binary, regression MLP 평가 결과와 실행 절차 문서화 | CNN 튜토리얼은 미진행 |
 | 2026-06-18 | Phase 7.6 완료 - 후속 PyTorch, TensorFlow, JAX 프로젝트 연계를 위한 interface 규약과 PyTorch 마이그레이션 체크리스트 작성 | CNN 평가는 중지 상태로 기록 |
@@ -114,3 +114,37 @@ updated: 2026-06-19
 | Visualizer 책임 | `Visualizer`는 prediction 이미지 grid 저장만 담당한다. |
 | Training log plot | 학습 로그 그래프는 `src/utils/training_plots.py`의 helper 함수가 담당한다. |
 | 호환성 | 기존 `Visualizer.plot_training_log(...)` 메서드는 유지하지 않고 제거한다. |
+
+## 260619 Python 및 Markdown 규칙 보강과 코드 스타일 정합화
+
+**완료 항목**
+- 마크다운 문서의 UTF-8 인코딩 규칙과 생성 후 확인 절차 추가
+- Python 파일 문자 사용 규칙과 `np.savez(path, **arrays)` 예외 규칙 추가
+- `src/` 코드의 한국어 주석, 특수문자, 탭 들여쓰기 정리
+- `tests/` 코드의 한국어 주석, 특수문자, 탭 들여쓰기 정리
+
+**산출물**
+
+| 파일/산출물 | 내용 |
+|---|---|
+| `_core/rules/docs-rules.md` | Markdown UTF-8 인코딩 규칙과 확인 명령 추가 |
+| `_core/rules/python-rules.md` | 키보드 입력 가능 문자 사용 규칙과 라이브러리 API 예외 추가 |
+| `src/` | 코드 로직 변경 없이 헤더, 주석, docstring 문자 규칙 정합화 |
+| `tests/` | 테스트 로직 변경 없이 헤더, 주석, 들여쓰기 문자 규칙 정합화 |
+
+**검증**
+
+| 명령 | 결과 |
+|---|---|
+| `file -bi _core/rules/docs-rules.md` | `text/plain; charset=utf-8` |
+| `conda run -n numpy_py311 python -m compileall -q src` | 통과 |
+| `conda run -n numpy_py311 python -m compileall -q tests` | 통과 |
+| `conda run -n numpy_py311 pytest tests -q` | 430 passed, 8 skipped, 16 warnings |
+
+**결정사항**
+
+| 항목 | 결정 내용 |
+|---|---|
+| 코드 로직 | 이번 변경은 로직을 바꾸지 않고 설명 텍스트와 들여쓰기만 정리한다. |
+| `np.savez` | named argument unpacking을 요구하는 외부 라이브러리 API는 `**dict` 금지 규칙의 예외로 둔다. |
+| 테스트 `__init__.py` | 빈 `tests/stage*/__init__.py` 파일 삭제는 별도 작업으로 남긴다. |

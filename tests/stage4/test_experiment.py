@@ -1,4 +1,4 @@
-# test_experiment.py: Experiment 조립 및 run() 반환값 테스트 (synthetic MNIST 사용)
+# test_experiment.py: Unit tests for Experiment assembly and run() results.
 
 import gzip
 import struct

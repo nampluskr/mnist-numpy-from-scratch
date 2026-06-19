@@ -1,4 +1,4 @@
-# test_experiment.py: CNN + Experiment 통합 테스트 (synthetic MNIST 사용)
+# test_experiment.py: Integration tests for CNN with Experiment using synthetic MNIST.
 
 import gzip
 import struct
@@ -12,7 +12,7 @@ from src.models.cnn import CNN
 
 
 # ---------------------------------------------------------------------------
-# synthetic MNIST gz 헬퍼
+# synthetic MNIST gz helpers
 # ---------------------------------------------------------------------------
 
 def make_image_gz(path, n=40):
@@ -63,7 +63,7 @@ def mlp_config(mnist_dir, task="multiclass"):
 
 
 # ---------------------------------------------------------------------------
-# 조립 테스트: config["model"] 분기
+# Assembly tests for config["model"] branching
 # ---------------------------------------------------------------------------
 
 class TestExperimentModelSelection:
@@ -93,7 +93,7 @@ class TestExperimentModelSelection:
 
 
 # ---------------------------------------------------------------------------
-# CNN run() 테스트
+# CNN run() tests
 # ---------------------------------------------------------------------------
 
 class TestCNNExperimentRun:
@@ -140,7 +140,7 @@ class TestCNNExperimentRun:
 
 
 class TestCNNExperimentLoss:
-    """수치 안정성 검증 — regression은 소규모 synthetic 환경에서 발산할 수 있으므로 제외."""
+    """Numeric stability checks excluding regression on small synthetic data."""
 
     @pytest.fixture(params=["multiclass", "binary"])
     def task(self, request):
@@ -158,7 +158,7 @@ class TestCNNExperimentLoss:
 
 
 # ---------------------------------------------------------------------------
-# CNN + Trainer 단계 테스트 (1 step forward+backward)
+# CNN + Trainer step tests for one forward/backward pass
 # ---------------------------------------------------------------------------
 
 class TestCNNTrainerStep:

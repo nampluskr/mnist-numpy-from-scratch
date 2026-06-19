@@ -1,4 +1,4 @@
-# test_predict.py: scripts/predict.py main() 반환값 및 체크포인트 로딩 테스트
+# test_predict.py: Unit tests for scripts/predict.py main() and checkpoint loading.
 
 import argparse
 import gzip
@@ -91,7 +91,7 @@ class TestBuildConfig:
         assert config["num_epochs"] == 0
 
 
-# --- main() 반환값 ---
+# --- main() return value ---
 
 class TestPredictMain:
     @pytest.fixture(params=["multiclass", "binary", "regression"])
@@ -120,7 +120,7 @@ class TestPredictMain:
         assert len(result["predictions"]) == 20
 
 
-# --- --model 플래그 ---
+# --- --model flag ---
 
 class TestPredictModel:
     def test_model_key_in_config(self, mnist_dir):
@@ -144,7 +144,7 @@ class TestPredictModel:
         assert len(result["predictions"]) == 5
 
 
-# --- 체크포인트 로딩 ---
+# --- checkpoint loading ---
 
 class TestPredictCheckpoint:
     def test_loads_checkpoint_without_error(self, mnist_dir, tmp_path):

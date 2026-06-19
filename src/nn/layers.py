@@ -1,4 +1,4 @@
-# layers.py: 레이어 모듈 (torch.nn 대응, forward/backward + params/grads 인터페이스)
+# layers.py: Layer modules with forward/backward and params/grads interfaces.
 
 import numpy as np
 from .activations import sigmoid

@@ -1,4 +1,4 @@
-# test_evaluate.py: scripts/evaluate.py main() 반환값 및 체크포인트 로딩 테스트
+# test_evaluate.py: Unit tests for scripts/evaluate.py main() and checkpoint loading.
 
 import argparse
 import gzip
@@ -91,7 +91,7 @@ class TestBuildConfig:
         assert config["task"] == "regression"
 
 
-# --- main() 반환값 ---
+# --- main() return value ---
 
 class TestEvaluateMain:
     @pytest.fixture(params=["multiclass", "binary", "regression"])
@@ -119,7 +119,7 @@ class TestEvaluateMain:
         assert result["num_samples"] > 0
 
 
-# --- --model 플래그 ---
+# --- --model flag ---
 
 class TestEvaluateModel:
     def test_model_key_in_config(self, mnist_dir):
@@ -143,7 +143,7 @@ class TestEvaluateModel:
         assert set(result.keys()) == {"loss", "metric", "num_samples"}
 
 
-# --- 체크포인트 로딩 ---
+# --- checkpoint loading ---
 
 class TestEvaluateCheckpoint:
     def test_loads_checkpoint_without_error(self, mnist_dir, tmp_path):

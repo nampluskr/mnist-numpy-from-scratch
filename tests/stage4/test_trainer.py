@@ -1,4 +1,4 @@
-# test_trainer.py: Trainer.fit() 학습 루프 및 반환값 테스트
+# test_trainer.py: Unit tests for Trainer.fit() training loop results.
 
 import numpy as np
 import pytest

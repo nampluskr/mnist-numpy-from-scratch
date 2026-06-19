@@ -1,4 +1,4 @@
-# test_evaluator.py: Evaluator.evaluate() 평가 루프 및 반환값 테스트
+# test_evaluator.py: Unit tests for Evaluator.evaluate() results.
 
 import numpy as np
 import pytest

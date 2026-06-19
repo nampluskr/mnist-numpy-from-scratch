@@ -1,4 +1,4 @@
-# evaluator.py: Evaluation loop — one pass over a DataLoader, returns loss/metric summary.
+# evaluator.py: Evaluation loop for one pass over a DataLoader.
 
 from src.nn.losses import (
     cross_entropy,

@@ -1,4 +1,4 @@
-# test_layers.py: Module, Linear, Sigmoid, ReLU, Sequential forward/backward 테스트
+# test_layers.py: Unit tests for Module, Linear, Sigmoid, ReLU, and Sequential.
 
 import numpy as np
 import pytest
@@ -99,7 +99,7 @@ class TestSequential:
 
     def test_params_aggregated(self):
         net = Sequential(Linear(8, 5, seed=0), Sigmoid(), Linear(5, 3, seed=1))
-        # Linear(8,5): w+b=2, Sigmoid: 0, Linear(5,3): w+b=2 → total 4
+        # Linear(8,5): w+b=2, Sigmoid: 0, Linear(5,3): w+b=2 -> total 4
         assert len(net.params) == 4
 
     def test_backward_shape(self, x):
@@ -110,7 +110,7 @@ class TestSequential:
         assert grad_x.shape == x.shape
 
     def test_params_are_references(self):
-        # params 리스트의 원소는 레이어 내부 배열과 동일 객체여야 한다
+        # params entries should reference the layer's internal arrays.
         linear = Linear(4, 3, seed=0)
         net = Sequential(linear)
         assert net.params[0] is linear.w

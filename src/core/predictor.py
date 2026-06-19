@@ -13,9 +13,9 @@ class Predictor:
         """Returns {"logits", "predictions"} for input images.
 
         predictions:
-            argmax     → class index (N,) int32
-            threshold  → 0/1 label  (N,) int32
-            round_clip → digit 0~9  (N,) int32
+            argmax -> class index (N,) int32
+            threshold -> 0/1 label (N,) int32
+            round_clip -> digit 0~9 (N,) int32
         """
         logits = self.model.forward(images)
         if self.mode == "argmax":

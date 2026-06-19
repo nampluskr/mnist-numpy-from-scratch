@@ -1,4 +1,4 @@
-# mlp.py: src.nn 모듈을 조립한 3층 MLP (784→256→128→output_dim), PyTorch 방식
+# mlp.py: Three-layer MLP assembled from src.nn modules.
 
 from src.nn.layers import Linear, Sigmoid, Sequential
 from src.task import get_task_spec
@@ -7,8 +7,8 @@ from src.task import get_task_spec
 class MLP:
     """3-layer MLP: Sequential(Linear, Sigmoid, Linear, Sigmoid, Linear).
 
-    forward()는 raw logit을 반환한다.
-    activation과 gradient는 src.nn.losses 함수가 처리한다.
+    forward() returns raw logits.
+    src.nn.losses handles activations and gradients.
     """
 
     def __init__(self, task="multiclass", seed=None):
@@ -16,7 +16,7 @@ class MLP:
         self.task = task
         self.output_dim = spec["output_dim"]
 
-        # 재현성을 위해 seed에서 레이어별 seed를 파생
+        # Derive per-layer seeds for reproducibility.
         import numpy as np
         rng = np.random.default_rng(seed)
         seeds = rng.integers(0, 2**31, size=3)
@@ -42,5 +42,5 @@ class MLP:
         return self.net(x)
 
     def backward(self, grad_out):
-        """grad_out: d(loss)/d(logits), src.nn.losses의 *_grad 함수로 계산."""
+        """grad_out: d(loss)/d(logits), computed by src.nn.losses *_grad functions."""
         return self.net.backward(grad_out)

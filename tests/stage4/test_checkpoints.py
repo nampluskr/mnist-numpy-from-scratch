@@ -1,4 +1,4 @@
-# test_checkpoints.py: save/load 파라미터 저장·복원 테스트
+# test_checkpoints.py: Unit tests for saving and loading parameters.
 
 import numpy as np
 import pytest

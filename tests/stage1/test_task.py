@@ -77,7 +77,7 @@ class TestTransformTargets:
 
     def test_binary_values(self):
         targets = transform_targets(LABELS, "binary")
-        # odd labels → 1, even labels → 0
+        # Odd labels map to 1, even labels map to 0.
         expected = np.array([[0], [1], [0], [1], [0], [1], [0], [1], [0], [1]], dtype=np.float32)
         np.testing.assert_array_equal(targets, expected)
 

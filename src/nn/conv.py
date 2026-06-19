@@ -1,15 +1,15 @@
-# conv.py: CNN 레이어 모듈 (Conv2d, MaxPool2d, Flatten, Dropout) + im2col/col2im
+# conv.py: CNN layer modules and im2col/col2im helpers.
 
 import numpy as np
 from src.nn.layers import Module
 
 
 def im2col(x, kernel_size, stride=1, padding=0, xp=np):
-    """(B, C, H, W) → (B*out_h*out_w, C*K*K) 변환 (convolution 전처리).
+    """Convert (B, C, H, W) to (B*out_h*out_w, C*K*K) for convolution.
 
     Returns:
         col: (B*out_h*out_w, C*K*K)
-        out_h, out_w: 출력 공간 크기
+        out_h, out_w: Output spatial size.
     """
     B, C, H, W = x.shape
     K = kernel_size
@@ -27,15 +27,15 @@ def im2col(x, kernel_size, stride=1, padding=0, xp=np):
             kw_max = kw + stride * out_w
             col[:, :, kh, kw, :, :] = x[:, :, kh:kh_max:stride, kw:kw_max:stride]
 
-    # (B, C, K, K, out_h, out_w) → (B, out_h, out_w, C, K, K) → (B*out_h*out_w, C*K*K)
+    # (B, C, K, K, out_h, out_w) -> (B, out_h, out_w, C, K, K) -> (B*out_h*out_w, C*K*K)
     col = col.transpose(0, 4, 5, 1, 2, 3).reshape(B * out_h * out_w, -1)
     return col, out_h, out_w
 
 
 def col2im(col, x_shape, kernel_size, stride=1, padding=0, xp=np):
-    """(B*out_h*out_w, C*K*K) 또는 (B*out_h*out_w*C, K*K) → (B, C, H, W) 역변환.
+    """Convert columns back to (B, C, H, W).
 
-    두 형태 모두 col.reshape(B, out_h, out_w, C, K, K) 로 동일하게 처리된다.
+    Supports (B*out_h*out_w, C*K*K) and (B*out_h*out_w*C, K*K).
     """
     B, C, H, W = x_shape
     K = kernel_size
@@ -59,7 +59,7 @@ def col2im(col, x_shape, kernel_size, stride=1, padding=0, xp=np):
 
 
 class Conv2d(Module):
-    """2D 합성곱 레이어 (xp-agnostic: numpy 또는 cupy 지정 가능)."""
+    """2D convolution layer with numpy or cupy array module support."""
 
     def __init__(self, in_channels, out_channels, kernel_size, stride=1, padding=0,
                  seed=None, xp=np):
@@ -71,7 +71,7 @@ class Conv2d(Module):
         self.padding = padding
         self.xp = xp
 
-        # He init — numpy로 생성 후 xp로 변환 (seed 재현성 확보)
+        # He init is generated with numpy first, then converted to xp for reproducibility.
         rng = np.random.default_rng(seed)
         scale = np.sqrt(2.0 / (in_channels * kernel_size * kernel_size))
         w_np = (rng.standard_normal(
@@ -112,7 +112,7 @@ class Conv2d(Module):
 
 
 class MaxPool2d(Module):
-    """2D 최대 풀링 레이어 (xp-agnostic)."""
+    """2D max pooling layer with numpy or cupy array module support."""
 
     def __init__(self, kernel_size, stride=None, padding=0, xp=np):
         super().__init__()
@@ -150,7 +150,7 @@ class MaxPool2d(Module):
 
 
 class Flatten(Module):
-    """4D (B, C, H, W) → 2D (B, C*H*W) 변환 레이어."""
+    """Flatten 4D (B, C, H, W) tensors to 2D (B, C*H*W) tensors."""
 
     def __init__(self):
         super().__init__()
@@ -164,7 +164,7 @@ class Flatten(Module):
 
 
 class Dropout(Module):
-    """Dropout 레이어 — training 시 마스크 적용, eval 시 통과."""
+    """Dropout layer that applies a mask during training and passes through in eval."""
 
     def __init__(self, p=0.5):
         super().__init__()

@@ -1,4 +1,4 @@
-# experiment.py: Top-level assembler — wires dataset, model, and execution objects from config.
+# experiment.py: Top-level assembler for dataset, model, and execution objects.
 
 from src.config import get_default_config
 from src.task import get_task_spec

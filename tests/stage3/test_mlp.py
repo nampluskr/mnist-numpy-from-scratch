@@ -1,4 +1,4 @@
-# test_mlp.py: MLP 생성, forward shape, backward/update 흐름 테스트
+# test_mlp.py: Unit tests for MLP init, forward shape, backward, and update flow.
 
 import numpy as np
 import pytest
@@ -41,7 +41,7 @@ class TestMLPInit:
             MLP(task="invalid")
 
     def test_params_count(self, mlp_multiclass):
-        # Linear(784,256): w+b, Linear(256,128): w+b, Linear(128,10): w+b → 6
+        # Linear(784,256): w+b, Linear(256,128): w+b, Linear(128,10): w+b -> 6
         assert len(mlp_multiclass.params) == 6
 
     def test_grads_count(self, mlp_multiclass):
@@ -73,7 +73,7 @@ class TestMLPForward:
         assert mlp_multiclass.forward(batch).dtype == np.float32
 
     def test_logits_not_probability(self, mlp_multiclass, batch):
-        # raw logit 이므로 row sum ≠ 1
+        # Raw logits do not need row sums of 1.
         logits = mlp_multiclass.forward(batch)
         sums = logits.sum(axis=1)
         assert not np.allclose(sums, np.ones(8), atol=1e-3)
@@ -98,13 +98,13 @@ class TestMLPBackward:
         assert not np.all(mlp_multiclass.grads[0] == 0)
 
     def test_grads_are_references_to_layer_grads(self, mlp_multiclass, batch):
-        # MLP.grads 리스트 원소가 레이어 내부 grad 배열과 동일 객체여야 한다
+        # MLP.grads entries should reference internal layer grad arrays.
         logits = mlp_multiclass.forward(batch)
         targets = np.zeros((8, 10), dtype=np.float32)
         targets[np.arange(8), np.arange(8) % 10] = 1.0
         grad_out = cross_entropy_grad(logits, targets)
         mlp_multiclass.backward(grad_out)
-        # Sequential.grads[0] 은 첫 Linear 의 grad_w 와 동일
+        # Sequential.grads[0] should be the first Linear grad_w.
         assert mlp_multiclass.grads[0] is mlp_multiclass.net.layers[0].grad_w
 
 
