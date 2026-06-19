@@ -1,10 +1,10 @@
 ---
-tags: [stage5, scripts, train]
+tags: [stage6, scripts, train]
 created: 2026-06-17
-updated: 2026-06-17
+updated: 2026-06-20
 ---
 
-# Phase 5.1 training CLI 구현
+# Phase 6.1 training CLI 구현
 
 ## 1. 역할
 
@@ -63,7 +63,7 @@ logs = main(args)
 
 ## 3. 테스트
 
-테스트 파일: `tests/stage5/test_train.py`
+테스트 파일: `tests/stage6/test_train.py`
 
 | 클래스 | 항목 수 | 주요 검증 내용 |
 |---|---|---|
@@ -74,7 +74,7 @@ logs = main(args)
 실행 명령:
 
 ```bash
-conda run -n numpy_env pytest tests/stage5/test_train.py -v
+conda run -n numpy_env pytest tests/stage6/test_train.py -v
 ```
 
 ## 4. 설계 결정

@@ -1,10 +1,10 @@
 ---
-tags: [stage4, core, predictor]
+tags: [stage5, core, predictor]
 created: 2026-06-17
-updated: 2026-06-17
+updated: 2026-06-20
 ---
 
-# Phase 4.5 Predictor 구현
+# Phase 5.5 Predictor 구현
 
 ## 1. 역할
 
@@ -57,7 +57,7 @@ print(result["predictions"])  # [3, 7, 1, ...]
 
 ## 3. 테스트
 
-테스트 파일: `tests/stage4/test_predictor.py`
+테스트 파일: `tests/stage5/test_predictor.py`
 
 `FixedModel`(preset logit 반환)을 사용하여 MLP 없이 후처리 로직만 독립적으로 검증한다.
 
@@ -70,7 +70,7 @@ print(result["predictions"])  # [3, 7, 1, ...]
 실행 명령:
 
 ```bash
-conda run -n numpy_env pytest tests/stage4/test_predictor.py -v
+conda run -n numpy_env pytest tests/stage5/test_predictor.py -v
 ```
 
 ## 4. 설계 결정

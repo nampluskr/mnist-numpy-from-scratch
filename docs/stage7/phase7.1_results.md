@@ -1,10 +1,10 @@
 ---
 tags: [stage7, results, mlp, cnn]
 created: 2026-06-18
-updated: 2026-06-18
+updated: 2026-06-20
 ---
 
-# Phase 7.2 experiment 실행 및 result 수집
+# Phase 7.1 experiment 실행 및 result 수집
 
 ## 1. 실행 범위
 

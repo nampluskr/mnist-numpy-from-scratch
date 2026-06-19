@@ -1,10 +1,10 @@
 ---
-tags: [project, docs, stage6]
+tags: [project, docs, stage4]
 created: 2026-06-17
-updated: 2026-06-17
+updated: 2026-06-20
 ---
 
-# Phase 6.0 CuPy environment 구성
+# Phase 4.0 CuPy environment 구성
 
 ## 1. 개요
 

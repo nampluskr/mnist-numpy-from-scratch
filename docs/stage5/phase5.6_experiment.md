@@ -1,10 +1,10 @@
 ---
-tags: [stage4, core, experiment]
+tags: [stage5, core, experiment]
 created: 2026-06-17
-updated: 2026-06-17
+updated: 2026-06-20
 ---
 
-# Phase 4.6 Experiment 구현
+# Phase 5.6 Experiment 구현
 
 ## 1. 역할
 
@@ -65,7 +65,7 @@ result = exp.predictor.predict(images)
 
 ## 3. 테스트
 
-테스트 파일: `tests/stage4/test_experiment.py`
+테스트 파일: `tests/stage5/test_experiment.py`
 
 synthetic MNIST gz 파일을 생성하여 실제 MNIST 없이 전체 조립 흐름을 검증한다.
 
@@ -77,7 +77,7 @@ synthetic MNIST gz 파일을 생성하여 실제 MNIST 없이 전체 조립 흐�
 실행 명령:
 
 ```bash
-conda run -n numpy_env pytest tests/stage4/test_experiment.py -v
+conda run -n numpy_env pytest tests/stage5/test_experiment.py -v
 ```
 
 ## 4. 설계 결정

@@ -1,10 +1,10 @@
 ---
-tags: [stage4, core, checkpoints]
+tags: [stage5, core, checkpoints]
 created: 2026-06-17
-updated: 2026-06-17
+updated: 2026-06-20
 ---
 
-# Phase 4.2 checkpoint 구현
+# Phase 5.2 checkpoint 구현
 
 ## 1. 역할
 
@@ -52,7 +52,7 @@ load(model, "outputs/checkpoint")
 
 ## 3. 테스트
 
-테스트 파일: `tests/stage4/test_checkpoints.py`
+테스트 파일: `tests/stage5/test_checkpoints.py`
 
 | 클래스 | 항목 수 | 주요 검증 내용 |
 |---|---|---|
@@ -62,7 +62,7 @@ load(model, "outputs/checkpoint")
 실행 명령:
 
 ```bash
-conda run -n numpy_env pytest tests/stage4/test_checkpoints.py -v
+conda run -n numpy_env pytest tests/stage5/test_checkpoints.py -v
 ```
 
 ## 4. 설계 결정

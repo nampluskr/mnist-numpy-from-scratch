@@ -1,10 +1,10 @@
 ---
-tags: [stage4, core, visualizer]
+tags: [stage5, core, visualizer]
 created: 2026-06-17
-updated: 2026-06-19
+updated: 2026-06-20
 ---
 
-# Phase 4.7 Visualizer 구현
+# Phase 5.7 Visualizer 구현
 
 ## 1. 역할
 
@@ -58,7 +58,7 @@ viz.plot_predictions(test_images, true_labels, result["predictions"], n=16)
 
 ## 3. 테스트
 
-테스트 파일: `tests/stage4/test_visualizer.py`
+테스트 파일: `tests/stage5/test_visualizer.py`
 
 synthetic logs와 random image/label 배열을 사용하여 파일 생성 여부와 반환값을 검증한다.
 
@@ -71,7 +71,7 @@ synthetic logs와 random image/label 배열을 사용하여 파일 생성 여부
 실행 명령:
 
 ```bash
-conda run -n numpy_py311 pytest tests/stage1/test_training_plots.py tests/stage4/test_visualizer.py -v
+conda run -n numpy_py311 pytest tests/stage1/test_training_plots.py tests/stage5/test_visualizer.py -v
 ```
 
 ## 4. 설계 결정

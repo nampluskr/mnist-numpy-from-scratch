@@ -1,10 +1,10 @@
 ---
-tags: [stage4, core, trainer]
+tags: [stage5, core, trainer]
 created: 2026-06-17
-updated: 2026-06-17
+updated: 2026-06-20
 ---
 
-# Phase 4.3 Trainer 구현
+# Phase 5.3 Trainer 구현
 
 ## 1. 역할
 
@@ -69,7 +69,7 @@ print(log)  # {"loss": 2.31, "metric": 0.12, "num_samples": 60000}
 
 ## 3. 테스트
 
-테스트 파일: `tests/stage4/test_trainer.py`
+테스트 파일: `tests/stage5/test_trainer.py`
 
 `TinyModel`(선형 레이어 1개), `NoOpOptimizer`, `SimpleLoader`를 사용하여 MLP와 DataLoader 없이 독립적으로 검증한다.
 
@@ -80,7 +80,7 @@ print(log)  # {"loss": 2.31, "metric": 0.12, "num_samples": 60000}
 실행 명령:
 
 ```bash
-conda run -n numpy_env pytest tests/stage4/test_trainer.py -v
+conda run -n numpy_env pytest tests/stage5/test_trainer.py -v
 ```
 
 ## 4. 설계 결정

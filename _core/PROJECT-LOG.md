@@ -60,6 +60,8 @@ updated: 2026-06-19
 | 2026-06-19 | Phase 5.5 완료 - stage5-1_cli-scripts.ipynb 작성 | 16개 중 11개 완료 |
 | 2026-06-19 | Phase 6.3 완료 - stage6-1_cnn-architecture.ipynb (im2col 원리, shape 추적, MLP 비교), stage6-2_cnn-training.ipynb (3종 task CNN 학습, CuPy fallback, MLP 비교) | 16개 중 13개 완료 |
 | 2026-06-19 | Phase 7.7 완료 - stage7-1_multiclass-experiment.ipynb, stage7-2_binary-experiment.ipynb, stage7-3_regression-experiment.ipynb 작성 | 16개 전체 완료 |
+| 2026-06-20 | Stage 순서 재배치 - Stage 6(CuPy CNN)을 Stage 4로 이동, 기존 Stage 4/5가 Stage 5/6으로 순환 재배치 | docs/, tests/, notebooks/ 폴더명·파일명·내부 텍스트 전체 갱신 |
+| 2026-06-20 | PROJECT-TODO.md Phase 도입 문장 형식 통일 - 모든 Phase 도입 문장을 `~하고, ~를 검증한다.` / `~를 작성한다.` 형식으로 통일 | 11개 문장 수정 |
 
 ## 260618 Stage 7 CNN 검증 및 문서화
 

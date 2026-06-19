@@ -1,10 +1,10 @@
 ---
 tags: [stage7, framework, checklist, migration]
 created: 2026-06-18
-updated: 2026-06-18
+updated: 2026-06-20
 ---
 
-# Phase 7.6 framework 연계 준비
+# Phase 7.5 framework 연계 준비
 
 ## 1. 목적
 

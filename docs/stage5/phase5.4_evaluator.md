@@ -1,10 +1,10 @@
 ---
-tags: [stage4, core, evaluator]
+tags: [stage5, core, evaluator]
 created: 2026-06-17
-updated: 2026-06-17
+updated: 2026-06-20
 ---
 
-# Phase 4.4 Evaluator 구현
+# Phase 5.4 Evaluator 구현
 
 ## 1. 역할
 
@@ -64,7 +64,7 @@ print(result)  # {"loss": 0.45, "metric": 0.89, "num_samples": 10000}
 
 ## 3. 테스트
 
-테스트 파일: `tests/stage4/test_evaluator.py`
+테스트 파일: `tests/stage5/test_evaluator.py`
 
 `TinyModel`(선형 레이어 1개), `SimpleLoader`를 사용하여 MLP와 DataLoader 없이 독립적으로 검증한다.
 
@@ -75,7 +75,7 @@ print(result)  # {"loss": 0.45, "metric": 0.89, "num_samples": 10000}
 실행 명령:
 
 ```bash
-conda run -n numpy_env pytest tests/stage4/test_evaluator.py -v
+conda run -n numpy_env pytest tests/stage5/test_evaluator.py -v
 ```
 
 ## 4. 설계 결정

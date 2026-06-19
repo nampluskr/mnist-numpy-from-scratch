@@ -1,7 +1,7 @@
 ---
 tags: [project, docs]
 created: 2026-06-08
-updated: 2026-06-19
+updated: 2026-06-20
 ---
 
 # PROJECT-SPEC.md
@@ -9,6 +9,8 @@ updated: 2026-06-19
 
 이 프로젝트의 목적, 배경, 범위, 제약 사항, 진행 단계를 정의한다.
 사용자가 작성하며, 에이전트는 요청 시에만 갱신한다.
+`## 5. 진행 단계`의 Stage 제목과 Phase 목록은 `PROJECT-TODO.md`와 Stage - Phase 수준에서 항상 동기화한다.
+Stage - Phase 수준의 제목은 키워드 중심의 개조식 표현으로 작성한다.
 
 ## 1. 목적
 
@@ -46,11 +48,11 @@ updated: 2026-06-19
 
 ## 5. 진행 단계
 
-프로젝트는 Stage 0에서 레거시 코드를 분석하여 구현 계획과 테스트 계획을 수립한 뒤, Stage 1부터 코드 구현 → 테스트 → 문서 → 노트북 4단계 워크플로우로 진행한다.
+프로젝트는 Stage 0에서 레거시 코드를 분석하여 구현 계획과 테스트 계획을 수립한 뒤, Stage 1부터 코드 구현 > 테스트 > 문서 > 노트북 4단계 워크플로우로 진행한다.
 
-### 5.1. Stage 0 레거시 코드 분석 및 계획 수립
+### 5.1. Stage 0 계획 수립
 
-Stage 0의 Phase는 다음과 같다.
+레거시 `src/`의 task 스크립트 6개와 common 모듈 6개를 분석하여 manual/module 두 패턴을 비교하고, src 패키지 구조·구현 순서·TDD 원칙을 확정한다.
 
 - Phase 0.1 레거시 코드 분석
 - Phase 0.2 구현 계획 수립
@@ -58,7 +60,7 @@ Stage 0의 Phase는 다음과 같다.
 
 ### 5.2. Stage 1 기본 설정 및 과제 규약 구현
 
-Stage 1의 Phase는 다음과 같다.
+`src/config.py`에 hyperparameter 기본값을 정의하고, multiclass/binary/regression 세 task의 target 변환·loss·metric 규약을 `src/task.py`에 확정한다. 공통 utility(배치 분할, random seed, 파일 IO)도 이 단계에서 구현한다.
 
 - Phase 1.1 config 구성
 - Phase 1.2 과제 규약 정의
@@ -67,7 +69,7 @@ Stage 1의 Phase는 다음과 같다.
 
 ### 5.3. Stage 2 MNIST 데이터 로더 구현
 
-Stage 2의 Phase는 다음과 같다.
+로컬 MNIST `.gz` 파일을 파싱하는 `load_mnist`부터, task별 target 변환을 포함한 `MnistDataset`, 배치·shuffle·반복 순회를 지원하는 `DataLoader`까지 데이터 파이프라인 전체를 구현한다.
 
 - Phase 2.1 MNIST raw data loading
 - Phase 2.2 Dataset 클래스 구현
@@ -76,7 +78,7 @@ Stage 2의 Phase는 다음과 같다.
 
 ### 5.4. Stage 3 NumPy nn 모듈 및 MLP 구현
 
-Stage 3의 Phase는 다음과 같다.
+`src/nn/` 하위에 활성화 함수, 레이어 모듈(Linear/Sequential), 손실 함수와 gradient, 평가 지표를 순수 NumPy로 구현하고, 이를 조립하는 MLP 모델을 완성한다.
 
 - Phase 3.1 activation 구현
 - Phase 3.2 layer module 구현
@@ -85,49 +87,48 @@ Stage 3의 Phase는 다음과 같다.
 - Phase 3.5 MLP model 구현
 - Phase 3.6 Stage 3 노트북 작성
 
-### 5.5. Stage 4 실행 객체 구현
+### 5.5. Stage 4 CuPy 기반 CNN 구현
 
-Stage 4의 Phase는 다음과 같다.
+`numpy_py311`/`cupy_py311_cuda118`/`cupy_py311_cuda121` 세 conda 환경을 검증하고, `im2col`/`col2im` 기반 CNN을 구현한다. `Experiment`에 `config["model"]` 분기를 추가하여 MLP/CNN을 선택할 수 있도록 하고, 4개 CLI 스크립트에 `--model` 플래그를 추가하여 전 계층 동작을 검증한다.
 
-- Phase 4.1 optimizer 구현
-- Phase 4.2 checkpoint 구현
-- Phase 4.3 Trainer 구현
-- Phase 4.4 Evaluator 구현
-- Phase 4.5 Predictor 구현
-- Phase 4.6 Experiment 구현
-- Phase 4.7 Visualizer 구현
-- Phase 4.8 Stage 4 노트북 작성
+- Phase 4.0 CuPy environment 구성
+- Phase 4.1 CNN model 구현
+- Phase 4.2 CNN-core integration 검증 및 CLI 확장
+- Phase 4.3 Stage 4 노트북 작성
 
-### 5.6. Stage 5 클라이언트 코드 구현
+### 5.6. Stage 5 실행 객체 구현
 
-Stage 5의 Phase는 다음과 같다.
+SGD/Adam optimizer, checkpoint, Trainer/Evaluator/Predictor 실행 객체를 구현하고, 이를 config 기반으로 조립하는 `Experiment`와 시각화 도구(Visualizer, training_plots)를 완성한다.
 
-- Phase 5.1 training CLI 구현
-- Phase 5.2 evaluation CLI 구현
-- Phase 5.3 prediction CLI 구현
-- Phase 5.4 visualization CLI 구현
-- Phase 5.5 Stage 5 노트북 작성
+- Phase 5.1 optimizer 구현
+- Phase 5.2 checkpoint 구현
+- Phase 5.3 Trainer 구현
+- Phase 5.4 Evaluator 구현
+- Phase 5.5 Predictor 구현
+- Phase 5.6 Experiment 구현
+- Phase 5.7 Visualizer 및 training plot helper 구현
+- Phase 5.8 Stage 5 노트북 작성
 
-### 5.7. Stage 6 CuPy 기반 CNN 구현
+### 5.7. Stage 6 클라이언트 코드 구현
 
-Stage 6의 Phase는 다음과 같다.
+`scripts/` 아래에 train/evaluate/predict/visualize CLI를 구현하고, 각 스크립트가 커맨드라인 인수를 파싱하여 `Experiment`의 실행 객체를 올바르게 호출함을 테스트로 검증한다.
 
-- Phase 6.0 CuPy environment 구성
-- Phase 6.1 CNN model 구현
-- Phase 6.2 CNN-core integration 검증
-- Phase 6.3 Stage 6 노트북 작성
+- Phase 6.1 training CLI 구현
+- Phase 6.2 evaluation CLI 구현
+- Phase 6.3 prediction CLI 구현
+- Phase 6.4 visualization CLI 구현
+- Phase 6.5 Stage 6 노트북 작성
 
 ### 5.8. Stage 7 documentation 및 verification
 
-Stage 7의 Phase는 다음과 같다.
+multiclass/binary/regression 각 task에서 MLP와 CNN 실험 결과를 수집하고, task별 tutorial 문서와 비교 실험 노트북을 작성한다. 마지막으로 후속 PyTorch 프로젝트 연계를 위한 인터페이스 규약과 마이그레이션 체크리스트를 정리한다.
 
-- Phase 7.1 CLI 확장
-- Phase 7.2 experiment 실행 및 result 수집
-- Phase 7.3 Multiclass tutorial
-- Phase 7.4 Binary tutorial
-- Phase 7.5 Regression tutorial
-- Phase 7.6 framework 연계 준비
-- Phase 7.7 Stage 7 노트북 작성
+- Phase 7.1 experiment 실행 및 result 수집
+- Phase 7.2 Multiclass tutorial
+- Phase 7.3 Binary tutorial
+- Phase 7.4 Regression tutorial
+- Phase 7.5 framework 연계 준비
+- Phase 7.6 Stage 7 노트북 작성
 
 ## 6. 확정 구조
 
@@ -256,13 +257,16 @@ tests/
 │   ├── test_losses.py
 │   └── test_metrics.py
 ├── stage4/
+│   ├── test_cnn.py
+│   └── test_experiment.py
+├── stage5/
 │   ├── test_optimizers.py
 │   ├── test_checkpoints.py
 │   ├── test_trainer.py
 │   ├── test_evaluator.py
 │   ├── test_predictor.py
 │   └── test_experiment.py
-└── stage5/
+└── stage6/
     ├── test_train.py
     ├── test_evaluate.py
     ├── test_predict.py
@@ -348,9 +352,9 @@ Stage 1 초기 구현에서 사용할 공통 진입점은 후속 프레임워크
 - `MnistDataset(split, task)`의 `images`는 `(N, 784)` `float32` (reshape + /255 정규화 완료), `targets`는 task별 `float32` 배열이다.
 - `MnistDataset.__getitem__(idx)`는 `(image, target)` 단일 샘플 tuple을 반환한다.
 - `MnistDataset`의 task별 target 변환 규약은 다음과 같다.
-  - `multiclass`: `one_hot(labels, num_classes=10)` → shape `(N, 10)`
-  - `binary`: `(labels % 2)` (홀수=1, 짝수=0) → shape `(N, 1)`
-  - `regression`: `labels / 9.0` → shape `(N, 1)`
+  - `multiclass`: `one_hot(labels, num_classes=10)` -> shape `(N, 10)`
+  - `binary`: `(labels % 2)` (홀수=1, 짝수=0) -> shape `(N, 1)`
+  - `regression`: `labels / 9.0` -> shape `(N, 1)`
 - `DataLoader(dataset, batch_size, shuffle)`의 `__iter__`는 `(images_batch, targets_batch)` tuple을 yield한다.
 - `DataLoader`는 `__len__`과 `__getitem__`을 구현한 Dataset이면 종류에 관계없이 수용한다.
 - `get_task_spec(task)`는 최소한 `task`, `output_dim`, `target_dtype`, `prediction_mode` 키를 포함한다.
@@ -385,6 +389,8 @@ Stage 1부터는 구현보다 테스트가 먼저 작성되도록 TDD 순서를 
 | Stage 2 전체 | `pytest tests/stage2/ -q` |
 | Stage 3 전체 | `pytest tests/stage3/ -q` |
 | Stage 4 전체 | `pytest tests/stage4/ -q` |
+| Stage 5 전체 | `pytest tests/stage5/ -q` |
+| Stage 6 전체 | `pytest tests/stage6/ -q` |
 | 단일 파일 | `pytest tests/stage3/test_mlp.py -q` |
 | 전체 스모크 확인 | `pytest tests/ -q` |
 
@@ -405,14 +411,14 @@ notebooks/
 │   ├── stage3-3_losses-and-metrics.ipynb
 │   └── stage3-4_mlp.ipynb
 ├── stage4/
-│   ├── stage4-1_optimizers.ipynb
-│   ├── stage4-2_trainer-and-evaluator.ipynb
-│   └── stage4-3_experiment.ipynb
+│   ├── stage4-1_cnn-architecture.ipynb
+│   └── stage4-2_cnn-training.ipynb
 ├── stage5/
-│   └── stage5-1_cli-scripts.ipynb
+│   ├── stage5-1_optimizers.ipynb
+│   ├── stage5-2_trainer-and-evaluator.ipynb
+│   └── stage5-3_experiment.ipynb
 ├── stage6/
-│   ├── stage6-1_cnn-architecture.ipynb
-│   └── stage6-2_cnn-training.ipynb
+│   └── stage6-1_cli-scripts.ipynb
 └── stage7/
     ├── stage7-1_multiclass-experiment.ipynb
     ├── stage7-2_binary-experiment.ipynb
@@ -432,12 +438,12 @@ notebooks/
 | `stage3-2_layers` | `Linear` forward/backward, `Sequential` | shape 추적 표 |
 | `stage3-3_losses-and-metrics` | 3 loss 값+gradient, 3 metric 데모 | loss 곡선 비교 |
 | `stage3-4_mlp` | MLP params shape, 수동 step/epoch | 수동 학습 곡선 |
-| `stage4-1_optimizers` | SGD vs Adam, lr 민감도 비교 | 수렴 비교 그래프 |
-| `stage4-2_trainer-and-evaluator` | `Trainer.fit()`, `Evaluator.evaluate()`, task dispatch | 3 task log 비교 |
-| `stage4-3_experiment` | `Experiment`, `Predictor`, `Checkpoint` | 학습 곡선, 예측 grid |
-| `stage5-1_cli-scripts` | `scripts/*.py` `main(args)` 직접 호출 | visualize 출력 |
-| `stage6-1_cnn-architecture` | im2col 원리, CNN vs MLP 파라미터 비교 | shape 추적 |
-| `stage6-2_cnn-training` | CNN `Experiment`, CuPy fallback | 예측 grid, 비교 표 |
+| `stage4-1_cnn-architecture` | im2col 원리, CNN vs MLP 파라미터 비교 | shape 추적 |
+| `stage4-2_cnn-training` | CNN `Experiment`, CuPy fallback | 예측 grid, 비교 표 |
+| `stage5-1_optimizers` | SGD vs Adam, lr 민감도 비교 | 수렴 비교 그래프 |
+| `stage5-2_trainer-and-evaluator` | `Trainer.fit()`, `Evaluator.evaluate()`, task dispatch | 3 task log 비교 |
+| `stage5-3_experiment` | `Experiment`, `Predictor`, `Checkpoint` | 학습 곡선, 예측 grid |
+| `stage6-1_cli-scripts` | `scripts/*.py` `main(args)` 직접 호출 | visualize 출력 |
 | `stage7-1_multiclass-experiment` | multiclass MLP+CNN 전체 실험 | training curve, 예측 grid |
 | `stage7-2_binary-experiment` | binary MLP+CNN 전체 실험 | training curve, 예측 grid |
 | `stage7-3_regression-experiment` | regression MLP+CNN 전체 실험 | training curve, 예측 grid |

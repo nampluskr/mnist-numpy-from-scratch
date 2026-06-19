@@ -1,48 +1,55 @@
 ---
 tags: [docs, stage6, overview]
 created: 2026-06-19
-updated: 2026-06-19
+updated: 2026-06-20
 ---
 
-# Stage 6 CuPy CNN
+# Stage 6 클라이언트 코드
 
 ## 1. 개요
 
-Stage 6은 GPU 기반 CuPy 환경을 구성하고, im2col/col2im 기법을 활용한 CNN 모델을 구현하여 Stage 4의 실행 객체와 통합하는 단계이다.
-MLP와 동일한 `Module` 인터페이스를 따르므로 Trainer, Evaluator, Predictor를 수정하지 않고 CNN을 그대로 사용할 수 있다.
-`src/core/experiment.py`의 `config["model"]` 분기를 통해 MLP와 CNN 중 하나를 선택한다.
+Stage 5는 `src/core/`의 실행 객체를 호출하는 CLI 진입점 스크립트를 `scripts/` 폴더에 구현하는 단계이다.
+각 스크립트는 argparse로 실행 인자를 파싱하고 `Experiment`를 조립한 뒤 학습, 평가, 예측, 시각화를 실행한다.
+스크립트 내부에서 `src/core/` 모듈을 직접 조립하지 않고 `Experiment`를 통해 간접 호출하는 구조를 유지한다.
 
 ## 2. Phase 구성
 
-### 2.1. Phase 6.0 CuPy environment 구성
+### 2.1. Phase 5.1 training CLI 구현
 
-`numpy_py311`, `cupy_py311_cuda118`, `cupy_py311_cuda121` 세 가지 conda 환경을 구성하고 검증한다.
-MLP는 CPU 기반 `numpy_py311`에서, CNN은 GPU 기반 `cupy_py311_cuda118` 또는 `cupy_py311_cuda121`에서 실행한다.
-환경별 CuPy 버전과 CUDA 드라이버 호환성을 확인하고 `requirements.txt`에 반영한다.
+`scripts/train.py`를 구현한다.
+`--task`, `--epochs`, `--batch_size`, `--lr`, `--seed`, `--model` 인자를 파싱하고, `Experiment`를 조립하여 `Trainer.fit()`을 호출한다.
+학습 완료 후 checkpoint를 저장하고 training log PNG를 `outputs/` 하위 경로에 저장한다.
 
-- [[phase6.0_cupy-setup|Phase 6.0 CuPy environment 구성]]
+- [[phase5.1_train|Phase 5.1 training CLI 구현]]
 
-### 2.2. Phase 6.1 CNN model 구현
+### 2.2. Phase 5.2 evaluation CLI 구현
 
-`src/nn/conv.py`에 `im2col`, `col2im` 변환 함수와 `Conv2d`, `MaxPool2d`, `Flatten`, `Dropout` 레이어를 구현한다.
-`src/models/cnn.py`에 CuPy 기반 CNN 클래스를 구현하며, CuPy가 없는 환경에서는 NumPy로 fallback한다.
-`src/nn/layers.py`의 `Module` 클래스에 `training` 플래그와 `train()`, `eval()` 메서드를 추가하여 Dropout 동작을 제어한다.
+`scripts/evaluate.py`를 구현한다.
+저장된 checkpoint를 로딩하고 `Evaluator.evaluate()`를 호출하여 test split의 loss와 metric을 출력한다.
 
-- [[phase6.1_cnn|Phase 6.1 CNN model 구현]]
+- [[phase5.2_evaluate|Phase 5.2 evaluation CLI 구현]]
 
-### 2.3. Phase 6.2 CNN-core integration 검증
+### 2.3. Phase 5.3 prediction CLI 구현
 
-`src/core/experiment.py`에 `config["model"]` 값이 `"cnn"`일 때 CNN을 선택하는 분기를 추가한다.
-synthetic MNIST gz 기반 통합 테스트로 MLP와 CNN이 동일한 Experiment 인터페이스에서 동작함을 검증한다.
+`scripts/predict.py`를 구현한다.
+저장된 checkpoint를 로딩하고 `Predictor.predict()`를 호출하여 test 샘플 일부의 예측 결과를 반환한다.
 
-- [[phase6.2_cnn-integration|Phase 6.2 CNN-core integration 검증]]
+- [[phase5.3_predict|Phase 5.3 prediction CLI 구현]]
+
+### 2.4. Phase 5.4 visualization CLI 구현
+
+`scripts/visualize.py`를 구현한다.
+`plot_training_log()` helper로 학습 로그 곡선을 저장하고, `Visualizer`로 prediction 결과 이미지 grid를 저장한다.
+두 산출물 모두 `outputs/{task}/{model}/` 경로에 PNG 파일로 저장된다.
+
+- [[phase5.4_visualize|Phase 5.4 visualization CLI 구현]]
 
 ## 3. 주요 산출물
 
 | 산출물 | 내용 |
 |---|---|
-| `src/nn/conv.py` | im2col/col2im + Conv2d, MaxPool2d, Flatten, Dropout |
-| `src/models/cnn.py` | CuPy 기반 CNN 클래스 (NumPy fallback 지원) |
-| `src/nn/layers.py` | Module training/train/eval 추가 |
-| `src/core/experiment.py` | config["model"] CNN 분기 추가 |
-| `tests/stage6/` | cnn, experiment 테스트 파일 2개 (73개 테스트 통과) |
+| `scripts/train.py` | 학습 CLI (--task, --model 포함) |
+| `scripts/evaluate.py` | 평가 CLI |
+| `scripts/predict.py` | 예측 CLI |
+| `scripts/visualize.py` | 시각화 CLI (training log + prediction grid) |
+| `tests/stage6/` | 4개 CLI 테스트 파일 (87개 테스트 통과) |
