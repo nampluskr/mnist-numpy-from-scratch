@@ -1,7 +1,7 @@
 ---
 tags: [project, docs]
 created: 2026-06-08
-updated: 2026-06-20
+updated: 2026-06-20 (experiments/ 파일명 run_xxx.py 형식으로 변경)
 ---
 
 # PROJECT-SPEC.md
@@ -18,23 +18,37 @@ Stage - Phase 수준의 제목은 키워드 중심의 개조식 표현으로 작
 
 ## 2. 배경
 
-이 프로젝트는 `numpy -> pytorch -> tensorflow -> jax` 순서로 진행되는 딥러닝 프레임워크 학습 시리즈의 첫 번째 프로젝트이다. 프레임워크별 구현을 비교 학습하려면 동일한 문제, 동일한 구조, 동일한 사용법을 갖는 프로젝트 구성이 필요하다.
+이 프로젝트는 `numpy > pytorch > tensorflow > jax` 순서로 진행되는 딥러닝 프레임워크 학습 시리즈의 첫 번째 프로젝트이다. 프레임워크별 구현을 비교 학습하려면 동일한 문제, 동일한 구조, 동일한 사용법을 갖는 프로젝트 구성이 필요하다.
 
 ## 3. 범위
 
 이 프로젝트에서 수행할 작업 범위는 MNIST 데이터셋 기반 태스크, 모델 구현, 문서화, 테스트 구조를 모두 포함한다.
 
-- MNIST 데이터셋을 대상으로 실험 환경을 구성한다.
+### 3.1. 과제 및 모델
+
+MNIST 데이터셋을 기반으로 세 가지 과제를 수행하며, MLP와 CNN 두 모델을 후속 프레임워크와 호환되는 인터페이스로 구현한다.
+
 - Multiclass Classification, Binary Classification, Regression 과제를 수행한다.
 - MLP 모델은 CPU 기반 NumPy 구현으로 학습한다.
 - CNN 모델은 GPU 기반 CuPy 구현으로 학습한다.
 - 후속 PyTorch, TensorFlow, JAX 프로젝트와 호환되도록 모듈명, 함수명, 사용법을 통일한다.
+
+### 3.2. 코드 구현
+
+레거시 코드를 분석하여 설계 기준을 도출하고, `src/`, `scripts/`, `tests/` 세 폴더에 재사용 가능한 소스 코드, CLI 진입점, TDD 테스트를 순서대로 구현한다.
+
 - `_core/legacy/src/` 폴더에 사용자가 제공하는 기존 3가지 작업의 레거시 코드(task 스크립트 6개 + common 모듈 6개)를 보관하고 분석한다.
-- `src/` 폴더에 실제 소스 코드를 구현한다.
-- `scripts/` 폴더에 클라이언트 코드 `train.py`, `evaluate.py`, `predict.py`, `visualize.py`를 작성한다.
+- `src/` 폴더에 재사용 가능한 소스 코드를 구현한다.
+- `scripts/` 폴더에 사용자용 CLI 클라이언트 코드를 작성한다. `src/core/` 실행 객체를 조립하는 진입점이다.
 - `tests/` 폴더 기반으로 `pytest`를 이용한 TDD 구조를 구현한다.
-- 튜토리얼 문서와 실행 가능한 예제 코드를 함께 작성한다.
-- 교육용 Jupyter 노트북을 `notebooks/` 폴더에 Stage별로 작성하여, 각 Stage의 코드를 직접 실행·시각화·검증하는 실습 커리큘럼을 제공한다.
+
+### 3.3. 문서 및 실험
+
+Phase별 참조 문서, 교육용 노트북, batch 실험 스크립트를 작성하여 구현 결과를 문서화하고 재현 가능한 실험 환경을 제공한다.
+
+- `docs/` 폴더에 각 Phase 구현의 상세 매뉴얼 및 참조 문서를 작성한다.
+- `notebooks/` 폴더에 교육용 튜토리얼 노트북을 Stage별로 작성한다. 각 Stage의 코드를 직접 실행·시각화·검증하는 실습 커리큘럼을 제공한다.
+- `experiments/` 폴더에 CLI scripts를 실행하는 예제 Python 스크립트를 둔다. 실행 결과는 `outputs/`에 저장한다.
 
 ## 4. 제약 사항
 
@@ -48,12 +62,13 @@ Stage - Phase 수준의 제목은 키워드 중심의 개조식 표현으로 작
 
 ## 5. 진행 단계
 
-프로젝트는 Stage 0에서 레거시 코드를 분석하여 구현 계획과 테스트 계획을 수립한 뒤, Stage 1부터 코드 구현 > 테스트 > 문서 > 노트북 4단계 워크플로우로 진행한다.
+프로젝트는 Stage 0에서 conda 환경을 구축하고 레거시 코드를 분석하여 구현 계획과 테스트 계획을 수립한 뒤, Stage 1부터 코드 구현 > 테스트 > 문서 > 노트북 4단계 워크플로우로 진행한다.
 
-### 5.1. Stage 0 계획 수립
+### 5.1. Stage 0 환경 구성 및 계획 수립
 
-레거시 `src/`의 task 스크립트 6개와 common 모듈 6개를 분석하여 manual/module 두 패턴을 비교하고, src 패키지 구조·구현 순서·TDD 원칙을 확정한다.
+conda 실행 환경을 구성하고, 레거시 `src/`의 task 스크립트 6개와 common 모듈 6개를 분석하여 manual/module 두 패턴을 비교하고, src 패키지 구조·구현 순서·TDD 원칙을 확정한다.
 
+- Phase 0.0 conda 환경 구성
 - Phase 0.1 레거시 코드 분석
 - Phase 0.2 구현 계획 수립
 - Phase 0.3 테스트 계획 수립
@@ -91,7 +106,6 @@ Stage - Phase 수준의 제목은 키워드 중심의 개조식 표현으로 작
 
 `numpy_py311`/`cupy_py311_cuda118`/`cupy_py311_cuda121` 세 conda 환경을 검증하고, `im2col`/`col2im` 기반 CNN을 구현한다. `Experiment`에 `config["model"]` 분기를 추가하여 MLP/CNN을 선택할 수 있도록 하고, 4개 CLI 스크립트에 `--model` 플래그를 추가하여 전 계층 동작을 검증한다.
 
-- Phase 4.0 CuPy environment 구성
 - Phase 4.1 CNN model 구현
 - Phase 4.2 CNN-core integration 검증 및 CLI 확장
 - Phase 4.3 Stage 4 노트북 작성
@@ -219,7 +233,7 @@ src/
 | `src/utils/training_plots.py` | 학습 로그 loss/metric 곡선을 PNG 파일로 저장한다. |
 | `src/utils/io.py` | 파일 저장·로딩 보조 함수를 제공한다. |
 
-### 6.3. `scripts`와 `core` 관계
+### 6.3. `scripts`, `core`, `experiments` 관계
 
 클라이언트 코드는 내부 구현 모듈을 직접 조립하지 않고 `core`의 실행 객체를 참조한다.
 
@@ -229,6 +243,19 @@ src/
 | `scripts/evaluate.py` | `src/core/experiment.py`, `src/core/evaluator.py` |
 | `scripts/predict.py` | `src/core/experiment.py`, `src/core/predictor.py` |
 | `scripts/visualize.py` | `src/core/experiment.py`, `src/core/visualizer.py`, `src/utils/training_plots.py` |
+
+`experiments/` 폴더는 `scripts/*.py`를 subprocess로 호출하는 batch job 스크립트를 보관한다. `CONFIGS` 리스트에 정의된 조합을 순차 실행하며, 결과는 `outputs/{exp_name}/`에 저장한다. `notebooks/stage7/`이 이 결과를 시각화하는 튜토리얼을 담당한다.
+
+`exp_name` 형식: `{task}_{model}_ep{epochs}_lr{lr}_bs{batch_size}`
+
+```text
+experiments/
+├── run_all.py
+├── run_train.py
+├── run_evaluate.py
+├── run_predict.py
+└── run_visualize.py
+```
 
 ### 6.4. `tests` 폴더 구조
 

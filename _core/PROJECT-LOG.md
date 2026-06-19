@@ -62,6 +62,13 @@ updated: 2026-06-19
 | 2026-06-19 | Phase 7.7 완료 - stage7-1_multiclass-experiment.ipynb, stage7-2_binary-experiment.ipynb, stage7-3_regression-experiment.ipynb 작성 | 16개 전체 완료 |
 | 2026-06-20 | Stage 순서 재배치 - Stage 6(CuPy CNN)을 Stage 4로 이동, 기존 Stage 4/5가 Stage 5/6으로 순환 재배치 | docs/, tests/, notebooks/ 폴더명·파일명·내부 텍스트 전체 갱신 |
 | 2026-06-20 | PROJECT-TODO.md Phase 도입 문장 형식 통일 - 모든 Phase 도입 문장을 `~하고, ~를 검증한다.` / `~를 작성한다.` 형식으로 통일 | 11개 문장 수정 |
+| 2026-06-20 | PROJECT-TODO.md task 수준 기술 형식 통일 - 파일 항목에 동사 추가(src/→구현, tests/→작성, scripts/→구현), 괄호 설명 앞 동사 삽입, outputs/ 항목에 `생성` 추가 | 약 64개 항목 수정 |
+| 2026-06-20 | 폴더 역할 체계 재정의 - CLAUDE.md·PROJECT-SPEC.md §3·§6.3 업데이트 (src/scripts/docs/notebooks/experiments/ 역할 명확화) | experiments/ 역할: CLI scripts 실행 예제 Python 스크립트 |
+| 2026-06-20 | experiments/ 신규 구축 - subprocess 기반 batch job 4개(train/evaluate/predict/visualize_all.py) + run_all.py 작성, CONFIGS 주입 방식 채택 | exp_name 도입, outputs/{exp_name}/ 저장 구조 |
+| 2026-06-20 | tests/ __init__.py 3개 삭제 - tests/stage2,3,4/__init__.py 제거 (coding-rules.md 규칙 준수) | |
+| 2026-06-20 | experiments/ 파일명 변경 - train/evaluate/predict/visualize_all.py → run_train/evaluate/predict/visualize.py, run_all.py import 경로 갱신 | |
+| 2026-06-20 | PROJECT-SPEC.md §3 서브섹션 도입 - 3.1 과제 및 모델 / 3.2 코드 구현 / 3.3 문서 및 실험 3개 서브섹션으로 재구성, 도입 문장 추가 | |
+| 2026-06-20 | Stage 0 환경 구성 편입 - Phase 0.0 conda 환경 구성 신설, docs/stage4/phase4.0_cupy-setup.md → docs/stage0/phase0.0_conda-setup.md 이동, PROJECT-SPEC.md §5.1 제목 변경, Stage 4에서 Phase 4.0 제거 | | |
 
 ## 260618 Stage 7 CNN 검증 및 문서화
 

@@ -1,14 +1,14 @@
 ---
-tags: [project, docs, stage4]
+tags: [project, docs, stage0]
 created: 2026-06-17
 updated: 2026-06-20
 ---
 
-# Phase 4.0 CuPy environment 구성
+# Phase 0.0 conda 환경 구성
 
 ## 1. 개요
 
-CuPy 기반 CNN 구현(Phase 6.1~6.2)에 앞서 conda `numpy_env`에 CuPy를 설치하고 GPU 연산이 정상 동작하는지 검증한다.
+MLP 실행용 `numpy_py311`과 CNN 실행용 `cupy_py311_cuda118`, `cupy_py311_cuda121` conda 환경을 구성하고, CuPy 설치 및 GPU 연산이 정상 동작하는지 검증한다.
 
 ## 2. 실행 환경
 

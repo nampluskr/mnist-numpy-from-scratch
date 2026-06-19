@@ -44,11 +44,11 @@ mnist-numpy-from-scratch/
 | `data/` | 데이터 경로 또는 설명 |
 | `src/` | 소스 코드 루트 - 재사용 가능한 모듈·클래스·함수 |
 | `scripts/` | `src/core/` 실행 객체를 호출하는 CLI 진입점 - 학습·평가·예측·시각화 |
-| `notebooks/` | Jupyter 노트북 - 탐색·시각화·프로토타입 |
+| `notebooks/` | Jupyter 노트북 - 교육용 튜토리얼 |
 | `tests/` | 테스트 코드 |
 | `configs/` | 설정 파일 |
-| `experiments/` | 실험 기록 및 실행 메타데이터 |
-| `docs/` | 프로젝트 문서 |
+| `experiments/` | CLI scripts 실행 예제 Python 스크립트, 결과는 `outputs/` 저장 |
+| `docs/` | 상세 매뉴얼 및 참조 문서 |
 | `outputs/` | 모델, 그래프, 예측, 내보내기 결과 |
 
 ## 4. 자료 흐름
