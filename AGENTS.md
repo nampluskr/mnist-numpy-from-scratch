@@ -75,6 +75,8 @@ data/ → notebooks/ → src/ → scripts/ → experiments/ → outputs/
 - 작업 전 `_core/rules/agent-rules.md` 와 `_core/rules/coding-rules.md` 를 참조한다.
 - 마크다운 문서 작성·수정 시 `_core/rules/docs-rules.md` 를 따른다.
 - Python 스크립트 작성·수정 시 `_core/rules/python-rules.md` 를 따른다.
+- `docs/` 문서 작성 시 `_core/templates/docs-template.md` 를 사용하고 `_core/rules/template-rules.md` 를 적용한다.
+- `notebooks/` 노트북 작성 시 `_core/templates/notebooks-template.ipynb` 를 사용하고 `_core/rules/template-rules.md` 를 적용한다.
 - 탐색·프로토타입은 `notebooks/` 에서 시작하고, 재사용 코드는 `src/` 로 이동한다.
 - `scripts/` 를 통해 `experiments/` 에서 학습·추론·시각화를 실행하고, 결과는 `outputs/` 에 저장한다.
 - 새 소스 파일을 만들 때 첫 줄에 파일명과 한 줄 영어 설명을 주석으로 기록한다.
@@ -92,6 +94,7 @@ data/ → notebooks/ → src/ → scripts/ → experiments/ → outputs/
 | 마크다운 규칙 | `_core/rules/docs-rules.md` |
 | Python 규칙 | `_core/rules/python-rules.md` |
 | 코딩 규칙 | `_core/rules/coding-rules.md` |
+| 템플릿 규칙 | `_core/rules/template-rules.md` |
 | 코딩 가이드 | `_core/docs/coding-guide.md` |
 | 주제 분류 | `_core/docs/subject-guide.md` |
 | 프로젝트 가이드 | `_core/docs/project-guide.md` |
