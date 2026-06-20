@@ -1,7 +1,7 @@
 ---
 tags: [project, docs]
 created: 2026-06-15
-updated: 2026-06-20 (Stage 0 docs/ 전체 작성 완료)
+updated: 2026-06-20 (Stage 1 docs/notebooks/ 전체 작성 완료)
 ---
 
 # PROJECT-LOG.md
@@ -70,6 +70,34 @@ updated: 2026-06-20 (Stage 0 docs/ 전체 작성 완료)
 | 2026-06-20 | experiments/ 파일명 변경 - train/evaluate/predict/visualize_all.py → run_train/evaluate/predict/visualize.py, run_all.py import 경로 갱신 | |
 | 2026-06-20 | PROJECT-SPEC.md §3 서브섹션 도입 - 3.1 과제 및 모델 / 3.2 코드 구현 / 3.3 문서 및 실험 3개 서브섹션으로 재구성, 도입 문장 추가 | |
 | 2026-06-20 | Stage 0 환경 구성 편입 - Phase 0.0 conda 환경 구성 신설, docs/stage4/phase4.0_cupy-setup.md → docs/stage0/phase0.0_conda-setup.md 이동, PROJECT-SPEC.md §5.1 제목 변경, Stage 4에서 Phase 4.0 제거 | | |
+
+## 260620 Stage 1 docs/ 및 notebooks/ 전체 작성 완료
+
+**완료 항목**
+- `notebooks/` 기존 16개 파일 `_notebooks/`로 이동 (아카이브)
+- Phase 1.1 문서 작성: `docs/stage1/phase1.1_batching-and-random.md`
+- Phase 1.2 문서 작성: `docs/stage1/phase1.2_io-and-checkpoints.md`
+- Phase 1.3 문서 작성: `docs/stage1/phase1.3_training-plots.md`
+- `tests/stage1/test_checkpoints.py` 신규 작성 (4 tests, 24 passed)
+- Phase 1.4 노트북 작성: `notebooks/stage1/stage1-1_utils.ipynb`
+- PROJECT-TODO.md Stage 1 Phase 1.1~1.4 완료 처리
+
+**산출물**
+
+| 파일/산출물 | 내용 |
+|---|---|
+| `docs/stage1/phase1.1_batching-and-random.md` | get_batches 개념, shuffle 인덱스 동기화, set_seed 재현성 |
+| `docs/stage1/phase1.2_io-and-checkpoints.md` | .npz 형식, save_params/load_params, checkpoints.save/load CuPy 변환 |
+| `docs/stage1/phase1.3_training-plots.md` | plot_training_log, 2-subplot PNG 저장, plt.close 필요성 |
+| `tests/stage1/test_checkpoints.py` | save/load 파일 생성, in-place 복원, .npz 확장자 자동 처리 |
+| `notebooks/stage1/stage1-1_utils.ipynb` | 5개 유틸리티 실습 (batching/random/io/checkpoints/training_plots) |
+| `_notebooks/` | 기존 notebooks/ 16개 아카이브 이동 |
+
+**결정사항**
+
+| 항목 | 결정 내용 |
+|---|---|
+| notebooks/ 관리 방식 | 기존 파일 `_notebooks/`로 이동, `notebooks/`는 템플릿 기반 신규 작성만 유지 |
 
 ## 260620 Stage 0 docs/ 전체 작성 완료
 

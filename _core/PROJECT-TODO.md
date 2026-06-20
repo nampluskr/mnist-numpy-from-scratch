@@ -60,35 +60,35 @@ tests/ 폴더 구조와 파일별 공개 인터페이스 규약을 정하고, sy
 
 mini-batch 인덱스 생성과 shuffle을 담당하는 `batching.py`와 난수 시드를 고정하는 `random.py`를 구현한다.
 
-- [ ] `src/utils/batching.py` 구현
-- [ ] `tests/stage1/test_batching.py` 작성
-- [ ] `src/utils/random.py` 구현
-- [ ] `tests/stage1/test_random.py` 작성
-- [ ] [[docs/stage1/phase1.1_batching-and-random|phase1.1_batching-and-random.md]] 문서 작성
+- [x] `src/utils/batching.py` 구현
+- [x] `tests/stage1/test_batching.py` 작성
+- [x] `src/utils/random.py` 구현
+- [x] `tests/stage1/test_random.py` 작성
+- [x] [[docs/stage1/phase1.1_batching-and-random|phase1.1_batching-and-random.md]] 문서 작성
 
 ### 2.2. Phase 1.2 파일 입출력 유틸리티
 
 파일 저장·로딩 보조 함수(`io.py`)와 모델 파라미터를 `.npz` 파일로 저장·복원하는 `checkpoints.py`를 구현한다.
 
-- [ ] `src/utils/io.py` 구현
-- [ ] `tests/stage1/test_io.py` 작성
-- [ ] `src/utils/checkpoints.py` 구현 (이동 예정: `src/core/checkpoints.py`)
-- [ ] `tests/stage1/test_checkpoints.py` 작성 (이동 예정: `tests/stage4/test_checkpoints.py`)
-- [ ] [[docs/stage1/phase1.2_io-and-checkpoints|phase1.2_io-and-checkpoints.md]] 문서 작성
+- [x] `src/utils/io.py` 구현
+- [x] `tests/stage1/test_io.py` 작성
+- [x] `src/utils/checkpoints.py` 구현 (이동 예정: `src/core/checkpoints.py`)
+- [x] `tests/stage1/test_checkpoints.py` 작성 (이동 예정: `tests/stage4/test_checkpoints.py`)
+- [x] [[docs/stage1/phase1.2_io-and-checkpoints|phase1.2_io-and-checkpoints.md]] 문서 작성
 
 ### 2.3. Phase 1.3 시각화 유틸리티
 
 학습 로그 loss/metric 곡선을 PNG 파일로 저장하는 `training_plots.py` helper를 구현한다.
 
-- [ ] `src/utils/training_plots.py` 구현
-- [ ] `tests/stage1/test_training_plots.py` 작성
-- [ ] [[docs/stage1/phase1.3_training-plots|phase1.3_training-plots.md]] 문서 작성
+- [x] `src/utils/training_plots.py` 구현
+- [x] `tests/stage1/test_training_plots.py` 작성
+- [x] [[docs/stage1/phase1.3_training-plots|phase1.3_training-plots.md]] 문서 작성
 
 ### 2.4. Phase 1.4 실습 노트북 작성
 
 Stage 1에서 구현한 유틸리티(batching, random, io, checkpoints, training_plots)를 실습하는 교육용 노트북을 작성한다.
 
-- [ ] `notebooks/stage1/stage1-1_utils.ipynb` 작성
+- [x] `notebooks/stage1/stage1-1_utils.ipynb` 작성
 
 ## 3. Stage 2 MNIST 데이터 로더 구현
 
