@@ -1,7 +1,7 @@
 ---
 tags: [project, docs]
 created: 2026-06-15
-updated: 2026-06-20 (Stage 1 docs/notebooks/ 전체 작성 완료)
+updated: 2026-06-21 (Stage 4 phase4.1_mlp.md, phase4.2_cnn.md 개념 섹션 상세화)
 ---
 
 # PROJECT-LOG.md
@@ -70,6 +70,19 @@ updated: 2026-06-20 (Stage 1 docs/notebooks/ 전체 작성 완료)
 | 2026-06-20 | experiments/ 파일명 변경 - train/evaluate/predict/visualize_all.py → run_train/evaluate/predict/visualize.py, run_all.py import 경로 갱신 | |
 | 2026-06-20 | PROJECT-SPEC.md §3 서브섹션 도입 - 3.1 과제 및 모델 / 3.2 코드 구현 / 3.3 문서 및 실험 3개 서브섹션으로 재구성, 도입 문장 추가 | |
 | 2026-06-20 | Stage 0 환경 구성 편입 - Phase 0.0 conda 환경 구성 신설, docs/stage4/phase4.0_cupy-setup.md → docs/stage0/phase0.0_conda-setup.md 이동, PROJECT-SPEC.md §5.1 제목 변경, Stage 4에서 Phase 4.0 제거 | | |
+
+## 260621 Stage 4 MLP/CNN 문서 개념 섹션 상세화
+
+**완료 항목**
+- `docs/stage4/phase4.1_mlp.md` 개념 섹션 상세화 (2개 소절 -> 9개 소절)
+- `docs/stage4/phase4.2_cnn.md` 개념 섹션 상세화 (3개 소절 -> 13개 소절)
+
+**산출물**
+
+| 파일/산출물 | 내용 |
+|---|---|
+| `docs/stage4/phase4.1_mlp.md` | MLP란 무엇인가, 구조, 파라미터 수, Forward/Backward 수식 전개, params/grads 설계, seed 파생, logit 입력 설계 의미, 학습 한 스텝 전체 흐름 |
+| `docs/stage4/phase4.2_cnn.md` | CNN이란 무엇인가, 구조, 합성곱/feature map, 공간 크기 변화 추적, 파라미터 수, Forward/Backward 단계별 설명, CuPy/numpy 경계 설계, Dropout 역할, fallback 설계, params/grads 설계, MLP/CNN 인터페이스 비교, 학습 한 스텝 전체 흐름 |
 
 ## 260621 Stage 5 src/core/ 구현 완료 및 Stage 6 tests/ 정비
 
