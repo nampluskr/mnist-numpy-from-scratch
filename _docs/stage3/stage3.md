@@ -33,7 +33,7 @@ activation 함수는 순전파 계산만 담당하며, 손실 함수는 raw logi
 `Module` 클래스에는 `training` 플래그와 `train()`, `eval()` 메서드가 포함된다.
 `src/models/mlp.py`에서 `Sequential`로 MLP를 조립하고, `forward(x)`는 raw logit을 반환한다.
 
-- [[phase3.4_layers|Phase 3.4 layers]]
+- [[phase3.4_mlp-layers|Phase 3.4 mlp-layers]]
 - [[phase3.5_mlp|Phase 3.5 MLP model]]
 
 ### 2.4. Phase 3.4 MLP 문서

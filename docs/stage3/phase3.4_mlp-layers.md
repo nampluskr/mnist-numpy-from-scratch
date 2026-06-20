@@ -1,7 +1,7 @@
 ---
 tags: [docs, stage3, nn, layers]
 created: "2026-06-20"
-updated: "2026-06-20"
+updated: "2026-06-21"
 ---
 
 # MLP 레이어 모듈
@@ -30,17 +30,97 @@ updated: "2026-06-20"
 | `train()` / `eval()` | 학습/평가 모드 전환. `Dropout` 등 모드에 따라 동작이 달라지는 레이어에 사용한다. |
 | `__call__(x)` | `forward(x)`를 호출. `layer(x)` 형식으로 사용 가능하다. |
 
-### 2.2. backward와 gradient 누적
+### 2.2. Linear
 
-`Linear.backward(dout)`은 chain rule에 따라 `grad_w`와 `grad_b`를 계산하고, 하위 레이어로 전달할 `dx`를 반환한다.
+완전 연결(fully-connected) 레이어이다. 입력 $x$에 가중치 행렬 $W$를 곱하고 편향 $b$를 더하는 아핀 변환을 수행한다.
+
+**Forward**
+
+$$
+y = xW + b, \quad x \in \mathbb{R}^{N \times D_{in}},\ W \in \mathbb{R}^{D_{in} \times D_{out}},\ b \in \mathbb{R}^{D_{out}}
+$$
+
+입력 $x$는 배치 크기 $N$, 입력 차원 $D_{in}$의 행렬이다. 출력 $y$의 shape는 $(N, D_{out})$이다.
+
+**Backward**
+
+상위 레이어에서 전달된 gradient $\frac{\partial L}{\partial y}$를 `dout`이라 하면, chain rule로 각 파라미터와 입력에 대한 gradient는 다음과 같다.
 
 $$
 \frac{\partial L}{\partial W} = x^T \cdot \text{dout}, \quad
-\frac{\partial L}{\partial b} = \sum \text{dout}, \quad
+\frac{\partial L}{\partial b} = \sum_{i} \text{dout}_i, \quad
 \frac{\partial L}{\partial x} = \text{dout} \cdot W^T
 $$
 
-`grad_w[...] = ...` 형식의 in-place 대입은 `params`와 `grads`가 같은 배열을 참조하도록 유지한다. 새 배열을 생성하여 대입하면 `grads` 리스트가 이전 배열을 가리키게 되어 optimizer 업데이트가 동작하지 않는다.
+$\frac{\partial L}{\partial W}$와 $\frac{\partial L}{\partial b}$는 optimizer가 참조하는 `grads` 리스트에 in-place로 저장하고, $\frac{\partial L}{\partial x}$는 하위 레이어로 반환한다.
+
+**He 초기화**
+
+$$
+W \sim \mathcal{N}\!\left(0,\ \sqrt{\frac{2}{D_{in}}}\right)
+$$
+
+ReLU 활성화 이후 신호 분산이 레이어를 거칠수록 감소하는 문제를 방지하는 초기화 방식이다. sigmoid 계열에는 Xavier 초기화가 적합하지만, 이 프로젝트에서는 hidden layer의 activation 종류에 관계없이 He 초기화를 통일하여 사용한다.
+
+### 2.3. Sigmoid
+
+활성화 레이어로서 `src/nn/activations.py`의 `sigmoid` 함수를 감싸고, backward에 필요한 forward 출력을 저장한다.
+
+**Forward**
+
+$$
+\hat{y} = \sigma(x) = \frac{1}{1 + e^{-x}}
+$$
+
+**Backward**
+
+sigmoid의 미분은 자기 자신으로 표현된다.
+
+$$
+\frac{\partial L}{\partial x} = \text{dout} \cdot \sigma(x) \cdot (1 - \sigma(x))
+$$
+
+$\sigma(x)$는 `forward`에서 `self._out`으로 저장한 값을 재사용하므로 backward에서 재계산하지 않는다.
+
+### 2.4. ReLU
+
+활성화 레이어로서 양수 구간은 그대로 통과시키고 음수 구간은 0으로 만든다.
+
+**Forward**
+
+$$
+\hat{y} = \max(0, x) = \begin{cases} x & x > 0 \\ 0 & x \leq 0 \end{cases}
+$$
+
+**Backward**
+
+ReLU의 미분은 forward에서 양수였던 위치는 1, 음수였던 위치는 0이다.
+
+$$
+\frac{\partial L}{\partial x} = \text{dout} \cdot \mathbf{1}[x > 0]
+$$
+
+$\mathbf{1}[x > 0]$은 `forward`에서 `self._mask = x > 0`으로 저장한 boolean 배열이다. 재계산 없이 마스크를 그대로 곱한다.
+
+### 2.5. Sequential
+
+여러 레이어를 순서대로 연결하는 컨테이너이다. forward는 순방향, backward는 역방향으로 레이어를 순회한다.
+
+**Forward**
+
+$$
+y = f_n(\cdots f_2(f_1(x)) \cdots)
+$$
+
+$f_1, f_2, \ldots, f_n$은 등록된 레이어이다. 각 레이어의 출력이 다음 레이어의 입력이 된다.
+
+**Backward**
+
+$$
+\frac{\partial L}{\partial x} = f_1'\!\left(f_2'\!\left(\cdots f_n'(\text{dout}) \cdots\right)\right)
+$$
+
+역순으로 각 레이어의 `backward`를 호출하며 gradient를 전파한다. `params`와 `grads`는 생성자에서 하위 레이어의 리스트를 `extend`로 수집하므로, optimizer는 `Sequential.params` 하나로 모든 파라미터를 접근한다.
 
 ## 3. 구현
 
@@ -81,7 +161,7 @@ class Linear(Module):
 
 He 초기화(`scale = sqrt(2 / in_features)`)는 ReLU 활성화 이후 gradient 소실을 완화하는 초기화 방식이다. `np.random.default_rng(seed)`는 재현 가능한 초기화를 위해 seed를 지정할 수 있게 한다.
 
-### 3.2. Sigmoid와 ReLU
+### 3.2. Sigmoid
 
 ```python
 class Sigmoid(Module):
@@ -91,8 +171,13 @@ class Sigmoid(Module):
 
     def backward(self, dout):
         return dout * self._out * (1.0 - self._out)
+```
 
+`forward`에서 `self._out`에 sigmoid 출력을 저장한다. `backward`에서 `sigmoid'(x) = sigmoid(x) * (1 - sigmoid(x))`를 계산할 때 이 값을 재사용하므로 sigmoid를 다시 계산하지 않는다.
 
+### 3.3. ReLU
+
+```python
 class ReLU(Module):
     def forward(self, x):
         self._mask = x > 0
@@ -102,9 +187,9 @@ class ReLU(Module):
         return dout * self._mask
 ```
 
-`Sigmoid.backward`는 `forward`에서 저장한 `self._out`을 재사용하여 `sigmoid'(x) = sigmoid(x) * (1 - sigmoid(x))`를 계산한다. `ReLU.backward`는 `forward`에서 저장한 boolean mask를 적용하여 음수였던 위치의 gradient를 0으로 만든다.
+`forward`에서 `self._mask = x > 0`으로 boolean 마스크를 저장한다. `backward`에서 마스크를 그대로 곱하여 음수였던 위치의 gradient를 0으로 만든다.
 
-### 3.3. Sequential
+### 3.4. Sequential
 
 ```python
 class Sequential(Module):
@@ -191,4 +276,4 @@ conda run -n numpy_py311 pytest tests/stage3/test_layers.py -v
 
 `layers.py`는 `Module` 기반의 `Linear`, `Sigmoid`, `ReLU`, `Sequential` 레이어를 제공한다. `Linear.backward`는 chain rule로 `grad_w`, `grad_b`, `dx`를 계산하며, in-place 대입으로 `grads` 리스트와 배열 참조 일관성을 유지한다. `Sequential`은 하위 레이어의 `params`와 `grads`를 자동으로 집계하여 optimizer가 단일 진입점으로 모든 파라미터를 업데이트할 수 있게 한다.
 
-다음 Phase에서는 [[phase3.5_conv]]를 다룬다.
+다음 Phase에서는 [[phase3.5_cnn-layers]]를 다룬다.

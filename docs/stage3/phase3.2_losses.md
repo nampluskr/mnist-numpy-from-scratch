@@ -1,7 +1,7 @@
 ---
 tags: [docs, stage3, nn, losses]
 created: "2026-06-20"
-updated: "2026-06-20"
+updated: "2026-06-21"
 ---
 
 # 손실 함수와 gradient
@@ -29,7 +29,83 @@ updated: "2026-06-20"
 | `binary` | `binary_cross_entropy` | `sigmoid` | logits `(N, 1)`, targets `(N, 1)` |
 | `regression` | `mse` | 없음 (identity) | preds `(N, 1)`, targets `(N, 1)` |
 
-### 2.2. logit 입력 설계
+### 2.2. Cross Entropy
+
+다중 클래스 분류(multiclass classification)에 사용한다. logit을 먼저 `softmax`로 확률로 변환한 뒤, 정답 클래스의 log 확률을 최대화하는 방향으로 학습한다.
+
+**Softmax**
+
+$$
+\hat{y}_c = \text{softmax}(z)_c = \frac{e^{z_c}}{\sum_{k=1}^{C} e^{z_k}}
+$$
+
+$z_c$는 클래스 $c$의 logit이다. 출력 $\hat{y}_c$는 0과 1 사이의 확률이며 모든 클래스에 대해 합산하면 1이 된다.
+
+**Negative Log-Likelihood (NLL)**
+
+$$
+L_{\text{CE}} = -\frac{1}{N} \sum_{i=1}^{N} \sum_{c=1}^{C} y_{ic} \log(\hat{y}_{ic})
+$$
+
+$y_{ic}$는 one-hot 정답(정답 클래스만 1, 나머지 0)이므로, 합산은 정답 클래스 하나의 log 확률만 선택한다. $\hat{y}_{ic}$가 1에 가까울수록 loss가 0에 수렴한다.
+
+**gradient (softmax + CE 결합)**
+
+$$
+\frac{\partial L_{\text{CE}}}{\partial z} = \frac{\hat{y} - y}{N}
+$$
+
+softmax와 cross entropy를 결합하면 gradient가 `(예측값 - 정답) / N`으로 단순해진다. 이것은 두 함수를 따로 미분하여 연쇄 법칙으로 결합한 결과와 동일하다.
+
+### 2.3. Binary Cross Entropy
+
+이진 분류(binary classification)에 사용한다. logit을 `sigmoid`로 변환한 뒤, 정답이 1인 경우는 $\log(\hat{y})$, 정답이 0인 경우는 $\log(1-\hat{y})$를 최대화한다.
+
+**Sigmoid**
+
+$$
+\hat{y} = \sigma(z) = \frac{1}{1 + e^{-z}}
+$$
+
+출력은 0과 1 사이의 단일 확률값이다. $\hat{y} > 0.5$이면 클래스 1, 그 이하이면 클래스 0으로 예측한다.
+
+**Binary Cross Entropy**
+
+$$
+L_{\text{BCE}} = -\frac{1}{N} \sum_{i=1}^{N} \bigl[ y_i \log(\hat{y}_i) + (1 - y_i) \log(1 - \hat{y}_i) \bigr]
+$$
+
+정답이 1인 샘플($y_i = 1$)은 첫 번째 항만 남고, 정답이 0인 샘플($y_i = 0$)은 두 번째 항만 남는다. 두 항 모두 예측이 맞을수록 0에 가까워진다.
+
+**gradient (sigmoid + BCE 결합)**
+
+$$
+\frac{\partial L_{\text{BCE}}}{\partial z} = \frac{\hat{y} - y}{N}
+$$
+
+Cross Entropy와 동일하게, sigmoid와 BCE를 결합한 gradient도 `(예측값 - 정답) / N`으로 단순화된다.
+
+### 2.4. Mean Squared Error
+
+회귀(regression)에 사용한다. activation이 없으므로 logit이 곧 예측값이며, 예측값과 정답의 차이 제곱의 평균을 최소화한다.
+
+**MSE**
+
+$$
+L_{\text{MSE}} = \frac{1}{N} \sum_{i=1}^{N} (\hat{y}_i - y_i)^2
+$$
+
+$\hat{y}_i$는 모델이 출력한 실수 예측값, $y_i$는 정답 레이블이다. 이 프로젝트에서 `regression` task의 정답은 $y_i = \text{label} / 9.0 \in [0, 1]$이다.
+
+**gradient**
+
+$$
+\frac{\partial L_{\text{MSE}}}{\partial \hat{y}} = \frac{2(\hat{y} - y)}{N}
+$$
+
+MSE는 activation이 없으므로 $\hat{y}$에 대한 gradient가 곧 logit에 대한 gradient이다. 계수 2는 관례적으로 유지하며, 학습률로 흡수할 수도 있다.
+
+### 2.5. logit 입력 설계
 
 손실 함수가 activation을 내부에서 처리하면 backward gradient 수식이 단순해진다. `softmax`와 `cross_entropy`를 결합한 gradient는 `softmax(logits) - targets`이며, `sigmoid`와 `binary_cross_entropy`를 결합한 gradient도 `sigmoid(logits) - targets`이다. 두 수식 모두 batch 크기로 나누어 정규화한다.
 
@@ -52,7 +128,7 @@ $$
 | `mse` | 함수 | `preds (N, 1)`, `targets (N, 1)` | scalar | mean squared error |
 | `mse_grad` | 함수 | `preds (N, 1)`, `targets (N, 1)` | `(N, 1)` | `d(MSE)/d(preds)` |
 
-### 3.1. cross_entropy
+### 3.1. Cross Entropy
 
 ```python
 def cross_entropy(logits, targets):
@@ -66,7 +142,7 @@ def cross_entropy_grad(logits, targets):
 
 `log(preds + 1e-8)`는 `preds`가 0에 가까울 때 `log(0)` = `-inf` 발생을 방지한다. `targets * log(preds)`는 one-hot 정답이 1인 위치의 log 확률만 선택하며, 행 합산 후 평균을 취한다.
 
-### 3.2. binary_cross_entropy
+### 3.2. Binary Cross Entropy
 
 ```python
 def binary_cross_entropy(logits, targets):
@@ -80,7 +156,7 @@ def binary_cross_entropy_grad(logits, targets):
 
 `np.clip(sigmoid(logits), 1e-8, 1 - 1e-8)`는 `sigmoid` 출력을 `(0, 1)` 열린 구간으로 제한하여 `log(0)` 발생을 방지한다. gradient 계산에서는 clip 없이 `sigmoid`를 직접 사용한다.
 
-### 3.3. mse
+### 3.3. Mean Squared Error
 
 ```python
 def mse(preds, targets):

@@ -110,8 +110,8 @@ updated: 2026-06-20 (Stage 1 docs/notebooks/ 전체 작성 완료)
 - Phase 3.1 문서 작성: `docs/stage3/phase3.1_activations.md`
 - Phase 3.2 문서 작성: `docs/stage3/phase3.2_losses.md`
 - Phase 3.3 문서 작성: `docs/stage3/phase3.3_metrics.md`
-- Phase 3.4 문서 작성: `docs/stage3/phase3.4_layers.md`
-- Phase 3.5 문서 작성: `docs/stage3/phase3.5_conv.md`
+- Phase 3.4 문서 작성: `docs/stage3/phase3.4_mlp-layers.md`
+- Phase 3.5 문서 작성: `docs/stage3/phase3.5_cnn-layers.md`
 - Phase 4.1 문서 작성: `docs/stage4/phase4.1_mlp.md`
 - Phase 4.2 문서 작성: `docs/stage4/phase4.2_cnn.md`
 - PROJECT-TODO.md Stage 2~4 문서 항목 완료 처리
@@ -126,8 +126,8 @@ updated: 2026-06-20 (Stage 1 docs/notebooks/ 전체 작성 완료)
 | `docs/stage3/phase3.1_activations.md` | sigmoid 수치 안정성, softmax max subtraction, relu/identity |
 | `docs/stage3/phase3.2_losses.md` | logit 입력 설계, activation 내부 처리, gradient 수식 단순화 |
 | `docs/stage3/phase3.3_metrics.md` | accuracy/binary_accuracy logit 기반, R2 score 수식 |
-| `docs/stage3/phase3.4_layers.md` | Module 인터페이스, Linear backward in-place, Sequential params 집계 |
-| `docs/stage3/phase3.5_conv.md` | im2col/col2im 원리, Conv2d/MaxPool2d, Dropout inverted scaling |
+| `docs/stage3/phase3.4_mlp-layers.md` | Module 인터페이스, Linear backward in-place, Sequential params 집계 |
+| `docs/stage3/phase3.5_cnn-layers.md` | im2col/col2im 원리, Conv2d/MaxPool2d, Dropout inverted scaling |
 | `docs/stage4/phase4.1_mlp.md` | 3층 MLP 구조, seed 파생, logit 출력 설계 |
 | `docs/stage4/phase4.2_cnn.md` | Conv-FC 구조, CuPy/numpy 경계 처리, fallback 패턴 |
 

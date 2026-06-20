@@ -1,7 +1,7 @@
 ---
 tags: [docs, stage3, nn, activations]
 created: "2026-06-20"
-updated: "2026-06-20"
+updated: "2026-06-21"
 ---
 
 # 활성화 함수
@@ -29,16 +29,61 @@ updated: "2026-06-20"
 | `binary` | `sigmoid` | 이진 확률을 `[0, 1]` 범위로 변환 |
 | `regression` | `identity` | 원본 logit 값을 그대로 예측값으로 사용 |
 
-### 2.2. 수치 안정성
+### 2.2. Sigmoid
 
-`sigmoid`와 `softmax`는 지수 함수를 포함하므로 큰 입력값에서 overflow가 발생한다.
+이진 분류 출력 레이어에 사용한다. 임의의 실수 logit을 `(0, 1)` 범위의 확률로 변환한다.
 
-`sigmoid(x)`에서 `x`가 매우 크면 `exp(-x)`가 0에 가까워 안전하지만, `x`가 매우 작으면 `exp(-x)`가 overflow한다. 이를 방지하기 위해 양수 입력과 음수 입력을 분기 처리한다.
+$$
+\sigma(x) = \frac{1}{1 + e^{-x}}
+$$
 
-- `x >= 0`: `1 / (1 + exp(-x))`
-- `x < 0`: `exp(x) / (1 + exp(x))`
+$x = 0$이면 $\sigma(0) = 0.5$이고, $x \to +\infty$이면 1에 수렴, $x \to -\infty$이면 0에 수렴한다. 출력 범위는 열린 구간 $(0, 1)$이며 정확히 0 또는 1이 되지 않는다.
 
-`softmax(x)`에서는 각 행에서 최대값을 빼는 max subtraction 기법을 적용한다. `exp(x - max(x))`는 최대값이 0이 되므로 overflow 없이 계산된다.
+**수치 안정성**: $x$가 매우 작은 음수이면 $e^{-x}$가 overflow한다. 음수 영역에서는 수식을 변형하여 회피한다.
+
+$$
+\sigma(x) = \begin{cases} \dfrac{1}{1 + e^{-x}} & x \geq 0 \\[6pt] \dfrac{e^{x}}{1 + e^{x}} & x < 0 \end{cases}
+$$
+
+두 수식은 수학적으로 동일하지만, 각 영역에서 지수 함수 인수의 부호가 항상 음수이거나 양수로 제한되어 overflow가 발생하지 않는다.
+
+### 2.3. Softmax
+
+다중 클래스 분류 출력 레이어에 사용한다. logit 벡터를 클래스 확률 분포로 변환하며, 출력의 합이 1이 된다.
+
+$$
+\text{softmax}(z)_c = \frac{e^{z_c}}{\displaystyle\sum_{k=1}^{C} e^{z_k}}
+$$
+
+$z_c$는 클래스 $c$의 logit이다. 출력은 각 클래스에 속할 확률이며 모든 클래스에 대해 합산하면 1이다. 값이 가장 큰 logit의 확률이 가장 높게 나온다.
+
+**수치 안정성**: $z_c$가 크면 $e^{z_c}$가 overflow한다. 각 행에서 최대값을 빼는 max subtraction으로 회피한다.
+
+$$
+\text{softmax}(z)_c = \frac{e^{z_c - \max(z)}}{\displaystyle\sum_{k=1}^{C} e^{z_k - \max(z)}}
+$$
+
+$\max(z)$를 빼면 최대값 항이 $e^0 = 1$이 되어 overflow 없이 계산된다. 분자와 분모에 동일한 값을 빼므로 결과는 수학적으로 동일하다.
+
+### 2.4. ReLU
+
+hidden layer의 비선형 활성화로 사용한다. 음수 입력을 0으로 만들어 네트워크에 희소성(sparsity)을 부여한다.
+
+$$
+\text{ReLU}(x) = \max(0, x) = \begin{cases} x & x > 0 \\ 0 & x \leq 0 \end{cases}
+$$
+
+양수 구간에서 gradient가 1로 일정하므로, sigmoid나 tanh에서 발생하는 vanishing gradient 문제를 완화한다. 음수 구간에서는 gradient가 0이 되어 해당 뉴런이 업데이트되지 않는다(dead neuron).
+
+### 2.5. Identity
+
+activation이 필요 없는 regression 출력 레이어에 사용한다. 입력을 변환 없이 그대로 반환한다.
+
+$$
+\text{identity}(x) = x
+$$
+
+선형 변환 레이어 직후에 아무 변환도 하지 않으므로 출력이 raw logit 그대로 예측값이 된다. 다른 activation과 동일한 인터페이스를 제공하여 task별 분기 코드 없이 통일된 방식으로 조합할 수 있다.
 
 ## 3. 구현
 
@@ -51,7 +96,7 @@ updated: "2026-06-20"
 | `relu` | 함수 | `(N, D)` float32 | `(N, D)` float32 | 음수를 0으로 클리핑 |
 | `identity` | 함수 | `(N, D)` float32 | `(N, D)` float32 | 입력 그대로 반환 |
 
-### 3.1. sigmoid
+### 3.1. Sigmoid
 
 ```python
 def sigmoid(x):
@@ -62,9 +107,9 @@ def sigmoid(x):
     return out
 ```
 
-양수 영역과 음수 영역을 boolean mask로 분기 처리하여 수치 안정성을 확보한다. `np.empty_like(x)`로 출력 배열을 미리 할당하고 마스크 인덱싱으로 채운다.
+양수 영역(`x >= 0`)과 음수 영역(`x < 0`)을 boolean mask로 분기 처리하여 수치 안정성을 확보한다. `x`가 매우 작을 때 `exp(-x)`가 overflow하는 문제를 음수 영역 수식으로 회피한다. `np.empty_like(x)`로 출력 배열을 미리 할당하고 마스크 인덱싱으로 채운다.
 
-### 3.2. softmax
+### 3.2. Softmax
 
 ```python
 def softmax(x):
@@ -72,19 +117,25 @@ def softmax(x):
     return e / e.sum(axis=-1, keepdims=True)
 ```
 
-`x.max(axis=-1, keepdims=True)`는 각 행의 최대값을 구하고, 이를 뺀 뒤 지수 함수를 적용하여 overflow를 방지한다. `keepdims=True`는 브로드캐스팅을 위해 차원을 유지한다.
+`x.max(axis=-1, keepdims=True)`로 각 행의 최대값을 빼는 max subtraction을 적용한다. `exp(x - max(x))`에서 최대값 항은 `exp(0) = 1`이 되어 overflow 없이 계산된다. `keepdims=True`는 빼기와 나누기 연산에서 브로드캐스팅을 위해 차원을 유지한다.
 
-### 3.3. relu와 identity
+### 3.3. ReLU
 
 ```python
 def relu(x):
     return np.maximum(0.0, x)
+```
 
+`np.maximum(0.0, x)`는 원소별로 0과 비교하여 음수를 0으로 클리핑한다. hidden layer의 비선형 활성화로 사용하며, 양수 구간에서는 gradient가 1로 일정하여 vanishing gradient 문제를 완화한다.
+
+### 3.4. Identity
+
+```python
 def identity(x):
     return x
 ```
 
-`relu`는 `np.maximum(0.0, x)`로 음수를 0으로 클리핑한다. `identity`는 입력을 그대로 반환하며, regression 출력 레이어에서 activation 없이 logit을 통과시킬 때 사용한다.
+입력을 그대로 반환한다. regression 출력 레이어에서 activation 없이 logit을 예측값으로 사용할 때 쓴다. 다른 activation과 동일한 인터페이스를 유지하므로 task별 분기 없이 통일된 방식으로 호출할 수 있다.
 
 ## 4. 사용법
 
