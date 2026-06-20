@@ -71,6 +71,36 @@ updated: 2026-06-20 (Stage 1 docs/notebooks/ 전체 작성 완료)
 | 2026-06-20 | PROJECT-SPEC.md §3 서브섹션 도입 - 3.1 과제 및 모델 / 3.2 코드 구현 / 3.3 문서 및 실험 3개 서브섹션으로 재구성, 도입 문장 추가 | |
 | 2026-06-20 | Stage 0 환경 구성 편입 - Phase 0.0 conda 환경 구성 신설, docs/stage4/phase4.0_cupy-setup.md → docs/stage0/phase0.0_conda-setup.md 이동, PROJECT-SPEC.md §5.1 제목 변경, Stage 4에서 Phase 4.0 제거 | | |
 
+## 260621 Stage 5 src/core/ 구현 완료 및 Stage 6 tests/ 정비
+
+**완료 항목**
+- Phase 5.1: `tests/stage5/test_optimizers.py` 작성 (7 passed)
+- Phase 5.4: `src/core/logger.py` 구현 + `tests/stage5/test_logger.py` 작성 (5 passed)
+- Phase 6.1: `tests/stage6/test_train.py`, `tests/stage6/test_evaluate.py` 정위치 배치
+- Phase 6.2: `tests/stage6/test_predict.py`, `tests/stage6/test_visualize.py` 정위치 배치
+- `tests/stage5/` 정비: scripts/ 테스트 4개를 `tests/stage6/`으로 이동
+- PROJECT-TODO.md Phase 5.1~5.4, 6.1~6.2 완료 처리
+- PROJECT-TODO.md Phase 명칭 PROJECT-SPEC.md 기준으로 동기화 (7개 항목)
+
+**산출물**
+
+| 파일/산출물 | 내용 |
+|---|---|
+| `src/core/logger.py` | `Logger`: append / load / to_dict / to_csv |
+| `tests/stage5/test_optimizers.py` | TestSGD(3) + TestAdam(4), 7 passed |
+| `tests/stage5/test_logger.py` | TestLogger(5), 5 passed |
+| `tests/stage6/test_train.py` | `scripts/train.py` 검증 - build_config, main 반환값, checkpoint 저장 |
+| `tests/stage6/test_evaluate.py` | `scripts/evaluate.py` 검증 - build_config, main 반환값, checkpoint 로드 |
+| `tests/stage6/test_predict.py` | `scripts/predict.py` 검증 - 예측 수·dtype, n clips |
+| `tests/stage6/test_visualize.py` | `scripts/visualize.py` 검증 - PNG 파일 생성, logs 길이 |
+
+**검증**
+
+| 명령 | 결과 |
+|---|---|
+| `pytest tests/stage5/ -q` | 12 passed |
+| `pytest tests/stage6/ -q` | 95 passed, 8 skipped |
+
 ## 260620 Stage 2~4 docs/ 전체 작성 완료
 
 **완료 항목**
