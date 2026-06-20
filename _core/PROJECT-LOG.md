@@ -71,6 +71,57 @@ updated: 2026-06-20 (전면 리팩토링 계획 수립)
 | 2026-06-20 | PROJECT-SPEC.md §3 서브섹션 도입 - 3.1 과제 및 모델 / 3.2 코드 구현 / 3.3 문서 및 실험 3개 서브섹션으로 재구성, 도입 문장 추가 | |
 | 2026-06-20 | Stage 0 환경 구성 편입 - Phase 0.0 conda 환경 구성 신설, docs/stage4/phase4.0_cupy-setup.md → docs/stage0/phase0.0_conda-setup.md 이동, PROJECT-SPEC.md §5.1 제목 변경, Stage 4에서 Phase 4.0 제거 | | |
 
+## 260620 Stage 5·6 Phase 구조 재편 및 명칭 정비
+
+**완료 항목**
+- Stage 5 Phase 재편: 7개 → 5개 (Trainer+Evaluator 통합, Predictor+Visualizer 통합, Logger 신설)
+- Stage 6 Phase 재편: 6개 → 4개 (학습+평가 통합, 예측+시각화 통합, 실험 배치 스크립트 신설)
+- Phase 제목 명칭 정비: CLI → 스크립트, 영문 키워드 → 한글(학습 및 평가, 예측 및 시각화)
+- Phase 제목 특수문자 수정: "·" → "및" (docs-rules.md 키보드 입력 불가 문자 금지 반영)
+- docs-rules.md·template-rules.md 사용자 수정 반영
+
+**산출물**
+
+| 파일/산출물 | 내용 |
+|---|---|
+| `_core/PROJECT-SPEC.md` | Stage 5·6 Phase 목록 재편, src/core/logger.py 추가, Phase 명칭 정비 |
+| `_core/PROJECT-TODO.md` | Stage 5·6 Phase Task 재편 및 번호 재조정 |
+
+**결정사항**
+
+| 항목 | 결정 내용 |
+|---|---|
+| Stage 5 Phase 수 | 7개 → 5개 (5.2 Trainer+Evaluator, 5.3 Predictor+Visualizer, 5.4 Logger, 5.5 노트북) |
+| Stage 6 Phase 수 | 6개 → 4개 (6.1 학습+평가, 6.2 예측+시각화, 6.3 실험 배치, 6.4 노트북) |
+| src/core/logger.py | Phase 5.4 신설 — epoch별 loss/metric CSV/dict 기록 |
+
+## 260620 PROJECT-TODO.md 신규 Stage 0~7 구조 재작성
+
+**완료 항목**
+- PROJECT-TODO.md 신규 Stage 0~7 구조로 전면 재작성 (모든 체크박스 미완료 초기화)
+- PROJECT-BOOK-PLAN.md 삭제 (원칙은 docs-rules.md, template-rules.md, PROJECT-SPEC.md에 반영 완료)
+- PROJECT-SPEC.md Stage 7 삭제 → Stage 6 Phase 6.6에 실험 노트북 3개 통합
+- PROJECT-SPEC.md Phase 0.2에 후속 프레임워크 공통 인터페이스 규약 문서 task 추가
+- Phase 명칭 수정: 0.1 개발 환경 구성 / 2.1 MNIST 데이터 로딩 / 3.4 MLP 레이어 구현 / 3.5 CNN 레이어 구현
+- Stage 2 도입 문장 수정: `src/data/` 패키지에 ~로 시작
+
+**산출물**
+
+| 파일/산출물 | 내용 |
+|---|---|
+| `_core/PROJECT-TODO.md` | Stage 0~7 구조 전면 재작성, 모든 체크박스 미완료 |
+| `_core/PROJECT-SPEC.md` | Stage 7 삭제, Stage 6 Phase 6.6 노트북 4개로 확장, Phase 명칭 정비 |
+| `_core/PROJECT-BOOK-PLAN.md` | 삭제 (원칙 반영 완료) |
+
+**결정사항**
+
+| 항목 | 결정 내용 |
+|---|---|
+| Stage 수 | 0~6 (7개) — Stage 7 삭제 |
+| 실험 노트북 위치 | Stage 6 Phase 6.6 (cli + multiclass/binary/regression 비교 4개) |
+| framework 연계 문서 | Phase 0.2 마지막 task로 배치 |
+| 체크박스 상태 | 전체 미완료 — 문서·노트북 템플릿 기준 재작성 예정 |
+
 ## 260618 Stage 7 CNN 검증 및 문서화
 
 **완료 항목**

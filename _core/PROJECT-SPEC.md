@@ -1,7 +1,7 @@
 ---
 tags: [project, docs]
 created: 2026-06-08
-updated: 2026-06-20 (experiments/ 파일명 run_xxx.py 형식으로 변경)
+updated: 2026-06-20 (목표 독자 및 책 구조 원칙 추가)
 ---
 
 # PROJECT-SPEC.md
@@ -15,6 +15,8 @@ Stage - Phase 수준의 제목은 키워드 중심의 개조식 표현으로 작
 ## 1. 목적
 
 이 프로젝트의 목적은 NumPy와 CuPy만으로 MNIST 기반 딥러닝 모델 학습 과정을 구현하고, 이후 PyTorch, TensorFlow, JAX 프로젝트와 동일한 모듈 및 함수 인터페이스를 유지할 수 있는 기준 구현을 작성하는 것이다.
+
+목표 독자는 Python과 NumPy에 익숙하며 딥러닝을 처음 학습하는 사용자이다.
 
 ## 2. 배경
 
@@ -62,80 +64,72 @@ Phase별 참조 문서, 교육용 노트북, batch 실험 스크립트를 작성
 
 ## 5. 진행 단계
 
-프로젝트는 Stage 0에서 conda 환경을 구축하고 레거시 코드를 분석하여 구현 계획과 테스트 계획을 수립한 뒤, Stage 1부터 코드 구현 > 테스트 > 문서 > 노트북 4단계 워크플로우로 진행한다.
+Stage는 책의 Chapter에, Phase는 Chapter 내부의 Section에 대응한다. `src/` 하위 폴더 1개가 Stage 1개에 대응하여 폴더 구조와 목차가 일치한다. 후속 PyTorch, TensorFlow, JAX 프로젝트에서 동일한 Stage 번호와 제목을 유지하여 프레임워크 간 상호 참조가 가능하도록 한다. Chapter 0은 환경 구성과 설계 단계로 실습 노트북을 두지 않으며, Section 번호는 0.1부터 시작한다.
 
 ### 5.1. Stage 0 환경 구성 및 계획 수립
 
-conda 실행 환경을 구성하고, 레거시 `src/`의 task 스크립트 6개와 common 모듈 6개를 분석하여 manual/module 두 패턴을 비교하고, src 패키지 구조·구현 순서·TDD 원칙을 확정한다.
+개발 실행 환경을 구성하고, 레거시 `src/`의 task 스크립트 6개와 common 모듈 6개를 분석하여 src 패키지 구조, 구현 순서, TDD 원칙을 확정한다. Phase 0.0 레거시 코드 분석은 numpy 전용 단계이며 후속 프레임워크 책에서는 생략한다.
 
-- Phase 0.0 conda 환경 구성
-- Phase 0.1 레거시 코드 분석
+- Phase 0.0 레거시 코드 분석
+- Phase 0.1 개발 환경 구성
 - Phase 0.2 구현 계획 수립
 - Phase 0.3 테스트 계획 수립
 
-### 5.2. Stage 1 기본 설정 및 과제 규약 구현
+### 5.2. Stage 1 공통 유틸리티
 
-`src/config.py`에 hyperparameter 기본값을 정의하고, multiclass/binary/regression 세 task의 target 변환·loss·metric 규약을 `src/task.py`에 확정한다. 공통 utility(배치 분할, random seed, 파일 IO)도 이 단계에서 구현한다.
+`src/utils/` 패키지에 모든 Stage에서 공통으로 사용하는 유틸리티를 구현한다. 배치 분할과 난수 시드 고정, 파일 입출력과 모델 체크포인트, 학습 곡선 저장 기능을 제공한다.
 
-- Phase 1.1 config 구성
-- Phase 1.2 과제 규약 정의
-- Phase 1.3 utility 구현
-- Phase 1.4 Stage 1 노트북 작성
+- Phase 1.1 배치 및 난수 유틸리티 구현
+- Phase 1.2 파일 입출력 유틸리티 구현
+- Phase 1.3 시각화 유틸리티 구현
+- Phase 1.4 실습 노트북 작성
 
 ### 5.3. Stage 2 MNIST 데이터 로더 구현
 
-로컬 MNIST `.gz` 파일을 파싱하는 `load_mnist`부터, task별 target 변환을 포함한 `MnistDataset`, 배치·shuffle·반복 순회를 지원하는 `DataLoader`까지 데이터 파이프라인 전체를 구현한다.
+`src/data/` 패키지에 로컬 MNIST `.gz` 파일을 파싱하는 `load_mnist`부터, task별 target 변환을 포함한 `MnistDataset`, 배치·shuffle·반복 순회를 지원하는 `DataLoader`까지 데이터 파이프라인 전체를 구현한다.
 
-- Phase 2.1 MNIST raw data loading
-- Phase 2.2 Dataset 클래스 구현
+- Phase 2.1 MNIST 데이터 로딩
+- Phase 2.2 Dataset 구현
 - Phase 2.3 DataLoader 구현
-- Phase 2.4 Stage 2 노트북 작성
+- Phase 2.4 실습 노트북 작성
 
-### 5.4. Stage 3 nn 모듈 및 모델 구현
+### 5.4. Stage 3 nn 모듈 구현
 
-`src/nn/` 패키지 전체(activation, loss, metric, layer, conv)와 MLP/CNN 모델을 함께 구현한다. 공통 모듈 → MLP → CNN 순으로 점진적으로 구현하며, NumPy 기반 MLP와 CuPy/NumPy 양용 CNN을 같은 `Module` 인터페이스로 완성한다.
+`src/nn/` 패키지 전체(activation, loss, metric, layer, conv)를 구현한다. 후속 PyTorch, TensorFlow, JAX 프로젝트에서는 이 Stage의 번호와 제목을 유지하고 내용을 해당 프레임워크 API로 교체한다.
 
-- Phase 3.1 공통 모듈 구현
-- Phase 3.2 공통 모듈 문서
-- Phase 3.3 MLP 구현
-- Phase 3.4 MLP 문서
-- Phase 3.5 CNN 구현
-- Phase 3.6 CNN 문서
-- Phase 3.7 Stage 3 노트북 작성
+- Phase 3.1 activation 함수 구현
+- Phase 3.2 loss 함수 구현
+- Phase 3.3 metric 함수 구현
+- Phase 3.4 MLP 레이어 구현
+- Phase 3.5 CNN 레이어 구현
+- Phase 3.6 실습 노트북 작성
 
-### 5.5. Stage 4 실행 객체 구현
+### 5.5. Stage 4 모델 구현
 
-SGD/Adam optimizer, checkpoint, Trainer/Evaluator/Predictor 실행 객체를 구현하고, 이를 config 기반으로 조립하는 `Experiment`와 시각화 도구(Visualizer, training_plots)를 완성한다.
+`src/models/` 패키지에 NumPy 기반 MLP와 CuPy 기반 CNN을 같은 `Module` 인터페이스로 구현한다.
 
-- Phase 4.1 optimizer 구현
-- Phase 4.2 checkpoint 구현
-- Phase 4.3 Trainer 구현
-- Phase 4.4 Evaluator 구현
-- Phase 4.5 Predictor 구현
-- Phase 4.6 Experiment 구현
-- Phase 4.7 Visualizer 및 training plot helper 구현
-- Phase 4.8 Stage 4 노트북 작성
+- Phase 4.1 MLP 모델 구현
+- Phase 4.2 CNN 모델 구현
+- Phase 4.3 실습 노트북 작성
 
-### 5.6. Stage 5 클라이언트 코드 구현
+### 5.6. Stage 5 실행 객체 구현
 
-`scripts/` 아래에 train/evaluate/predict/visualize CLI를 구현하고, 각 스크립트가 커맨드라인 인수를 파싱하여 `Experiment`의 실행 객체를 올바르게 호출함을 테스트로 검증한다.
+`src/core/` 패키지에 SGD/Adam optimizer, Trainer/Evaluator/Predictor 실행 객체, 시각화 도구, 학습 로그 기록 도구를 구현한다.
 
-- Phase 5.1 training CLI 구현
-- Phase 5.2 evaluation CLI 구현
-- Phase 5.3 prediction CLI 구현
-- Phase 5.4 visualization CLI 구현
-- Phase 5.5 Stage 5 노트북 작성
+- Phase 5.1 optimizer 구현
+- Phase 5.2 Trainer 및 Evaluator 구현
+- Phase 5.3 Predictor 및 Visualizer 구현
+- Phase 5.4 Logger 구현
+- Phase 5.5 실습 노트북 작성
 
-### 5.7. Stage 6 documentation 및 verification
+### 5.7. Stage 6 클라이언트 코드 구현
 
-multiclass/binary/regression 각 task에서 MLP와 CNN 실험 결과를 수집하고, task별 tutorial 문서와 비교 실험 노트북을 작성한다. 마지막으로 후속 PyTorch 프로젝트 연계를 위한 인터페이스 규약과 마이그레이션 체크리스트를 정리한다.
+`scripts/` 아래에 train/evaluate/predict/visualize 스크립트를 작성하고, `experiments/`에 배치 실행 스크립트를 작성한다. multiclass/binary/regression 각 task에서 MLP와 CNN 실험 결과를 비교하는 노트북을 포함한다.
 
-- Phase 6.1 experiment 실행 및 result 수집
-- Phase 6.2 Multiclass tutorial
-- Phase 6.3 Binary tutorial
-- Phase 6.4 Regression tutorial
-- Phase 6.5 framework 연계 준비
-- Phase 6.6 Stage 6 노트북 작성
+- Phase 6.1 학습 및 평가 스크립트 작성
+- Phase 6.2 예측 및 시각화 스크립트 작성
+- Phase 6.3 실험 배치 스크립트 작성
+- Phase 6.4 실습 노트북 작성
 
 ## 6. 확정 구조
 
@@ -167,14 +161,13 @@ MNIST 로컬 저장소는 다음 4개 파일을 포함해야 한다.
 ```text
 src/
 ├── __init__.py
-├── config.py
-├── task.py
 ├── nn/                  ← numpy-only: torch.nn이 제공하는 구성요소를 직접 구현
 │   ├── __init__.py
 │   ├── activations.py
 │   ├── layers.py
 │   ├── losses.py
-│   └── metrics.py
+│   ├── metrics.py
+│   └── conv.py
 ├── data/
 │   ├── __init__.py
 │   ├── mnist.py
@@ -186,45 +179,44 @@ src/
 ├── core/
 │   ├── __init__.py
 │   ├── optimizers.py
-│   ├── checkpoints.py
 │   ├── trainer.py
 │   ├── evaluator.py
 │   ├── predictor.py
 │   ├── visualizer.py
-│   └── experiment.py
+│   └── logger.py
 └── utils/
     ├── __init__.py
     ├── batching.py
     ├── random.py
-    ├── training_plots.py
-    └── io.py
+    ├── io.py
+    ├── checkpoints.py
+    └── training_plots.py
 ```
 
 각 위치의 책임은 다음 기준으로 분리한다.
 
 | 위치 | 책임 |
 | --- | --- |
-| `src/config.py` | 기본 경로, 기본 split, 기본 task, 기본 실행 설정을 정의한다. |
-| `src/task.py` | task별 output_dim, loss, metric, prediction_mode 규약을 단일 진입점으로 관리한다. `transform_targets`는 각 Dataset 클래스가 내부에서 호출하는 헬퍼로 사용한다. |
 | `src/nn/activations.py` | `sigmoid`, `softmax`, `identity`, `relu` 활성화 함수를 구현한다. numpy-only (`torch.nn.functional` 대응). |
 | `src/nn/layers.py` | `Linear`, `Sigmoid`, `ReLU`, `Sequential` 등 레이어 모듈을 구현한다. numpy-only (`torch.nn` 대응). |
 | `src/nn/losses.py` | `cross_entropy`, `binary_cross_entropy`, `mse` 손실 함수와 이들의 gradient 함수를 구현한다. numpy-only (`torch.nn` 대응). |
 | `src/nn/metrics.py` | `accuracy`, `binary_accuracy`, `r2_score` 평가 지표를 구현한다. numpy-only. |
+| `src/nn/conv.py` | `im2col`/`col2im` 기반 `Conv2d`, `MaxPool2d`, `Flatten`, `Dropout`을 구현한다. numpy-only. |
 | `src/data/mnist.py` | 로컬 MNIST `*.gz` 파일 로딩(`load_mnist`)과 `MnistDataset` 클래스를 제공한다. task별 target 변환은 `MnistDataset` 내부에서 처리한다. |
 | `src/data/dataloader.py` | 범용 `DataLoader` 클래스를 제공한다. `__len__`과 `__getitem__`을 구현한 Dataset이면 모두 수용한다. |
 | `src/models/mlp.py` | NumPy 기반 MLP 생성, forward, backward, update를 구현한다. `src/nn/` 모듈을 조립하여 구성한다. |
 | `src/models/cnn.py` | CuPy 기반 CNN 생성, forward, backward, update를 구현한다. |
 | `src/core/optimizers.py` | `SGD`, `Adam` 옵티마이저를 구현한다. model.params/grads 기반 in-place 업데이트를 수행한다. |
-| `src/core/checkpoints.py` | 모델 파라미터를 파일로 저장하고 불러온다. |
 | `src/core/trainer.py` | 학습 루프를 실행한다. `DataLoader`를 수신하여 loss/metric을 집계한다. |
 | `src/core/evaluator.py` | 평가 루프를 실행한다. `DataLoader`를 수신하여 loss/metric을 집계한다. |
 | `src/core/predictor.py` | task별 예측 후처리를 수행한다. |
 | `src/core/visualizer.py` | 예측 결과와 샘플 이미지를 시각화한다. |
-| `src/core/experiment.py` | dataset, dataloader, model, optimizer, trainer, evaluator, predictor를 조립하는 최상위 진입점이다. |
+| `src/core/logger.py` | epoch별 loss/metric 로그를 기록하고 CSV 또는 dict 형태로 반환한다. |
 | `src/utils/batching.py` | mini-batch 인덱스 생성과 shuffle을 담당한다. |
 | `src/utils/random.py` | 난수 시드를 고정한다. |
-| `src/utils/training_plots.py` | 학습 로그 loss/metric 곡선을 PNG 파일로 저장한다. |
 | `src/utils/io.py` | 파일 저장·로딩 보조 함수를 제공한다. |
+| `src/utils/checkpoints.py` | 모델 파라미터를 `.npz` 파일로 저장하고 불러온다. CuPy array는 NumPy로 변환하여 저장한다. |
+| `src/utils/training_plots.py` | 학습 로그 loss/metric 곡선을 PNG 파일로 저장한다. |
 
 ### 6.3. `scripts`, `core`, `experiments` 관계
 
@@ -232,12 +224,12 @@ src/
 
 | 클라이언트 파일 | 참조 대상 |
 | --- | --- |
-| `scripts/train.py` | `src/core/experiment.py`, `src/core/trainer.py` |
-| `scripts/evaluate.py` | `src/core/experiment.py`, `src/core/evaluator.py` |
-| `scripts/predict.py` | `src/core/experiment.py`, `src/core/predictor.py` |
-| `scripts/visualize.py` | `src/core/experiment.py`, `src/core/visualizer.py`, `src/utils/training_plots.py` |
+| `scripts/train.py` | `src/core/trainer.py`, `src/core/optimizers.py`, `src/data/`, `src/models/`, `src/utils/` |
+| `scripts/evaluate.py` | `src/core/evaluator.py`, `src/utils/checkpoints.py` |
+| `scripts/predict.py` | `src/core/predictor.py`, `src/utils/checkpoints.py` |
+| `scripts/visualize.py` | `src/core/visualizer.py`, `src/utils/training_plots.py`, `src/utils/checkpoints.py` |
 
-`experiments/` 폴더는 `scripts/*.py`를 subprocess로 호출하는 batch job 스크립트를 보관한다. `CONFIGS` 리스트에 정의된 조합을 순차 실행하며, 결과는 `outputs/{exp_name}/`에 저장한다. `notebooks/stage7/`이 이 결과를 시각화하는 튜토리얼을 담당한다.
+`experiments/` 폴더는 `scripts/*.py`를 subprocess로 호출하는 batch job 스크립트를 보관한다. `CONFIGS` 리스트에 정의된 조합을 순차 실행하며, 결과는 `outputs/{exp_name}/`에 저장한다. `notebooks/stage6/`의 task별 비교 노트북이 이 결과를 시각화하는 튜토리얼을 담당한다.
 
 `exp_name` 형식: `{task}_{model}_ep{epochs}_lr{lr}_bs{batch_size}`
 
@@ -260,12 +252,11 @@ experiments/
 tests/
 ├── conftest.py
 ├── stage1/
-│   ├── test_config.py
-│   ├── test_task.py
 │   ├── test_batching.py
 │   ├── test_random.py
-│   ├── test_training_plots.py
-│   └── test_io.py
+│   ├── test_io.py
+│   ├── test_checkpoints.py
+│   └── test_training_plots.py
 ├── stage2/
 │   ├── test_mnist.py
 │   ├── test_dataset.py
@@ -275,34 +266,34 @@ tests/
 │   ├── test_losses.py
 │   ├── test_metrics.py
 │   ├── test_layers.py
-│   ├── test_mlp.py
-│   ├── test_cnn.py
-│   └── test_experiment.py
+│   └── test_conv.py
 ├── stage4/
+│   ├── test_mlp.py
+│   └── test_cnn.py
+├── stage5/
 │   ├── test_optimizers.py
-│   ├── test_checkpoints.py
 │   ├── test_trainer.py
 │   ├── test_evaluator.py
 │   ├── test_predictor.py
-│   └── test_experiment.py
-└── stage5/
+│   └── test_visualizer.py
+└── stage6/
     ├── test_train.py
     ├── test_evaluate.py
     ├── test_predict.py
     └── test_visualize.py
 ```
 
-테스트 작성 우선순위는 설정과 task 규약에서 시작하여 데이터, 모델, 실행 객체, 클라이언트 코드 순으로 확장한다.
+테스트 작성 우선순위는 유틸리티에서 시작하여 데이터, nn 모듈, 모델, 실행 객체, 클라이언트 코드 순으로 확장한다.
 
 | 우선순위 | 테스트 파일 | 대상 |
 | --- | --- | --- |
-| 1 | `tests/stage1/test_task.py` | task별 target 변환과 task spec |
+| 1 | `tests/stage1/test_batching.py` | mini-batch 분할과 shuffle |
 | 2 | `tests/stage2/test_mnist.py` | 로컬 MNIST 로딩, split 처리, shape 검증 |
-| 3 | `tests/stage3/test_mlp.py` | MLP 생성, forward shape, parameter update 흐름 |
-| 4 | `tests/stage4/test_optimizers.py` | SGD, Adam 파라미터 업데이트 |
-| 5 | `tests/stage4/test_trainer.py` | 학습 루프와 batch 처리 |
-| 6 | `tests/stage4/test_evaluator.py` | 평가 루프와 metric 집계 |
-| 7 | `tests/stage4/test_experiment.py` | data, task, model, core 실행 객체 조립 |
+| 3 | `tests/stage3/test_layers.py` | Linear forward/backward, Sequential |
+| 4 | `tests/stage4/test_mlp.py` | MLP 생성, forward shape, parameter update 흐름 |
+| 5 | `tests/stage5/test_optimizers.py` | SGD, Adam 파라미터 업데이트 |
+| 6 | `tests/stage5/test_trainer.py` | 학습 루프와 batch 처리 |
+| 7 | `tests/stage5/test_evaluator.py` | 평가 루프와 metric 집계 |
 
 ### 6.5. 레거시 코드와 구현 파일 매핑
 
@@ -320,34 +311,30 @@ task별 차이와 구현 대상 파일의 매핑 기준은 아래와 같다.
 
 | 구분 | multiclass 레거시 | binary 레거시 | regression 레거시 | 구현 대상 파일 |
 | --- | --- | --- | --- | --- |
-| target 변환 | one-hot, shape `(N, 10)` | 홀수/짝수 이진화, shape `(N, 1)` | `label / 9.0`, shape `(N, 1)` | `src/task.py` |
-| output dimension | `10` | `1` | `1` | `src/task.py`, `src/models/mlp.py` |
-| output activation | `softmax` | `sigmoid` | `identity` | `src/task.py`, `src/models/mlp.py` |
-| loss | `cross_entropy` | `binary_cross_entropy` | `mse` | `src/task.py`, `src/core/trainer.py`, `src/core/evaluator.py` |
-| metric | `accuracy` | `binary_accuracy` | `r2_score` | `src/task.py`, `src/core/trainer.py`, `src/core/evaluator.py` |
+| target 변환 | one-hot, shape `(N, 10)` | 홀수/짝수 이진화, shape `(N, 1)` | `label / 9.0`, shape `(N, 1)` | `src/data/mnist.py` (`MnistDataset` 내부) |
+| output dimension | `10` | `1` | `1` | `src/models/mlp.py` |
+| output activation | `softmax` | `sigmoid` | `identity` | `src/models/mlp.py` |
+| loss | `cross_entropy` | `binary_cross_entropy` | `mse` | `src/core/trainer.py`, `src/core/evaluator.py` |
+| metric | `accuracy` | `binary_accuracy` | `r2_score` | `src/core/trainer.py`, `src/core/evaluator.py` |
 | output gradient | `(preds - y) / batch_size` | `(preds - y) / batch_size` | `2 * (preds - y) / batch_size` | `src/nn/` 하위 구현 |
 | prediction 후처리 | `argmax` | `prob >= 0.5` | `round(clip(raw * 9.0, 0, 9))` | `src/core/predictor.py` |
 
 파일 단위 구현 계획은 공통 책임과 task 규약을 분리하는 방향으로 유지한다.
 
-- `src/data/mnist.py`: gzip 파일 읽기, split 선택, 이미지/레이블 원본 로딩 담당
-- `src/task.py`: target 변환, output dimension, loss, metric, prediction 후처리 규약 담당
-- `src/models/mlp.py`: forward, backward, parameter update에 필요한 NumPy MLP 구현 담당
+- `src/data/mnist.py`: gzip 파일 읽기, split 선택, 이미지/레이블 원본 로딩과 task별 target 변환 담당
+- `src/models/mlp.py`: output dimension, output activation, forward, backward, parameter update 담당
 - `src/core/trainer.py`: batch 반복, 학습 loss/metric 집계 담당
 - `src/core/evaluator.py`: 평가 loss/metric 집계 담당
 - `src/core/predictor.py`: task별 prediction 후처리와 출력 형식 담당
 
 ### 6.6. 공통 함수명과 입력·출력 규약
 
-Stage 1 초기 구현에서 사용할 공통 진입점은 후속 프레임워크 프로젝트와 같은 이름을 유지해야 한다.
+Stage 2 이후 구현에서 사용할 공통 진입점은 후속 프레임워크 프로젝트와 같은 이름을 유지해야 한다.
 
 우선 확정한 파일별 공개 함수와 클래스는 아래와 같다.
 
 | 파일 | 공개 진입점 | 입력 | 출력 | 책임 |
 | --- | --- | --- | --- | --- |
-| `src/config.py` | `get_default_config()` | 없음 | `dict` | 기본 경로, seed, batch size, epoch, task, split 반환 |
-| `src/task.py` | `get_task_spec(task)` | `task: str` | `dict` | `output_dim`, activation, loss, metric, prediction_mode 반환 |
-| `src/task.py` | `transform_targets(labels, task)` | `labels: np.ndarray`, `task: str` | `np.ndarray` | task별 target 변환 - 각 Dataset 클래스 내부에서 호출 |
 | `src/data/mnist.py` | `load_mnist(split)` | `split: str` | `(images, labels)` tuple | 로컬 MNIST 원본 배열 로딩 |
 | `src/data/mnist.py` | `MnistDataset` | `split: str`, `task: str` | dataset instance | MNIST 로딩·정규화·task별 target 변환 담당 |
 | `src/data/dataloader.py` | `DataLoader` | `dataset`, `batch_size: int`, `shuffle: bool` | dataloader instance | 범용 배치·셔플 이터레이터 (`__len__`+`__getitem__` 프로토콜 요구) |
@@ -361,7 +348,7 @@ Stage 1 초기 구현에서 사용할 공통 진입점은 후속 프레임워크
 | `src/core/trainer.py` | `Trainer` | model, optimizer, task spec | trainer instance | 학습 루프 실행 |
 | `src/core/evaluator.py` | `Evaluator` | model, task spec | evaluator instance | 평가 루프 실행 |
 | `src/core/predictor.py` | `Predictor` | model, task spec | predictor instance | 예측 및 후처리 실행 |
-| `src/core/experiment.py` | `Experiment` | config | experiment instance | data, task, model, 실행 객체 조립 |
+| `src/utils/checkpoints.py` | `save_checkpoint`, `load_checkpoint` | model, path | 없음 / model params | 모델 파라미터 저장·로드 |
 
 초기 구현에서 통일할 입력·출력 규약은 아래 기준을 따른다.
 
@@ -389,7 +376,7 @@ Stage 1 초기 구현에서 사용할 공통 진입점은 후속 프레임워크
 
 ### 6.7. 실패 테스트 작성 원칙과 `pytest` 실행 기준
 
-Stage 1부터는 구현보다 테스트가 먼저 작성되도록 TDD 순서를 고정한다.
+Stage 1부터 구현보다 테스트가 먼저 작성되도록 TDD 순서를 고정한다.
 
 실패 테스트 작성 원칙은 아래 기준을 따른다.
 
@@ -409,7 +396,8 @@ Stage 1부터는 구현보다 테스트가 먼저 작성되도록 TDD 순서를 
 | Stage 3 전체 | `pytest tests/stage3/ -q` |
 | Stage 4 전체 | `pytest tests/stage4/ -q` |
 | Stage 5 전체 | `pytest tests/stage5/ -q` |
-| 단일 파일 | `pytest tests/stage3/test_mlp.py -q` |
+| Stage 6 전체 | `pytest tests/stage6/ -q` |
+| 단일 파일 | `pytest tests/stage4/test_mlp.py -q` |
 | 전체 스모크 확인 | `pytest tests/ -q` |
 
 ### 6.8. `notebooks` 폴더 구조
@@ -419,27 +407,27 @@ Stage 1부터는 구현보다 테스트가 먼저 작성되도록 TDD 순서를 
 ```text
 notebooks/
 ├── stage1/
-│   └── stage1-1_config-and-task.ipynb
+│   └── stage1-1_utils.ipynb
 ├── stage2/
 │   ├── stage2-1_mnist-loading.ipynb
 │   └── stage2-2_dataset-and-dataloader.ipynb
 ├── stage3/
 │   ├── stage3-1_activations.ipynb
-│   ├── stage3-2_layers.ipynb
-│   ├── stage3-3_losses-and-metrics.ipynb
-│   ├── stage3-4_mlp.ipynb
-│   ├── stage3-5_cnn-architecture.ipynb
-│   └── stage3-6_cnn-training.ipynb
+│   ├── stage3-2_losses-and-metrics.ipynb
+│   ├── stage3-3_layers.ipynb
+│   └── stage3-4_conv-architecture.ipynb
 ├── stage4/
-│   ├── stage4-1_optimizers.ipynb
-│   ├── stage4-2_trainer-and-evaluator.ipynb
-│   └── stage4-3_experiment.ipynb
+│   ├── stage4-1_mlp.ipynb
+│   └── stage4-2_cnn-model.ipynb
 ├── stage5/
-│   └── stage5-1_cli-scripts.ipynb
+│   ├── stage5-1_optimizers.ipynb
+│   ├── stage5-2_trainer-and-evaluator.ipynb
+│   └── stage5-3_predictor-and-visualizer.ipynb
 └── stage6/
-    ├── stage6-1_multiclass-experiment.ipynb
-    ├── stage6-2_binary-experiment.ipynb
-    └── stage6-3_regression-experiment.ipynb
+    ├── stage6-1_cli-and-experiments.ipynb
+    ├── stage6-2_multiclass-experiment.ipynb
+    ├── stage6-3_binary-experiment.ipynb
+    └── stage6-4_regression-experiment.ipynb
 ```
 
 파일명 규칙은 `stage{N}-{순번}_{kebab-case-keywords}.ipynb`로 통일한다.
@@ -448,21 +436,21 @@ notebooks/
 
 | 노트북 | 핵심 학습 내용 | 주요 그래프 |
 | --- | --- | --- |
-| `stage1-1_config-and-task` | config dict, 3 task spec 비교, target 변환 | target 분포 bar |
+| `stage1-1_utils` | batching, random seed, io, checkpoints, training_plots | - |
 | `stage2-1_mnist-loading` | `load_mnist`, shape/dtype, 픽셀 분포 | 샘플 16장 grid, histogram |
 | `stage2-2_dataset-and-dataloader` | `MnistDataset` 3종, `DataLoader` 배치 | target 시각화 |
 | `stage3-1_activations` | sigmoid/relu/softmax 수식 및 그래프 | 4종 함수 그래프 |
-| `stage3-2_layers` | `Linear` forward/backward, `Sequential` | shape 추적 표 |
-| `stage3-3_losses-and-metrics` | 3 loss 값+gradient, 3 metric 데모 | loss 곡선 비교 |
-| `stage3-4_mlp` | MLP params shape, 수동 step/epoch | 수동 학습 곡선 |
-| `stage3-5_cnn-architecture` | im2col 원리, CNN vs MLP 파라미터 비교 | shape 추적 |
-| `stage3-6_cnn-training` | CNN `Experiment`, CuPy fallback | 예측 grid, 비교 표 |
-| `stage4-1_optimizers` | SGD vs Adam, lr 민감도 비교 | 수렴 비교 그래프 |
-| `stage4-2_trainer-and-evaluator` | `Trainer.fit()`, `Evaluator.evaluate()`, task dispatch | 3 task log 비교 |
-| `stage4-3_experiment` | `Experiment`, `Predictor`, `Checkpoint` | 학습 곡선, 예측 grid |
-| `stage5-1_cli-scripts` | `scripts/*.py` `main(args)` 직접 호출 | visualize 출력 |
-| `stage6-1_multiclass-experiment` | multiclass MLP+CNN 전체 실험 | training curve, 예측 grid |
-| `stage6-2_binary-experiment` | binary MLP+CNN 전체 실험 | training curve, 예측 grid |
-| `stage6-3_regression-experiment` | regression MLP+CNN 전체 실험 | training curve, 예측 grid |
+| `stage3-2_losses-and-metrics` | 3 loss 값+gradient, 3 metric 데모 | loss 곡선 비교 |
+| `stage3-3_layers` | `Linear` forward/backward, `Sequential` | shape 추적 표 |
+| `stage3-4_conv-architecture` | im2col 원리, Conv2d/MaxPool2d shape 추적 | shape 추적 |
+| `stage4-1_mlp` | MLP params shape, forward/backward, parameter update | 수동 학습 곡선 |
+| `stage4-2_cnn-model` | CNN forward/backward, CuPy fallback | shape 추적, 비교 표 |
+| `stage5-1_optimizers` | SGD vs Adam, lr 민감도 비교 | 수렴 비교 그래프 |
+| `stage5-2_trainer-and-evaluator` | `Trainer.fit()`, `Evaluator.evaluate()`, task dispatch | 3 task log 비교 |
+| `stage5-3_predictor-and-visualizer` | `Predictor`, `Visualizer`, checkpoint 저장·로드 | 예측 grid |
+| `stage6-1_cli-and-experiments` | `scripts/*.py` 직접 호출, batch experiment 실행 | visualize 출력 |
+| `stage6-2_multiclass-experiment` | multiclass MLP vs CNN 비교 실험 | training curve, 예측 grid |
+| `stage6-3_binary-experiment` | binary MLP vs CNN 비교 실험 | training curve, 예측 grid |
+| `stage6-4_regression-experiment` | regression MLP vs CNN 비교 실험 | training curve, 예측 grid |
 
 노트북 형식은 마크다운(한국어 설명) + 코드(영어) + 그래프(`plt.show()` inline)를 원칙으로 한다. 실행 환경은 `numpy_py311`을 기본으로 하며, CNN 노트북은 CuPy `try/except` fallback을 사용한다.
