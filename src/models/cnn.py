@@ -9,7 +9,7 @@ except ImportError:
 
 from src.nn.conv import Conv2d, MaxPool2d, Flatten, Dropout
 from src.nn.layers import Linear, ReLU, Sequential
-from src.task import get_task_spec
+from src.data.mnist import get_task_spec
 
 
 class CNN:

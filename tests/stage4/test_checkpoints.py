@@ -2,7 +2,7 @@
 
 import numpy as np
 import pytest
-from src.core.checkpoints import save, load
+from src.utils.checkpoints import save, load
 
 
 class SimpleModel:

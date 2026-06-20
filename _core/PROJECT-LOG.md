@@ -1,7 +1,7 @@
 ---
 tags: [project, docs]
 created: 2026-06-15
-updated: 2026-06-20 (전면 리팩토링 계획 수립)
+updated: 2026-06-20 (src/ 코드 변경 - config/task/experiment 삭제 및 checkpoints 이동)
 ---
 
 # PROJECT-LOG.md
@@ -70,6 +70,36 @@ updated: 2026-06-20 (전면 리팩토링 계획 수립)
 | 2026-06-20 | experiments/ 파일명 변경 - train/evaluate/predict/visualize_all.py → run_train/evaluate/predict/visualize.py, run_all.py import 경로 갱신 | |
 | 2026-06-20 | PROJECT-SPEC.md §3 서브섹션 도입 - 3.1 과제 및 모델 / 3.2 코드 구현 / 3.3 문서 및 실험 3개 서브섹션으로 재구성, 도입 문장 추가 | |
 | 2026-06-20 | Stage 0 환경 구성 편입 - Phase 0.0 conda 환경 구성 신설, docs/stage4/phase4.0_cupy-setup.md → docs/stage0/phase0.0_conda-setup.md 이동, PROJECT-SPEC.md §5.1 제목 변경, Stage 4에서 Phase 4.0 제거 | | |
+
+## 260620 src/ 코드 변경 - config/task/experiment 삭제 및 checkpoints 이동
+
+**완료 항목**
+- `src/config.py` 삭제 - 기본값을 각 스크립트 `_DEFAULTS` 상수로 이동
+- `src/task.py` 삭제 - `get_task_spec()` / `transform_targets()` 를 `src/data/mnist.py`로 흡수
+- `src/core/experiment.py` 삭제 - scripts/ 4개를 직접 조립 방식으로 재작성
+- `src/core/checkpoints.py` → `src/utils/checkpoints.py` git mv
+- 연관 테스트 삭제 (test_config, test_task, test_experiment x2)
+- import 갱신 (mlp, cnn, test_trainer, test_evaluator, test_predictor, test_checkpoints)
+- pytest 전체 통과 확인 (351 passed, 8 skipped)
+
+**산출물**
+
+| 파일/산출물 | 내용 |
+|---|---|
+| `src/data/mnist.py` | `get_task_spec()`, `transform_targets()`, `_TASK_SPECS` 흡수, `_DATASET_DIR` 기본값 상수화 |
+| `src/utils/checkpoints.py` | `src/core/` 에서 이동 (내용 무변경) |
+| `scripts/train.py` | `Experiment` 제거, DataLoader/Model/Optimizer/Trainer/Evaluator 직접 조립 |
+| `scripts/evaluate.py` | `Experiment` 제거, 직접 조립 |
+| `scripts/predict.py` | `Experiment` 제거, 직접 조립 |
+| `scripts/visualize.py` | `Experiment` 제거, 직접 조립 |
+
+**결정사항**
+
+| 항목 | 결정 내용 |
+|---|---|
+| `get_task_spec()` 이동 위치 | `src/data/mnist.py` — task 규약은 dataset과 함께 관리 |
+| scripts/ 기본값 | `_DEFAULTS` 모듈 상수로 하드코딩 (`get_default_config()` 대체) |
+| `Experiment` 대체 | 각 스크립트에서 직접 조립 (PROJECT-SPEC §6.3 기준 준수) |
 
 ## 260620 Stage 5·6 Phase 구조 재편 및 명칭 정비
 

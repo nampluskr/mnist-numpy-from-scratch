@@ -7,20 +7,28 @@ import argparse
 
 import numpy as np
 
-from src.config import get_default_config
-from src.core.experiment import Experiment
-from src.core import checkpoints
-from src.data.mnist import MnistDataset
+from src.data.mnist import MnistDataset, get_task_spec
+from src.models.mlp import MLP
+from src.models.cnn import CNN
+from src.core.predictor import Predictor
+from src.utils import checkpoints
+
+
+_DEFAULTS = {
+    "dataset_dir": "/mnt/d/datasets/mnist",
+    "task": "multiclass",
+    "model": "mlp",
+    "seed": 42,
+}
 
 
 def parse_args():
-    defaults = get_default_config()
     parser = argparse.ArgumentParser(description="Predict with MLP/CNN on MNIST test samples")
-    parser.add_argument("--task", default=defaults["task"],
+    parser.add_argument("--task", default=_DEFAULTS["task"],
                         choices=["multiclass", "binary", "regression"])
-    parser.add_argument("--model", default="mlp", choices=["mlp", "cnn"])
-    parser.add_argument("--seed", type=int, default=defaults["seed"])
-    parser.add_argument("--dataset_dir", default=defaults["dataset_dir"])
+    parser.add_argument("--model", default=_DEFAULTS["model"], choices=["mlp", "cnn"])
+    parser.add_argument("--seed", type=int, default=_DEFAULTS["seed"])
+    parser.add_argument("--dataset_dir", default=_DEFAULTS["dataset_dir"])
     parser.add_argument("--checkpoint", default=None,
                         help="Path to load model parameters before prediction")
     parser.add_argument("--n", type=int, default=16,
@@ -43,13 +51,25 @@ def main(args=None):
     if args is None:
         args = parse_args()
     config = build_config(args)
-    exp = Experiment(config)
+
+    task = config["task"]
+    task_spec = get_task_spec(task)
+    dataset_dir = config["dataset_dir"]
+
+    if config.get("model") == "cnn":
+        model = CNN(task=task, seed=config["seed"])
+    else:
+        model = MLP(task=task, seed=config["seed"])
+
+    predictor = Predictor(model, task_spec)
+
     if args.checkpoint:
-        checkpoints.load(exp.model, args.checkpoint)
-    dataset = MnistDataset("test", args.task, dataset_dir=args.dataset_dir)
+        checkpoints.load(model, args.checkpoint)
+
+    dataset = MnistDataset("test", task, dataset_dir=dataset_dir)
     n = min(args.n, len(dataset))
     images = np.stack([dataset[i][0] for i in range(n)])
-    result = exp.predictor.predict(images)
+    result = predictor.predict(images)
     for i, pred in enumerate(result["predictions"]):
         print(f"[{i:2d}] prediction={pred}")
     return result
