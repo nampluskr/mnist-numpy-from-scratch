@@ -4,10 +4,10 @@ import os
 import sys
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from experiments.run_train import main as train_main
-from experiments.run_evaluate import main as evaluate_main
-from experiments.run_predict import main as predict_main
-from experiments.run_visualize import main as visualize_main
+from experiments.train import main as train_main
+from experiments.evaluate import main as evaluate_main
+from experiments.predict import main as predict_main
+from experiments.visualize import main as visualize_main
 
 DATASET_DIR = "/mnt/d/datasets/mnist"
 SEED = 42

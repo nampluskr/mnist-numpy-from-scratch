@@ -1,7 +1,7 @@
 ---
 tags: [docs, stage5, optimizers]
 created: "2026-06-20"
-updated: "2026-06-20"
+updated: "2026-06-21"
 ---
 
 # Optimizer 구현
@@ -17,51 +17,107 @@ updated: "2026-06-20"
 
 ## 2. 개념
 
-### 2.1. SGD
+### 2.1. Gradient Descent 원리
 
-SGD(Stochastic Gradient Descent)는 가장 기본적인 optimizer이다. 현재 gradient 방향으로 learning rate만큼 파라미터를 이동한다.
+신경망 학습은 loss $L$을 최소화하는 파라미터 $\theta$를 찾는 최적화 문제이다. $L$은 파라미터의 함수이므로, $\theta$ 공간에서 $L$이 감소하는 방향으로 $\theta$를 반복적으로 이동하면 최솟값에 가까워진다.
 
 $$
 \theta \leftarrow \theta - \eta \cdot \nabla_\theta L
 $$
 
-$\theta$는 업데이트할 파라미터, $\eta$는 learning rate, $\nabla_\theta L$는 loss에 대한 gradient이다. gradient가 크면 파라미터 이동도 크고, gradient가 작으면 이동이 작다. 단순하지만 learning rate 설정에 민감하여 너무 크면 발산하고 너무 작으면 수렴이 느리다.
+$\nabla_\theta L = \frac{\partial L}{\partial \theta}$는 $\theta$에 대한 loss의 편미분이다. gradient는 loss가 가장 빠르게 증가하는 방향을 가리키므로, 그 반대 방향으로 $\eta$만큼 이동하면 loss가 감소한다.
+
+**Full batch vs Mini-batch**: 전체 데이터셋 gradient를 정확히 계산하는 것은 비용이 크다. mini-batch gradient는 전체 gradient의 불편 추정량(unbiased estimator)이므로, 작은 배치로 계산해도 기대값 기준으로 같은 방향을 가리킨다. 이 프로젝트의 `Trainer`는 mini-batch 단위로 gradient를 계산하고 즉시 `optimizer.step()`을 호출한다.
+
+### 2.2. SGD
+
+SGD(Stochastic Gradient Descent)는 가장 기본적인 optimizer이다. 현재 gradient 방향으로 learning rate만큼 파라미터를 이동한다.
+
+$$
+\theta_t \leftarrow \theta_{t-1} - \eta \cdot g_t
+$$
+
+$\theta_t$는 스텝 $t$ 이후의 파라미터, $\eta$는 learning rate, $g_t = \nabla_{\theta} L$는 스텝 $t$에서의 gradient이다.
+
+**Learning rate의 영향**: learning rate $\eta$는 파라미터 이동 보폭을 결정한다.
+
+| $\eta$ 설정 | 결과 |
+|---|---|
+| 너무 크다 | gradient 방향으로 과도하게 이동 → loss가 발산할 수 있다 |
+| 적절하다 | loss가 안정적으로 감소한다 |
+| 너무 작다 | 이동 보폭이 미미하여 수렴이 매우 느리다 |
+
+**In-place update**: `param -= lr * grad`는 배열의 내용을 직접 수정한다. `param = param - lr * grad`는 새 배열을 생성하여 `model.params` 리스트의 참조가 끊어지므로 반드시 in-place 연산을 사용해야 한다.
 
 핵심 용어는 다음과 같다.
 
 | 용어 | 의미 | 이 프로젝트에서의 역할 |
 |---|---|---|
-| learning rate | 파라미터 업데이트 보폭 | `SGD(model, lr=0.01)` 형태로 설정 |
-| gradient | loss를 파라미터로 미분한 값 | `model.grads`에서 참조 |
+| learning rate $\eta$ | 파라미터 업데이트 보폭 | `SGD(model, lr=0.01)` 형태로 설정 |
+| gradient $g_t$ | loss를 파라미터로 미분한 값 | `model.grads`에서 참조 |
 | in-place update | 기존 배열을 직접 수정 | `param -= lr * grad` 형태로 적용 |
 
-### 2.2. Adam
+### 2.3. Adam
 
-Adam(Adaptive Moment Estimation)은 gradient의 1차 moment(평균)와 2차 moment(분산)를 추적하여 파라미터별로 learning rate를 자동으로 조절한다.
+SGD는 모든 파라미터에 동일한 learning rate를 적용한다. 그러나 파라미터마다 gradient 크기가 다르면 단일 learning rate가 모든 파라미터에 적합하지 않다. Adam(Adaptive Moment Estimation)은 gradient의 1차 moment(이동 평균)와 2차 moment(제곱 이동 평균)를 유지하여 파라미터별로 effective learning rate를 자동으로 조절한다.
+
+**1차 moment — gradient 이동 평균**
 
 $$
 m_t = \beta_1 m_{t-1} + (1 - \beta_1) g_t
 $$
+
+$m_t$는 과거 gradient의 지수 이동 평균(Exponential Moving Average, EMA)이다. $\beta_1$이 클수록 과거 gradient의 영향이 오래 유지된다. $\beta_1 = 0.9$이면 약 10 스텝의 gradient를 평균 낸 효과가 있다. 이는 gradient의 방향이 일관되면 가속하고, 진동하면 상쇄되는 momentum 효과를 낸다.
+
+**2차 moment — gradient 제곱 이동 평균**
+
 $$
 v_t = \beta_2 v_{t-1} + (1 - \beta_2) g_t^2
 $$
+
+$v_t$는 gradient 제곱의 EMA로, gradient의 분산 척도이다. gradient가 자주 크게 나타나는 파라미터는 $v_t$가 크고, 자주 작게 나타나는 파라미터는 $v_t$가 작다. $\sqrt{v_t}$로 나누어 effective learning rate를 조절하면, gradient가 큰 파라미터는 step이 작아지고 gradient가 작은 파라미터는 step이 커진다.
+
+**Bias correction**
+
+$m_0 = 0$, $v_0 = 0$으로 초기화하면 초기 스텝에서 $m_t$와 $v_t$가 0 쪽으로 편향된다. $t = 1$일 때 $m_1 = (1 - \beta_1) g_1$으로, 실제 gradient보다 $(1 - \beta_1)$ 배 작다. Bias correction은 이 편향을 제거한다.
+
 $$
 \hat{m}_t = \frac{m_t}{1 - \beta_1^t}, \quad \hat{v}_t = \frac{v_t}{1 - \beta_2^t}
 $$
+
+$t$가 커질수록 $\beta_1^t \to 0$이므로 보정 계수 $\frac{1}{1 - \beta_1^t} \to 1$이 되어 편향이 사라진다. $t = 1$에서 $\frac{1}{1 - 0.9} = 10$이고, $t = 100$에서는 거의 1에 가깝다.
+
+**파라미터 업데이트**
+
 $$
-\theta \leftarrow \theta - \eta \cdot \frac{\hat{m}_t}{\sqrt{\hat{v}_t} + \epsilon}
+\theta_t \leftarrow \theta_{t-1} - \eta \cdot \frac{\hat{m}_t}{\sqrt{\hat{v}_t} + \epsilon}
 $$
 
-$m_t$는 gradient의 지수 이동 평균(1차 moment), $v_t$는 gradient 제곱의 지수 이동 평균(2차 moment)이다. $\hat{m}_t$와 $\hat{v}_t$는 초기 단계에서 0으로 편향된 값을 보정하는 bias correction이다. $\epsilon$은 분모가 0이 되는 것을 방지하는 수치 안정성 상수이다.
+$\epsilon$은 $\sqrt{\hat{v}_t}$가 0에 가까울 때 분모가 0이 되는 것을 방지하는 수치 안정성 상수이다(기본값 $10^{-8}$). 전체 업데이트를 풀어 쓰면 다음과 같다.
 
-Adam은 gradient가 큰 파라미터에는 작은 step을 적용하고, gradient가 작은 파라미터에는 큰 step을 적용하여 파라미터별 학습 속도를 자동으로 조절한다.
+$$
+\theta_t \leftarrow \theta_{t-1} - \eta \cdot \frac{m_t / (1 - \beta_1^t)}{\sqrt{v_t / (1 - \beta_2^t)} + \epsilon}
+$$
+
+**SGD와의 비교**
+
+| 항목 | SGD | Adam |
+|---|---|---|
+| 업데이트 방향 | 현재 gradient $g_t$ | 1차 moment $\hat{m}_t$ (과거 gradient 포함) |
+| 업데이트 크기 | 모든 파라미터 동일 $\eta$ | 파라미터별 $\eta / \sqrt{\hat{v}_t}$ |
+| 추가 메모리 | 없음 | 파라미터당 $m$, $v$ 두 배열 |
+| 하이퍼파라미터 | $\eta$ | $\eta$, $\beta_1$, $\beta_2$, $\epsilon$ |
+| 수렴 안정성 | learning rate에 민감 | 넓은 learning rate 범위에서 안정적 |
+
+핵심 용어는 다음과 같다.
 
 | 용어 | 의미 | 이 프로젝트에서의 역할 |
 |---|---|---|
-| `beta1` | 1차 moment 감쇠 계수 | 기본값 0.9 |
-| `beta2` | 2차 moment 감쇠 계수 | 기본값 0.999 |
-| `epsilon` | 수치 안정성 상수 | 기본값 1e-8 |
-| bias correction | 초기 편향 보정 | `t` 스텝 수를 추적하여 적용 |
+| $\beta_1$ | 1차 moment 감쇠 계수 | 기본값 0.9. 클수록 과거 gradient를 오래 기억 |
+| $\beta_2$ | 2차 moment 감쇠 계수 | 기본값 0.999. 클수록 분산 추정이 느리게 변화 |
+| $\epsilon$ | 수치 안정성 상수 | 기본값 1e-8. 분모 0 방지 |
+| bias correction | 초기 0 편향 보정 | iter(스텝 수)를 추적하여 분모에 적용 |
+| in-place update | 기존 배열 직접 수정 | `m[...] =`, `param[...] -=` 형태로 적용 |
 
 ## 3. 구현
 

@@ -1,10 +1,8 @@
-# run_visualize.py: Batch visualization for all configs via subprocess.
+# train.py: Batch training for all configs via subprocess.
 
 import os
 import subprocess
 import sys
-
-N_SAMPLES = 16
 
 
 def exp_name(cfg):
@@ -18,10 +16,12 @@ def main(configs, dataset_dir, seed):
     for i, cfg in enumerate(configs, 1):
         name = exp_name(cfg)
         output_dir = os.path.join("outputs", name)
-        print(f"\n[{i}/{total}] visualize | {name}")
+        checkpoint = os.path.join(output_dir, "model.npz")
+        os.makedirs(output_dir, exist_ok=True)
+        print(f"\n[{i}/{total}] train | {name}")
         try:
             subprocess.run(
-                [sys.executable, "scripts/visualize.py",
+                [sys.executable, "scripts/train.py",
                  "--task", cfg["task"],
                  "--model", cfg["model"],
                  "--epochs", str(cfg["epochs"]),
@@ -29,8 +29,7 @@ def main(configs, dataset_dir, seed):
                  "--lr", str(cfg["lr"]),
                  "--seed", str(seed),
                  "--dataset_dir", dataset_dir,
-                 "--output_dir", output_dir,
-                 "--n_samples", str(N_SAMPLES)],
+                 "--checkpoint", checkpoint],
                 check=True,
             )
             results.append({"name": name, "success": True, "error": None})

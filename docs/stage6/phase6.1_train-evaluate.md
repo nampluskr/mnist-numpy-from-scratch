@@ -1,7 +1,7 @@
 ---
 tags: [docs, stage6, scripts, train, evaluate]
 created: "2026-06-20"
-updated: "2026-06-20"
+updated: "2026-06-21"
 ---
 
 # 학습 및 평가 스크립트
@@ -19,33 +19,75 @@ updated: "2026-06-20"
 
 ### 2.1. CLI 스크립트 역할
 
-`scripts/`의 스크립트는 `src/` 내부 모듈을 직접 호출하지 않고 `src/core/`의 실행 객체만 조립한다. 이 원칙 덕분에 학습 루프, 평가 루프, optimizer 구현을 바꾸더라도 스크립트 인터페이스는 그대로 유지할 수 있다.
+`scripts/`의 스크립트는 `src/` 내부 모듈을 직접 조립하지 않고 `src/core/`의 실행 객체를 조립하는 진입점이다. 이 원칙 덕분에 학습 루프, 평가 루프, optimizer 구현을 바꾸더라도 스크립트 인터페이스는 그대로 유지할 수 있다.
 
 스크립트와 `src/` 모듈의 의존 관계는 다음과 같다.
 
 | 스크립트 | 직접 참조하는 모듈 |
 |---|---|
-| `scripts/train.py` | `src/core/trainer.py`, `src/core/optimizers.py`, `src/data/`, `src/models/`, `src/utils/` |
-| `scripts/evaluate.py` | `src/core/evaluator.py`, `src/utils/checkpoints.py`, `src/data/`, `src/models/` |
+| `scripts/train.py` | `src/core/trainer.py`, `src/core/evaluator.py`, `src/core/optimizers.py`, `src/data/`, `src/models/`, `src/utils/checkpoints` |
+| `scripts/evaluate.py` | `src/core/evaluator.py`, `src/data/`, `src/models/`, `src/utils/checkpoints` |
 
-### 2.2. exp_name과 outputs 폴더 구조
+### 2.2. task_spec과 스크립트 조립 흐름
 
-학습 결과는 `outputs/{exp_name}/` 폴더에 저장한다. `exp_name`은 실험 설정을 파일명으로 인코딩하여 결과 폴더만 보고도 어떤 조합인지 파악할 수 있다.
+`scripts/train.py`는 CLI 인자로 `--task`를 받아 `get_task_spec(task)`를 호출하고, 반환된 `task_spec` dict를 `Trainer`와 `Evaluator` 생성자에 전달한다.
+
+```text
+--task 인자 → get_task_spec(task) → task_spec dict
+    → Trainer(model, optimizer, task_spec)
+    → Evaluator(model, task_spec)
+```
+
+`task_spec`은 `{"task": ..., "output_dim": ..., "prediction_mode": ...}` 구조로, 실행 객체들이 task별 함수를 내부에서 선택하는 데 사용된다. 스크립트는 `task_spec` 내용을 직접 참조하지 않는다.
+
+### 2.3. train.py의 학습+평가 동시 실행
+
+`scripts/train.py`는 학습만 실행하는 것이 아니라 매 epoch마다 `Trainer.fit`과 `Evaluator.evaluate`를 모두 호출하여 train/test 지표를 동시에 출력한다.
+
+```text
+for epoch in 1..N:
+    train_log = trainer.fit(train_loader)       → train loss/metric
+    test_log  = evaluator.evaluate(test_loader) → test loss/metric
+    print(epoch, train_log, test_log)
+```
+
+이렇게 하면 epoch마다 overfitting 여부를 즉시 확인할 수 있다. `Evaluator`는 backward를 호출하지 않으므로 파라미터에 영향을 주지 않는다.
+
+### 2.4. checkpoint 저장 방식
+
+`train.py`는 학습 완료 후 `--checkpoint` 인자로 지정한 경로에 `checkpoints.save(model, path)`로 모델 파라미터를 `.npz` 파일로 저장한다. `--checkpoint`가 지정되지 않으면 저장을 건너뛴다.
+
+`evaluate.py`는 `--checkpoint` 인자로 지정한 경로에서 `checkpoints.load(model, path)`로 파라미터를 복원한 뒤 평가를 실행한다. `--checkpoint`가 없으면 초기화된 파라미터 그대로 평가한다.
+
+| 스크립트 | checkpoint 처리 |
+|---|---|
+| `train.py` | 학습 후 `checkpoints.save(model, path)` (선택적) |
+| `evaluate.py` | 평가 전 `checkpoints.load(model, path)` (선택적) |
+
+### 2.5. exp_name과 outputs 폴더 구조
+
+`experiments/` 스크립트가 `scripts/train.py`를 subprocess로 호출할 때 `--checkpoint` 경로를 `outputs/{exp_name}/model.npz`로 지정하여 실험 결과를 구조화한다. `exp_name`은 실험 설정을 파일명으로 인코딩하여 폴더만 보고도 어떤 조합인지 파악할 수 있다.
 
 `exp_name` 형식은 다음과 같다.
 
 ```text
 {task}_{model}_ep{epochs}_lr{lr}_bs{batch_size}
-예: multiclass_mlp_ep10_lr0.01_bs128
+예: multiclass_mlp_ep10_lr0.01_bs64
 ```
 
-저장 파일 구성은 다음과 같다.
+`outputs/{exp_name}/`에 저장되는 파일 구성은 다음과 같다.
 
-| 파일 | 내용 |
-|---|---|
-| `model.npz` | `save_checkpoint`로 저장한 모델 파라미터 |
-| `train_log.csv` | epoch별 loss/metric 로그 |
-| `training_curves.png` | 학습 곡선 그래프 |
+| 파일 | 저장 주체 | 내용 |
+|---|---|---|
+| `model.npz` | `train.py` | `checkpoints.save`로 저장한 모델 파라미터 |
+
+핵심 용어는 다음과 같다.
+
+| 용어 | 의미 | 이 프로젝트에서의 역할 |
+|---|---|---|
+| `task_spec` | task 정보를 담은 dict | `get_task_spec(task)`가 반환, 실행 객체 생성자에 전달 |
+| `exp_name` | 실험 설정을 인코딩한 문자열 | checkpoint 저장 경로의 폴더명으로 사용 |
+| `checkpoints.save/load` | 모델 파라미터 저장·복원 | `.npz` 형식으로 저장, 학습 재개나 평가 시 복원 |
 
 ## 3. 구현
 
@@ -59,80 +101,81 @@ updated: "2026-06-20"
 ### 3.1. train.py 구현
 
 ```python
-import argparse
-from src.data.mnist import MnistDataset
+from src.data.mnist import MnistDataset, get_task_spec
 from src.data.dataloader import DataLoader
 from src.models.mlp import MLP
+from src.models.cnn import CNN
 from src.core.optimizers import SGD
 from src.core.trainer import Trainer
-from src.core.logger import Logger
-from src.utils.checkpoints import save_checkpoint
-from src.utils.training_plots import save_training_plots
+from src.core.evaluator import Evaluator
+from src.utils import checkpoints
 
-def main(args):
-    exp_name = f"{args.task}_{args.model}_ep{args.epochs}_lr{args.lr}_bs{args.batch_size}"
-    out_dir = f"outputs/{exp_name}"
+def main(args=None):
+    if args is None:
+        args = parse_args()
+    config = build_config(args)
 
-    train_ds = MnistDataset(split="train", task=args.task)
-    train_loader = DataLoader(train_ds, batch_size=args.batch_size, shuffle=True)
+    task = config["task"]
+    task_spec = get_task_spec(task)
 
-    model = MLP(task=args.task, seed=args.seed)
-    optimizer = SGD(model, lr=args.lr)
-    trainer = Trainer(model, optimizer, task=args.task)
+    train_dataset = MnistDataset("train", task, dataset_dir=config["dataset_dir"])
+    test_dataset  = MnistDataset("test",  task, dataset_dir=config["dataset_dir"])
+    train_loader  = DataLoader(train_dataset, batch_size=config["batch_size"], shuffle=True)
+    test_loader   = DataLoader(test_dataset,  batch_size=config["batch_size"], shuffle=False)
 
-    logs = trainer.fit(train_loader, epochs=args.epochs)
+    model     = CNN(task=task, seed=config["seed"]) if config["model"] == "cnn" \
+                else MLP(task=task, seed=config["seed"])
+    optimizer = SGD(model, lr=config["lr"])
+    trainer   = Trainer(model, optimizer, task_spec)
+    evaluator = Evaluator(model, task_spec)
 
-    logger = Logger()
-    logger.load(logs)
-    logger.to_csv(f"{out_dir}/train_log.csv")
-    save_checkpoint(model, f"{out_dir}/model.npz")
-    save_training_plots(logger.to_dict(), save_path=f"{out_dir}/training_curves.png")
+    for epoch in range(1, config["num_epochs"] + 1):
+        train_log = trainer.fit(train_loader)
+        test_log  = evaluator.evaluate(test_loader)
+        print(f"Epoch {epoch:3d} | train loss={train_log['loss']:.4f} metric={train_log['metric']:.4f}"
+              f" | test loss={test_log['loss']:.4f} metric={test_log['metric']:.4f}")
 
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--task", default="multiclass")
-    parser.add_argument("--model", default="mlp")
-    parser.add_argument("--epochs", type=int, default=10)
-    parser.add_argument("--lr", type=float, default=0.01)
-    parser.add_argument("--batch_size", type=int, default=128)
-    parser.add_argument("--seed", type=int, default=42)
-    main(parser.parse_args())
+    if args.checkpoint:
+        checkpoints.save(model, args.checkpoint)
+        print(f"Checkpoint saved: {args.checkpoint}")
 ```
 
-`exp_name`을 `out_dir` 경로와 CSV/PNG 파일명에 일관되게 사용한다. `save_checkpoint`와 `save_training_plots`는 `out_dir`이 없으면 자동으로 생성한다.
+`task_spec`을 `Trainer`와 `Evaluator` 모두에 전달한다. 매 epoch마다 train/test 지표를 함께 출력하여 overfitting을 모니터링한다.
 
 ### 3.2. evaluate.py 구현
 
 ```python
-import argparse
-from src.data.mnist import MnistDataset
+from src.data.mnist import MnistDataset, get_task_spec
 from src.data.dataloader import DataLoader
 from src.models.mlp import MLP
+from src.models.cnn import CNN
 from src.core.evaluator import Evaluator
-from src.utils.checkpoints import load_checkpoint
+from src.utils import checkpoints
 
-def main(args):
-    test_ds = MnistDataset(split="test", task=args.task)
-    test_loader = DataLoader(test_ds, batch_size=args.batch_size, shuffle=False)
+def main(args=None):
+    if args is None:
+        args = parse_args()
+    config = build_config(args)
 
-    model = MLP(task=args.task)
-    load_checkpoint(model, args.checkpoint)
+    task = config["task"]
+    task_spec = get_task_spec(task)
 
-    evaluator = Evaluator(model, task=args.task)
+    test_dataset = MnistDataset("test", task, dataset_dir=config["dataset_dir"])
+    test_loader  = DataLoader(test_dataset, batch_size=config["batch_size"], shuffle=False)
+
+    model = CNN(task=task, seed=config["seed"]) if config["model"] == "cnn" \
+            else MLP(task=task, seed=config["seed"])
+    evaluator = Evaluator(model, task_spec)
+
+    if args.checkpoint:
+        checkpoints.load(model, args.checkpoint)
+
     result = evaluator.evaluate(test_loader)
-
-    print(f"loss: {result['loss']:.4f}  metric: {result['metric']:.4f}  samples: {result['num_samples']}")
-
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--task", default="multiclass")
-    parser.add_argument("--model", default="mlp")
-    parser.add_argument("--checkpoint", required=True)
-    parser.add_argument("--batch_size", type=int, default=256)
-    main(parser.parse_args())
+    print(f"loss={result['loss']:.4f}  metric={result['metric']:.4f}  samples={result['num_samples']}")
+    return result
 ```
 
-`--checkpoint`는 필수 인자로 지정하여 checkpoint 경로 누락 시 즉시 오류 메시지를 출력한다.
+`--checkpoint`를 지정하지 않으면 초기화된 파라미터로 평가한다. `checkpoints.load`는 `src/utils/checkpoints.py`의 `load` 함수이다.
 
 ## 4. 사용법
 

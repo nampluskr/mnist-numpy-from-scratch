@@ -1,10 +1,8 @@
-# run_predict.py: Batch prediction for all configs via subprocess.
+# evaluate.py: Batch evaluation for all configs via subprocess.
 
 import os
 import subprocess
 import sys
-
-N_SAMPLES = 16
 
 
 def exp_name(cfg):
@@ -18,16 +16,16 @@ def main(configs, dataset_dir, seed):
     for i, cfg in enumerate(configs, 1):
         name = exp_name(cfg)
         checkpoint = os.path.join("outputs", name, "model.npz")
-        print(f"\n[{i}/{total}] predict | {name}")
+        print(f"\n[{i}/{total}] evaluate | {name}")
         try:
             subprocess.run(
-                [sys.executable, "scripts/predict.py",
+                [sys.executable, "scripts/evaluate.py",
                  "--task", cfg["task"],
                  "--model", cfg["model"],
+                 "--batch_size", str(cfg["batch_size"]),
                  "--seed", str(seed),
                  "--dataset_dir", dataset_dir,
-                 "--checkpoint", checkpoint,
-                 "--n", str(N_SAMPLES)],
+                 "--checkpoint", checkpoint],
                 check=True,
             )
             results.append({"name": name, "success": True, "error": None})

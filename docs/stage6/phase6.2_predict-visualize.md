@@ -1,7 +1,7 @@
 ---
 tags: [docs, stage6, scripts, predict, visualize]
 created: "2026-06-20"
-updated: "2026-06-20"
+updated: "2026-06-21"
 ---
 
 # 예측 및 시각화 스크립트
@@ -19,18 +19,73 @@ updated: "2026-06-20"
 
 ### 2.1. predict와 visualize의 역할 분리
 
-`predict.py`는 예측값 자체를 텍스트로 확인하는 데 집중하고, `visualize.py`는 이미지와 예측값을 함께 시각적으로 확인하는 데 집중한다. 두 스크립트를 분리한 이유는 실험 중에는 빠른 수치 확인이 필요하고, 리포팅에는 이미지 grid가 유용하기 때문이다.
+`predict.py`는 예측값을 텍스트로 빠르게 확인하는 데 집중하고, `visualize.py`는 학습부터 시각화까지 전체 파이프라인을 한 번에 실행하는 통합 스크립트이다.
 
-각 스크립트의 출력은 다음과 같다.
+각 스크립트의 동작과 출력은 다음과 같다.
 
-| 스크립트 | 출력 형태 | 용도 |
+| 스크립트 | 동작 | 출력 형태 | 용도 |
+|---|---|---|---|
+| `predict.py` | 모델 생성 → checkpoint 로드 → predict | 콘솔 텍스트 (`prediction` 목록) | 빠른 예측값 확인 |
+| `visualize.py` | 학습 → 평가 → predict → plot | PNG 파일 (학습 곡선 + 예측 grid) | 학습 결과 종합 시각화 |
+
+`visualize.py`는 `train.py`와 달리 내부에서 직접 학습 루프를 실행한다. checkpoint 없이 학습부터 시각화까지 한 번에 수행하려는 경우에 사용한다.
+
+### 2.2. predict.py의 샘플 구성
+
+`predict.py`는 `--n` 인자로 test set 앞부분에서 $n$개 샘플을 선택한다. `MnistDataset.__getitem__(i)`로 개별 샘플을 꺼내 `np.stack`으로 배치를 구성하여 `Predictor.predict`에 전달한다.
+
+```text
+dataset[0], dataset[1], ..., dataset[n-1]
+    → np.stack(images)  → (n, 784) float32
+    → predictor.predict(images)
+    → result["predictions"]  → (n,) int32
+```
+
+`--checkpoint`를 지정하면 `checkpoints.load`로 파라미터를 복원하고, 지정하지 않으면 초기화된 모델로 예측한다.
+
+### 2.3. visualize.py의 파이프라인
+
+`visualize.py`는 학습 후 두 가지 시각화를 순서대로 실행한다.
+
+```text
+학습 루프 (Trainer.fit + Evaluator.evaluate, epochs 반복)
+    → plot_training_log(logs, output_dir)    → 학습 곡선 PNG
+    → predictor.predict(images)
+    → viz.plot_predictions(images, labels, predictions) → 예측 grid PNG
+```
+
+`plot_training_log`는 `src/utils/training_plots.py`의 함수로, epoch별 train/test loss/metric을 PNG로 저장한다. `Visualizer.plot_predictions`는 이미지와 예측/정답을 grid로 배치하여 PNG를 저장한다.
+
+**labels 변환**: `visualize.py`는 `MnistDataset.__getitem__`이 반환하는 task별 target(`one-hot`, `binary`, `regression` 실수)을 사람이 읽을 수 있는 정수 레이블로 변환하는 `_decode_labels` 내부 함수를 포함한다. 이 변환은 `Visualizer`에 전달하는 `labels` 인자를 위한 전처리이다.
+
+| task | target 형태 | decode 방법 |
 |---|---|---|
-| `predict.py` | 콘솔 텍스트 (decoded, true label) | 빠른 수치 확인 |
-| `visualize.py` | PNG 파일 (이미지 + 예측/정답 grid) | 오분류 육안 확인 및 리포팅 |
+| `multiclass` | `(10,)` one-hot | `argmax` |
+| `binary` | `(1,)` float32 | int 변환 |
+| `regression` | `(1,)` float32 `[0,1]` | `round(x * 9)` |
 
-### 2.2. n_samples 인자
+### 2.4. 두 스크립트의 인자 차이
 
-`predict.py`와 `visualize.py` 모두 `--n_samples` 인자로 test set에서 확인할 샘플 수를 지정한다. 기본값은 16이며, 전체 test set을 대상으로 할 때는 `--n_samples 10000`을 사용한다. `visualize.py`에서는 `--n_cols`로 grid 열 수를 조정할 수 있다.
+| 인자 | `predict.py` | `visualize.py` |
+|---|---|---|
+| `--task` | O | O |
+| `--model` | O | O |
+| `--epochs` | X | O |
+| `--lr` | X | O |
+| `--batch_size` | X | O |
+| `--checkpoint` | O (선택) | X |
+| `--n` | O (샘플 수) | X |
+| `--n_samples` | X | O (시각화 샘플 수) |
+| `--output_dir` | X | O |
+
+핵심 용어는 다음과 같다.
+
+| 용어 | 의미 | 이 프로젝트에서의 역할 |
+|---|---|---|
+| `result["predictions"]` | `Predictor.predict` 반환 key | decoded 예측값 `(N,)` int32 |
+| `plot_predictions` | `Visualizer` 메서드 | 이미지 + 정오답 grid PNG 저장 |
+| `plot_training_log` | `training_plots.py` 함수 | epoch별 train/test 곡선 PNG 저장 |
+| `_decode_labels` | `visualize.py` 내부 함수 | task별 target → 정수 레이블 변환 |
 
 ## 3. 구현
 
@@ -44,77 +99,96 @@ updated: "2026-06-20"
 ### 3.1. predict.py 구현
 
 ```python
-import argparse
-from src.data.mnist import MnistDataset
+import numpy as np
+from src.data.mnist import MnistDataset, get_task_spec
 from src.models.mlp import MLP
+from src.models.cnn import CNN
 from src.core.predictor import Predictor
-from src.utils.checkpoints import load_checkpoint
+from src.utils import checkpoints
 
-def main(args):
-    test_ds = MnistDataset(split="test", task=args.task)
-    images = test_ds.images[:args.n_samples]
-    labels_raw = test_ds.labels_raw[:args.n_samples]
+def main(args=None):
+    if args is None:
+        args = parse_args()
+    config = build_config(args)
 
-    model = MLP(task=args.task)
-    load_checkpoint(model, args.checkpoint)
+    task = config["task"]
+    task_spec = get_task_spec(task)
 
-    predictor = Predictor(model, task=args.task)
+    model = CNN(task=task, seed=config["seed"]) if config["model"] == "cnn" \
+            else MLP(task=task, seed=config["seed"])
+    predictor = Predictor(model, task_spec)
+
+    if args.checkpoint:
+        checkpoints.load(model, args.checkpoint)
+
+    dataset = MnistDataset("test", task, dataset_dir=config["dataset_dir"])
+    n = min(args.n, len(dataset))
+    images = np.stack([dataset[i][0] for i in range(n)])
+
     result = predictor.predict(images)
-
-    for i, (pred, true) in enumerate(zip(result["decoded"], labels_raw)):
-        status = "O" if pred == int(true) else "X"
-        print(f"[{i:3d}] pred={pred}  true={int(true)}  {status}")
-
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--task", default="multiclass")
-    parser.add_argument("--model", default="mlp")
-    parser.add_argument("--checkpoint", required=True)
-    parser.add_argument("--n_samples", type=int, default=16)
-    main(parser.parse_args())
+    for i, pred in enumerate(result["predictions"]):
+        print(f"[{i:2d}] prediction={pred}")
+    return result
 ```
 
-`labels_raw`는 task 변환 이전의 원본 레이블(0~9 정수)이다. `MnistDataset`에서 `labels_raw` 속성으로 제공하며, `targets`(task별 변환 배열)와 구분하여 사용한다.
+`Predictor`는 `task_spec`을 받아 `prediction_mode`를 결정한다. `result["predictions"]`는 task별 후처리가 완료된 `(n,)` int32 배열이다.
 
 ### 3.2. visualize.py 구현
 
 ```python
-import argparse
-import os
-from src.data.mnist import MnistDataset
+import numpy as np
+from src.data.mnist import MnistDataset, get_task_spec
+from src.data.dataloader import DataLoader
 from src.models.mlp import MLP
+from src.models.cnn import CNN
+from src.core.optimizers import SGD
+from src.core.trainer import Trainer
+from src.core.evaluator import Evaluator
 from src.core.predictor import Predictor
 from src.core.visualizer import Visualizer
-from src.utils.checkpoints import load_checkpoint
+from src.utils.training_plots import plot_training_log
 
-def main(args):
-    test_ds = MnistDataset(split="test", task=args.task)
-    images = test_ds.images[:args.n_samples]
-    labels_raw = test_ds.labels_raw[:args.n_samples]
+def main(args=None):
+    if args is None:
+        args = parse_args()
+    config = build_config(args)
 
-    model = MLP(task=args.task)
-    load_checkpoint(model, args.checkpoint)
+    task = config["task"]
+    task_spec = get_task_spec(task)
 
-    predictor = Predictor(model, task=args.task)
+    train_dataset = MnistDataset("train", task, dataset_dir=config["dataset_dir"])
+    test_dataset  = MnistDataset("test",  task, dataset_dir=config["dataset_dir"])
+    train_loader  = DataLoader(train_dataset, batch_size=config["batch_size"], shuffle=True)
+    test_loader   = DataLoader(test_dataset,  batch_size=config["batch_size"], shuffle=False)
+
+    model     = CNN(task=task, seed=config["seed"]) if config["model"] == "cnn" \
+                else MLP(task=task, seed=config["seed"])
+    optimizer = SGD(model, lr=config["lr"])
+    trainer   = Trainer(model, optimizer, task_spec)
+    evaluator = Evaluator(model, task_spec)
+    predictor = Predictor(model, task_spec)
+
+    logs = []
+    for epoch in range(1, config["num_epochs"] + 1):
+        train_log = trainer.fit(train_loader)
+        test_log  = evaluator.evaluate(test_loader)
+        logs.append({"epoch": epoch, "train": train_log, "test": test_log})
+
+    log_path = plot_training_log(logs, output_dir=args.output_dir)
+    print(f"Training log saved: {log_path}")
+
+    viz = Visualizer(output_dir=args.output_dir)
+    n = min(args.n_samples, len(test_dataset))
+    images     = np.stack([test_dataset[i][0] for i in range(n)])
+    raw_labels = [test_dataset[i][1] for i in range(n)]
+    labels     = _decode_labels(raw_labels, task)   # task별 target → 정수 레이블
+
     result = predictor.predict(images)
-
-    save_path = os.path.join(args.out_dir, "predictions.png")
-    visualizer = Visualizer(task=args.task)
-    visualizer.save_grid(images, result["decoded"], labels_raw, save_path, n_cols=args.n_cols)
-    print(f"saved: {save_path}")
-
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--task", default="multiclass")
-    parser.add_argument("--model", default="mlp")
-    parser.add_argument("--checkpoint", required=True)
-    parser.add_argument("--n_samples", type=int, default=16)
-    parser.add_argument("--n_cols", type=int, default=8)
-    parser.add_argument("--out_dir", default="outputs/predictions")
-    main(parser.parse_args())
+    pred_path = viz.plot_predictions(images, labels, result["predictions"])
+    print(f"Predictions saved: {pred_path}")
 ```
 
-`--out_dir`을 별도 인자로 분리하여 `train.py`가 생성한 `outputs/{exp_name}/` 폴더와 연동할 수 있다.
+`Visualizer(output_dir=args.output_dir)`로 저장 디렉터리를 지정한다. `plot_predictions`의 세 번째 인자 `labels`는 정수 레이블이며, `_decode_labels`로 task별 target을 변환한다.
 
 ## 4. 사용법
 
