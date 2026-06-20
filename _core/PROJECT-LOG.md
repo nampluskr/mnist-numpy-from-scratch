@@ -214,6 +214,25 @@ updated: 2026-06-20 (전면 리팩토링 계획 수립)
 | `notebooks/stage7/stage7-2_binary-experiment.ipynb` | target 변환 확인, sigmoid threshold, MLP vs CNN 비교, Multiclass 대비 차이 정리 |
 | `notebooks/stage7/stage7-3_regression-experiment.ipynb` | R² 학습 곡선, round_clip 후처리, 3종 task 최종 비교 막대그래프, 프레임워크 연계 인터페이스 정리 |
 
+## 260620 프레임워크 공통 Stage-Phase 목차 설계
+
+**완료 항목**
+- PROJECT-BOOK-PLAN.md 검토 및 프레임워크 공통 관점에서 Stage-Phase 재설계
+- src/ 하위 폴더 기준 Stage 대응 원칙 확정
+- Stage 0~7 (8단계) 목차 제안 — Stage 4 (models/) 신규, Stage 7 (실험 결과) 분리
+
+**결정사항**
+
+| 항목 | 결정 내용 |
+|---|---|
+| Stage = src/ 폴더 | src/ 하위 폴더 1개 = Stage 1개 (config/task/utils 묶음은 Stage 1) |
+| Stage 3 처리 방침 | numpy 책에서는 직접 구현, 후속 프레임워크 책에서는 번호·제목 유지하고 내용만 교체 |
+| Stage 4 신규 | models/ 전담 (MLP, CNN) — 현 Stage 3에서 분리 |
+| Stage 5 | 현 Stage 4 (core/) 번호 이동, experiment.py 삭제에 따른 Phase 제거 |
+| Stage 6 | 현 Stage 5 (scripts/) 번호 이동 + Phase 6.5 batch experiment 신규 |
+| Stage 7 | 현 Stage 6 (실험 결과) 번호 이동 + MLP/CNN 문서 task별 비교 통합 |
+| 실행 범위 | 이번 세션은 설계 확정만. 다음 세션에서 SPEC/TODO 재작성 + 코드 변경 실행 |
+
 ## 260620 Stage 3 + Stage 4 통합 재편 (Stage 3~7 → Stage 3~6)
 
 **완료 항목**
