@@ -71,6 +71,36 @@ updated: 2026-06-20 (Stage 1 docs/notebooks/ 전체 작성 완료)
 | 2026-06-20 | PROJECT-SPEC.md §3 서브섹션 도입 - 3.1 과제 및 모델 / 3.2 코드 구현 / 3.3 문서 및 실험 3개 서브섹션으로 재구성, 도입 문장 추가 | |
 | 2026-06-20 | Stage 0 환경 구성 편입 - Phase 0.0 conda 환경 구성 신설, docs/stage4/phase4.0_cupy-setup.md → docs/stage0/phase0.0_conda-setup.md 이동, PROJECT-SPEC.md §5.1 제목 변경, Stage 4에서 Phase 4.0 제거 | | |
 
+## 260620 Stage 2~4 docs/ 전체 작성 완료
+
+**완료 항목**
+- Phase 2.1 문서 작성: `docs/stage2/phase2.1_mnist.md`
+- Phase 2.2 문서 작성: `docs/stage2/phase2.2_dataset.md`
+- Phase 2.3 문서 작성: `docs/stage2/phase2.3_dataloader.md`
+- Phase 3.1 문서 작성: `docs/stage3/phase3.1_activations.md`
+- Phase 3.2 문서 작성: `docs/stage3/phase3.2_losses.md`
+- Phase 3.3 문서 작성: `docs/stage3/phase3.3_metrics.md`
+- Phase 3.4 문서 작성: `docs/stage3/phase3.4_layers.md`
+- Phase 3.5 문서 작성: `docs/stage3/phase3.5_conv.md`
+- Phase 4.1 문서 작성: `docs/stage4/phase4.1_mlp.md`
+- Phase 4.2 문서 작성: `docs/stage4/phase4.2_cnn.md`
+- PROJECT-TODO.md Stage 2~4 문서 항목 완료 처리
+
+**산출물**
+
+| 파일/산출물 | 내용 |
+|---|---|
+| `docs/stage2/phase2.1_mnist.md` | IDX 바이너리 포맷, load_mnist, split 매핑, 합성 gz 테스트 |
+| `docs/stage2/phase2.2_dataset.md` | Dataset 프로토콜, task별 target 변환, __getitem__ 인터페이스 |
+| `docs/stage2/phase2.3_dataloader.md` | 인덱스 기반 배치 조립, shuffle, 마지막 배치 처리 |
+| `docs/stage3/phase3.1_activations.md` | sigmoid 수치 안정성, softmax max subtraction, relu/identity |
+| `docs/stage3/phase3.2_losses.md` | logit 입력 설계, activation 내부 처리, gradient 수식 단순화 |
+| `docs/stage3/phase3.3_metrics.md` | accuracy/binary_accuracy logit 기반, R2 score 수식 |
+| `docs/stage3/phase3.4_layers.md` | Module 인터페이스, Linear backward in-place, Sequential params 집계 |
+| `docs/stage3/phase3.5_conv.md` | im2col/col2im 원리, Conv2d/MaxPool2d, Dropout inverted scaling |
+| `docs/stage4/phase4.1_mlp.md` | 3층 MLP 구조, seed 파생, logit 출력 설계 |
+| `docs/stage4/phase4.2_cnn.md` | Conv-FC 구조, CuPy/numpy 경계 처리, fallback 패턴 |
+
 ## 260620 Stage 1 docs/ 및 notebooks/ 전체 작성 완료
 
 **완료 항목**
