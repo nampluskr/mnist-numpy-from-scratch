@@ -54,8 +54,6 @@ mnist-numpy-from-scratch/
 
 ```text
 src/
-├── config.py
-├── task.py
 ├── data/
 │   ├── mnist.py
 │   └── dataloader.py
@@ -63,28 +61,30 @@ src/
 │   ├── activations.py
 │   ├── layers.py
 │   ├── losses.py
+│   ├── metrics.py
 │   └── conv.py
 ├── models/
 │   ├── mlp.py
 │   └── cnn.py
 ├── core/
 │   ├── optimizers.py
-│   ├── checkpoints.py
 │   ├── trainer.py
 │   ├── evaluator.py
 │   ├── predictor.py
 │   ├── visualizer.py
-│   └── experiment.py
+│   └── logger.py
 └── utils/
     ├── batching.py
     ├── random.py
-    └── io.py
+    ├── io.py
+    ├── checkpoints.py
+    └── training_plots.py
 ```
 
 ## 데이터셋
 
 이 프로젝트는 로컬에 저장된 원본 MNIST gzip 파일을 사용한다.
-기본 데이터셋 경로는 `src/config.py`에 정의되어 있다.
+기본 데이터셋 경로는 `DATASET_DIR = "/mnt/d/datasets/mnist"`이다.
 
 필요한 파일은 다음과 같다.
 
@@ -98,32 +98,37 @@ src/
 
 ## 실행 환경
 
-기준 Python 버전은 Python 3.11이다.
+기준 Python 버전은 Python 3.11이다. 모든 Python 명령은 `conda run -n {환경명}` 형식으로 실행한다.
+
+확인된 환경 구성은 다음과 같다.
+
+| 환경명 | 용도 | NumPy | CuPy | CUDA |
+|---|---|---|---|---|
+| `numpy_py311` | MLP (CPU) | 2.4.6 | - | - |
+| `cupy_py311_cuda118` | CNN (GPU) | 2.4.6 | 13.6.0 | 11.8 |
+| `cupy_py311_cuda121` | CNN (GPU) | 2.4.6 | 14.1.1 | 12.x |
 
 CPU 기반 NumPy 환경은 다음처럼 만든다.
 
 ```bash
-conda create -n numpy_py311 python=3.11
-conda activate numpy_py311
-pip install numpy pytest matplotlib jupyterlab ipykernel
+conda create -n numpy_py311 python=3.11 -y
+conda run -n numpy_py311 pip install numpy matplotlib pytest jupyterlab ipykernel
 ```
 
 CUDA 11.8 기준 CuPy 환경은 다음처럼 만든다.
 
 ```bash
-conda create -n cupy_py311_cuda118 python=3.11
-conda activate cupy_py311_cuda118
-pip install numpy pytest matplotlib jupyterlab ipykernel
-pip install cupy-cuda11x
+conda create -n cupy_py311_cuda118 python=3.11 -y
+conda run -n cupy_py311_cuda118 pip install numpy matplotlib pytest jupyterlab ipykernel
+conda run -n cupy_py311_cuda118 pip install cupy-cuda11x
 ```
 
 CUDA 12 계열 CuPy 환경은 다음처럼 만든다.
 
 ```bash
-conda create -n cupy_py311_cuda121 python=3.11
-conda activate cupy_py311_cuda121
-pip install numpy pytest matplotlib jupyterlab ipykernel
-pip install "cupy-cuda12x[ctk]"
+conda create -n cupy_py311_cuda121 python=3.11 -y
+conda run -n cupy_py311_cuda121 pip install numpy matplotlib pytest jupyterlab ipykernel
+conda run -n cupy_py311_cuda121 pip install cupy-cuda12x
 ```
 
 ## 사용법
@@ -131,29 +136,29 @@ pip install "cupy-cuda12x[ctk]"
 학습은 저장소 루트에서 실행한다.
 
 ```bash
-python scripts/train.py --task multiclass --model mlp --epochs 1
-python scripts/train.py --task multiclass --model cnn --epochs 1
+conda run -n numpy_py311 python scripts/train.py --task multiclass --model mlp --epochs 1
+conda run -n cupy_py311_cuda118 python scripts/train.py --task multiclass --model cnn --epochs 1
 ```
 
 평가는 다음처럼 실행한다.
 
 ```bash
-python scripts/evaluate.py --task multiclass --model mlp
-python scripts/evaluate.py --task multiclass --model cnn
+conda run -n numpy_py311 python scripts/evaluate.py --task multiclass --model mlp
+conda run -n cupy_py311_cuda118 python scripts/evaluate.py --task multiclass --model cnn
 ```
 
 예측은 다음처럼 실행한다.
 
 ```bash
-python scripts/predict.py --task multiclass --model mlp
-python scripts/predict.py --task multiclass --model cnn
+conda run -n numpy_py311 python scripts/predict.py --task multiclass --model mlp
+conda run -n cupy_py311_cuda118 python scripts/predict.py --task multiclass --model cnn
 ```
 
 시각화는 다음처럼 실행한다.
 
 ```bash
-python scripts/visualize.py --task multiclass --model mlp
-python scripts/visualize.py --task multiclass --model cnn
+conda run -n numpy_py311 python scripts/visualize.py --task multiclass --model mlp
+conda run -n cupy_py311_cuda118 python scripts/visualize.py --task multiclass --model cnn
 ```
 
 지원하는 task 값은 다음과 같다.
@@ -176,18 +181,18 @@ cnn
 전체 테스트는 저장소 루트에서 실행한다.
 
 ```bash
-pytest
+conda run -n numpy_py311 pytest tests/ -q
 ```
 
 테스트는 구현 단계별로 나뉜다.
 
 ```text
-tests/stage1/  # config, task 규약, utility
+tests/stage1/  # 공통 유틸리티 (batching, random, io, checkpoints, training_plots)
 tests/stage2/  # MNIST loading, Dataset, DataLoader
-tests/stage3/  # NumPy nn module, MLP
-tests/stage4/  # optimizer, core 실행 객체
-tests/stage5/  # CLI 진입점
-tests/stage6/  # CuPy CNN, 통합 검증
+tests/stage3/  # nn 모듈 (activation, loss, metric, layer, conv)
+tests/stage4/  # 모델 (MLP, CNN)
+tests/stage5/  # 실행 객체 (optimizer, trainer, evaluator, predictor, visualizer)
+tests/stage6/  # 클라이언트 스크립트 (train, evaluate, predict, visualize)
 ```
 
 ## 학습 로드맵
@@ -196,14 +201,13 @@ tests/stage6/  # CuPy CNN, 통합 검증
 
 | Stage | 주제 |
 |---:|---|
-| 0 | legacy code 분석과 구현 계획 수립 |
-| 1 | config, task 규약, utility 구현 |
-| 2 | MNIST loader, Dataset, DataLoader 구현 |
-| 3 | NumPy neural network module과 MLP 구현 |
-| 4 | optimizer, checkpoint, trainer, evaluator, predictor, visualizer 구현 |
-| 5 | CLI 진입점 구현 |
-| 6 | CuPy CNN과 core 통합 |
-| 7 | tutorial, 실험 결과, framework migration checklist |
+| 0 | 환경 구성 및 계획 수립 |
+| 1 | 공통 유틸리티 (batching, random, io, checkpoints, training_plots) |
+| 2 | MNIST 데이터 로더 (load_mnist, MnistDataset, DataLoader) |
+| 3 | nn 모듈 (activation, loss, metric, layer, conv) |
+| 4 | 모델 (MLP, CNN) |
+| 5 | 실행 객체 (optimizer, trainer, evaluator, predictor, visualizer, logger) |
+| 6 | 클라이언트 코드 (scripts, experiments, notebooks) |
 
 ## 프레임워크 시리즈 목표
 

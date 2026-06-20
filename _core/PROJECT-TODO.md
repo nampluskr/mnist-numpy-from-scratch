@@ -17,42 +17,42 @@ Stage - Phase 수준의 제목은 키워드 중심의 개조식 표현으로 작
 
 레거시 `src/` 코드 6개 스크립트와 common 모듈을 읽고, manual/module 두 패턴을 비교하며 task별 차이를 도출한다.
 
-- [ ] `_core/legacy/src/` 레거시 코드 구조 파악 (task 스크립트 6개 + common 모듈 6개)
-- [ ] common 모듈별 제공 요소 정리 (functions, modules, optimizers, dataloader, trainer)
-- [ ] manual 및 module 두 가지 구현 패턴 비교 분석
-- [ ] task별 차이 도출 (target 변환, output dim, loss, metric, gradient, 후처리)
-- [ ] [[docs/stage0/phase0.0_legacy-analysis|phase0.0_legacy-analysis.md]] 문서 작성
+- [x] `_core/legacy/src/` 레거시 코드 구조 파악 (task 스크립트 6개 + common 모듈 6개)
+- [x] common 모듈별 제공 요소 정리 (functions, modules, optimizers, dataloader, trainer)
+- [x] manual 및 module 두 가지 구현 패턴 비교 분석
+- [x] task별 차이 도출 (target 변환, output dim, loss, metric, gradient, 후처리)
+- [x] [[docs/stage0/phase0.0_legacy-analysis|phase0.0_legacy-analysis.md]] 문서 작성
 
 ### 1.1. Phase 0.1 개발 환경 구성
 
 MLP 실행용 `numpy_py311`과 CNN 실행용 `cupy_py311_cuda118`, `cupy_py311_cuda121` conda 환경을 생성하고 정상 동작을 확인한다.
 
-- [ ] `numpy_py311` CPU 기반 NumPy 실행 환경 확인
-- [ ] `cupy_py311_cuda118` CUDA 11.8 기준 CuPy 실행 환경 확인
-- [ ] `cupy_py311_cuda121` CUDA 12 계열 CuPy 실행 환경 확인
-- [ ] README.md에 3개 conda environment 생성 기준 작성
-- [ ] [[docs/stage0/phase0.1_conda-setup|phase0.1_conda-setup.md]] 문서 작성
+- [x] `numpy_py311` CPU 기반 NumPy 실행 환경 확인
+- [x] `cupy_py311_cuda118` CUDA 11.8 기준 CuPy 실행 환경 확인
+- [x] `cupy_py311_cuda121` CUDA 12 계열 CuPy 실행 환경 확인
+- [x] README.md에 3개 conda environment 생성 기준 작성
+- [x] [[docs/stage0/phase0.1_conda-setup|phase0.1_conda-setup.md]] 문서 작성
 
 ### 1.2. Phase 0.2 구현 계획 수립
 
 레거시 common 모듈을 src 파일로 1:1 매핑하고, 패키지 구조와 Stage 1-6 구현 순서를 확정한다. 후속 프레임워크(PyTorch, TensorFlow, JAX)와 공유할 공통 인터페이스 규약을 문서화한다.
 
-- [ ] 레거시 common 모듈에서 `src` 파일로 1:1 매핑 확정
-- [ ] `src` 패키지 구조 확정 (`data/`, `models/`, `core/`, `utils/`)
-- [ ] 각 파일의 책임 범위 확정
-- [ ] Stage 1-6 구현 순서 및 Phase 단위 분할 확정
-- [ ] [[docs/stage0/phase0.2_implementation-plan|phase0.2_implementation-plan.md]] 문서 작성
-- [ ] [[docs/stage0/phase0.2_framework-interface|phase0.2_framework-interface.md]] 후속 프레임워크 공통 인터페이스 규약 문서 작성
+- [x] 레거시 common 모듈에서 `src` 파일로 1:1 매핑 확정
+- [x] `src` 패키지 구조 확정 (`data/`, `models/`, `core/`, `utils/`)
+- [x] 각 파일의 책임 범위 확정
+- [x] Stage 1-6 구현 순서 및 Phase 단위 분할 확정
+- [x] [[docs/stage0/phase0.2_implementation-plan|phase0.2_implementation-plan.md]] 문서 작성
+- [x] [[docs/stage0/phase0.2_framework-interface|phase0.2_framework-interface.md]] 후속 프레임워크 공통 인터페이스 규약 문서 작성
 
 ### 1.3. Phase 0.3 테스트 계획 수립
 
 tests/ 폴더 구조와 파일별 공개 인터페이스 규약을 정하고, synthetic array 기반 TDD 원칙과 pytest 실행 방법을 확정한다.
 
-- [ ] `tests` 폴더 구조 확정 (stage 단위, `__init__.py` 없음)
-- [ ] 파일별 공개 인터페이스 규약 확정 (진입점, 입력, 출력)
-- [ ] TDD 원칙 확정 (synthetic array 우선, tolerance 비교 등)
-- [ ] `pytest` 실행 명령 정리 (stage 단위, 단일 파일, 전체)
-- [ ] [[docs/stage0/phase0.3_test-plan|phase0.3_test-plan.md]] 문서 작성
+- [x] `tests` 폴더 구조 확정 (stage 단위, `__init__.py` 없음)
+- [x] 파일별 공개 인터페이스 규약 확정 (진입점, 입력, 출력)
+- [x] TDD 원칙 확정 (synthetic array 우선, tolerance 비교 등)
+- [x] `pytest` 실행 명령 정리 (stage 단위, 단일 파일, 전체)
+- [x] [[docs/stage0/phase0.3_test-plan|phase0.3_test-plan.md]] 문서 작성
 
 ## 2. Stage 1 공통 유틸리티
 

@@ -1,7 +1,7 @@
 ---
 tags: [project, docs]
 created: 2026-06-15
-updated: 2026-06-20 (src/ 코드 변경 - config/task/experiment 삭제 및 checkpoints 이동)
+updated: 2026-06-20 (Stage 0 docs/ 전체 작성 완료)
 ---
 
 # PROJECT-LOG.md
@@ -70,6 +70,34 @@ updated: 2026-06-20 (src/ 코드 변경 - config/task/experiment 삭제 및 chec
 | 2026-06-20 | experiments/ 파일명 변경 - train/evaluate/predict/visualize_all.py → run_train/evaluate/predict/visualize.py, run_all.py import 경로 갱신 | |
 | 2026-06-20 | PROJECT-SPEC.md §3 서브섹션 도입 - 3.1 과제 및 모델 / 3.2 코드 구현 / 3.3 문서 및 실험 3개 서브섹션으로 재구성, 도입 문장 추가 | |
 | 2026-06-20 | Stage 0 환경 구성 편입 - Phase 0.0 conda 환경 구성 신설, docs/stage4/phase4.0_cupy-setup.md → docs/stage0/phase0.0_conda-setup.md 이동, PROJECT-SPEC.md §5.1 제목 변경, Stage 4에서 Phase 4.0 제거 | | |
+
+## 260620 Stage 0 docs/ 전체 작성 완료
+
+**완료 항목**
+- Phase 0.0 문서 작성: `docs/stage0/phase0.0_legacy-analysis.md`
+- Phase 0.1 문서 작성: `docs/stage0/phase0.1_conda-setup.md`
+- Phase 0.2 문서 작성 2개: `phase0.2_implementation-plan.md`, `phase0.2_framework-interface.md`
+- Phase 0.3 문서 작성: `docs/stage0/phase0.3_test-plan.md`
+- README.md 갱신: src/ 구조, 실행 환경(conda run -n 형식·버전 표), 사용법, 테스트, 학습 로드맵
+- PROJECT-TODO.md Stage 0 전체 완료 처리
+
+**산출물**
+
+| 파일/산출물 | 내용 |
+|---|---|
+| `docs/stage0/phase0.0_legacy-analysis.md` | 레거시 구조·패턴 분석 (common 6개, manual/module 패턴, task별 차이) |
+| `docs/stage0/phase0.1_conda-setup.md` | conda 3환경 생성 명령 및 검증 (numpy_py311 / cuda118 / cuda121) |
+| `docs/stage0/phase0.2_implementation-plan.md` | 레거시→src 매핑, src/ 구조, 책임 범위, Stage 1-6 Phase 분할 |
+| `docs/stage0/phase0.2_framework-interface.md` | 공개 진입점·입출력 규약, task별 규약, 메서드 반환값 규약 |
+| `docs/stage0/phase0.3_test-plan.md` | tests/ 구조, 파일별 테스트 항목, TDD 원칙, pytest 실행 명령 |
+| `README.md` | src/ 구조 최신화, conda run -n 형식 통일, 학습 로드맵 Stage 0-6 |
+
+**결정사항**
+
+| 항목 | 결정 내용 |
+|---|---|
+| 확인된 환경 버전 | numpy_py311: NumPy 2.4.6 / cuda118: CuPy 13.6.0 / cuda121: CuPy 14.1.1 |
+| 실행 명령 형식 | 모든 Python 명령 `conda run -n {환경명}` 형식으로 통일 |
 
 ## 260620 src/ 코드 변경 - config/task/experiment 삭제 및 checkpoints 이동
 
