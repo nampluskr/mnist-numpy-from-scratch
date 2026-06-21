@@ -1,7 +1,7 @@
 ---
 tags: [project, docs]
 created: 2026-06-08
-updated: 2026-06-21 (Phase 5.5, Phase 6.4 노트북 완료 처리)
+updated: 2026-06-21 (Stage 2 Phase 번호 재편 — transforms Phase 삽입)
 ---
 
 # PROJECT-TODO.md
@@ -94,34 +94,45 @@ Stage 1에서 구현한 유틸리티(batching, random, io, checkpoints, training
 
 ### 3.1. Phase 2.1 MNIST 데이터 로딩
 
-MNIST `.gz` 파일을 파싱해 train/test로 분할하고 원본 배열을 반환하는 `load_mnist` 함수를 구현한다.
+MNIST `.gz` 파일을 파싱해 train/test로 분할하고 원본 배열을 반환하는 `load_images`/`load_labels` 함수를 구현한다. 후속 프레임워크 프로젝트에서 공통으로 재사용한다.
 
-- [x] `src/data/mnist.py` 구현
+- [x] `src/data/mnist.py` 구현 (`load_images`, `load_labels`)
 - [x] `tests/stage2/test_mnist.py` 작성
 - [x] [[docs/stage2/phase2.1_mnist|phase2.1_mnist.md]] 문서 작성
 
-### 3.2. Phase 2.2 Dataset 구현
+### 3.2. Phase 2.2 transforms 구현
 
-`MNISTDataset` 클래스를 구현하고, task에 따른 target 변환과 `__getitem__` 인터페이스를 갖추어 `Dataloader`와 연동 가능하게 한다.
+이미지 정규화·reshape와 task별 레이블 변환 함수를 구현한다.
 
-- [x] `src/data/mnist.py` 구현 (`MNISTDataset` 추가)
+- [x] `src/data/transforms.py` 구현 (`normalize`, `to_flat`, `one_hot`, `binarize`, `to_regression`)
+- [x] `tests/stage2/test_transforms.py` 작성
+- [x] [[docs/stage2/phase2.2_transforms|phase2.2_transforms.md]] 문서 작성
+
+### 3.3. Phase 2.3 Dataset 구현
+
+`transform`/`target_transform`을 외부에서 주입받는 `MNISTDataset` base 클래스와 task별 3개 Dataset 클래스를 구현한다.
+
+- [x] `src/data/datasets.py` 구현 (`MNISTDataset`, `MulticlassDataset`, `BinaryDataset`, `RegressionDataset`)
 - [x] `tests/stage2/test_dataset.py` 작성
-- [x] [[docs/stage2/phase2.2_dataset|phase2.2_dataset.md]] 문서 작성
+- [x] [[docs/stage2/phase2.3_dataset|phase2.3_dataset.md]] 문서 작성
 
-### 3.3. Phase 2.3 Dataloader 구현
+### 3.4. Phase 2.4 Dataloader 구현
 
-배치 생성, shuffle, 반복 순회를 지원하는 `Dataloader`를 구현하고, `MNISTDataset`과의 통합 동작을 검증한다.
+배치 생성, shuffle, 반복 순회를 지원하는 `Dataloader`를 구현하고, Dataset과의 통합 동작을 검증한다.
 
 - [x] `src/data/dataloader.py` 구현
 - [x] `tests/stage2/test_dataloader.py` 작성
-- [x] [[docs/stage2/phase2.3_dataloader|phase2.3_dataloader.md]] 문서 작성
+- [x] [[docs/stage2/phase2.4_dataloader|phase2.4_dataloader.md]] 문서 작성
 
-### 3.4. Phase 2.4 실습 노트북 작성
+### 3.5. Phase 2.5 실습 노트북 작성
 
-MNIST 데이터 로딩, Dataset, `Dataloader`를 실습하는 교육용 노트북을 작성한다.
+MNIST 데이터 로딩, transforms, task별 Dataset, `Dataloader`를 실습하는 교육용 노트북을 작성한다.
 
 - [x] `notebooks/stage2/stage2-1_mnist-loading.ipynb` 작성
 - [x] `notebooks/stage2/stage2-2_dataset-and-dataloader.ipynb` 작성
+- [x] `notebooks/stage2/stage2-3_multiclass-dataset.ipynb` 작성
+- [x] `notebooks/stage2/stage2-4_binary-dataset.ipynb` 작성
+- [x] `notebooks/stage2/stage2-5_regression-dataset.ipynb` 작성
 
 ## 4. Stage 3 nn 모듈 구현
 

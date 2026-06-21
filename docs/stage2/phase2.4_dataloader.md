@@ -1,14 +1,14 @@
 ---
 tags: [docs, stage2, dataloader, batching]
 created: "2026-06-20"
-updated: "2026-06-20"
+updated: "2026-06-21"
 ---
 
 # Dataloader와 mini-batch 순회
 
 ## 1. 개요
 
-`src/data/dataloader.py`의 `Dataloader`는 `__len__`과 `__getitem__`을 구현한 Dataset을 받아 mini-batch 단위로 순회하는 범용 이터레이터를 제공한다. MNIST 전용이 아니며, 같은 프로토콜을 따르는 모든 Dataset과 함께 동작한다. 데이터 파이프라인에서 `Dataloader`는 `MNISTDataset` 다음, Trainer/Evaluator 이전 단계에 위치하여 배치 단위 이미지와 target을 학습 루프로 공급한다.
+`src/data/dataloader.py`의 `Dataloader`는 `__len__`과 `__getitem__`을 구현한 Dataset을 받아 mini-batch 단위로 순회하는 범용 이터레이터를 제공한다. MNIST 전용이 아니며, 같은 프로토콜을 따르는 모든 Dataset과 함께 동작한다. 데이터 파이프라인에서 `Dataloader`는 Dataset 다음, Trainer/Evaluator 이전 단계에 위치하여 배치 단위 이미지와 target을 학습 루프로 공급한다.
 
 **목표**
 - Dataset을 mini-batch 단위로 순회하는 이터레이터를 제공한다.
@@ -69,7 +69,7 @@ class Dataloader:
 
 `__len__`에서 `(n + batch_size - 1) // batch_size`는 `ceil(n / batch_size)`를 정수 연산으로 계산한다. 마지막 배치가 `batch_size`보다 작은 경우도 배치 수에 포함한다.
 
-`__iter__`에서 `np.stack`은 `dataset[i][0]`의 1D 배열 목록을 `(batch_size, feature_dim)` 2D 배열로 조립한다. Dataset이 반환하는 배열 형태만 맞으면 MNIST 외 Dataset도 수용한다.
+`__iter__`에서 `np.stack`은 `dataset[i][0]`의 배열 목록을 하나의 배치 배열로 조립한다. Dataset이 반환하는 배열 형태만 맞으면 MNIST 외 Dataset도 수용한다.
 
 ### 3.2. 셔플 동작
 
@@ -80,10 +80,10 @@ class Dataloader:
 최소 사용 예제는 다음과 같다.
 
 ```python
-from src.data.mnist import MNISTDataset
+from src.data.datasets import MulticlassDataset
 from src.data.dataloader import Dataloader
 
-ds = MNISTDataset("train", "multiclass")
+ds = MulticlassDataset("train")
 loader = Dataloader(ds, batch_size=64, shuffle=True)
 
 print(len(loader))
@@ -103,11 +103,11 @@ for images, targets in loader:
 프로젝트 통합 예제는 다음과 같다. Trainer 내부의 학습 루프에서 다음과 같이 사용한다.
 
 ```python
-from src.data.mnist import MNISTDataset
+from src.data.datasets import MulticlassDataset
 from src.data.dataloader import Dataloader
 
-train_ds = MNISTDataset("train", "multiclass")
-test_ds = MNISTDataset("test", "multiclass")
+train_ds = MulticlassDataset("train")
+test_ds = MulticlassDataset("test")
 
 train_loader = Dataloader(train_ds, batch_size=64, shuffle=True)
 test_loader = Dataloader(test_ds, batch_size=64, shuffle=False)

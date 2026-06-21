@@ -1,7 +1,7 @@
 # mlp.py: Three-layer MLP assembled from src.nn modules.
 
 from src.nn.layers import Linear, Sigmoid, Sequential
-from src.data.mnist import get_task_spec
+from src.task import get_task_spec
 
 
 class MLP:

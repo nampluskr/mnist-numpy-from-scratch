@@ -71,6 +71,50 @@ updated: 2026-06-21 (Phase 3.6 노트북 4개, Phase 4.3 노트북 2개 작성)
 | 2026-06-20 | PROJECT-SPEC.md §3 서브섹션 도입 - 3.1 과제 및 모델 / 3.2 코드 구현 / 3.3 문서 및 실험 3개 서브섹션으로 재구성, 도입 문장 추가 | |
 | 2026-06-20 | Stage 0 환경 구성 편입 - Phase 0.0 conda 환경 구성 신설, docs/stage4/phase4.0_cupy-setup.md → docs/stage0/phase0.0_conda-setup.md 이동, PROJECT-SPEC.md §5.1 제목 변경, Stage 4에서 Phase 4.0 제거 | | |
 
+## 260621 Stage 2 data 파이프라인 전면 재설계 및 Phase 2.2~2.5 완료
+
+**완료 항목**
+- `src/data/mnist.py` 재작성 — `load_images`/`load_labels` 순수 로딩 함수만 유지 (후속 프레임워크 공통 재사용)
+- `src/data/transforms.py` 신규 작성 — `normalize`, `to_flat`, `one_hot`, `binarize`, `to_regression`
+- `src/data/datasets.py` 신규 작성 — `MNISTDataset` base + `MulticlassDataset`, `BinaryDataset`, `RegressionDataset`
+- `src/task.py` 신규 작성 — `get_task_spec()` 이동 (data 패키지 순환 의존 방지)
+- `src/data/__init__.py` 갱신 — transforms, datasets export 추가
+- `src/models/mlp.py`, `cnn.py` import 수정 — `from src.task import get_task_spec`
+- `scripts/train.py`, `evaluate.py`, `predict.py`, `visualize.py` — Dataset 생성 코드 변경
+- `tests/stage2/test_mnist.py`, `test_dataset.py` 재작성
+- `tests/stage2/test_transforms.py` 신규 작성 (29개 테스트 통과)
+- `tests/stage4/test_trainer.py`, `test_evaluator.py`, `test_predictor.py` import 수정
+- Phase 2.2 `docs/stage2/phase2.2_transforms.md` 신규 작성
+- Phase 2.3 `docs/stage2/phase2.3_dataset.md` 재작성 (구 phase2.2_dataset.md 파일명 변경)
+- Phase 2.4 `docs/stage2/phase2.4_dataloader.md` 파일명 변경 (구 phase2.3_dataloader.md)
+- Phase 2.5 노트북 3개 신규 작성: stage2-3_multiclass-dataset, stage2-4_binary-dataset, stage2-5_regression-dataset
+- PROJECT-SPEC.md, PROJECT-TODO.md Stage 2 Phase 목록 및 노트북 구조 갱신
+
+**산출물**
+
+| 파일/산출물 | 내용 |
+|---|---|
+| `src/data/mnist.py` | `load_images`/`load_labels` 순수 로딩만 유지, 후속 프레임워크 공통 재사용 |
+| `src/data/transforms.py` | 이미지 변환 2개 + 레이블 변환 3개 순수 함수 |
+| `src/data/datasets.py` | `MNISTDataset` base + task별 3개 Dataset (eager transform 주입) |
+| `src/task.py` | `get_task_spec()` 독립 파일로 이동 |
+| `tests/stage2/test_transforms.py` | 5개 클래스, 29개 테스트 통과 |
+| `docs/stage2/phase2.2_transforms.md` | 이미지 정규화/reshape 개념(수식), task별 레이블 변환(수식), 구현, 사용법, 테스트표 |
+| `docs/stage2/phase2.3_dataset.md` | transforms.py + datasets.py 통합 문서 (파일명 변경) |
+| `docs/stage2/phase2.4_dataloader.md` | Dataloader 문서 (파일명 변경) |
+| `notebooks/stage2/stage2-3_multiclass-dataset.ipynb` | normalize/to_flat/one_hot, MulticlassDataset, one-hot heatmap, Dataloader 배치 |
+| `notebooks/stage2/stage2-4_binary-dataset.ipynb` | binarize, BinaryDataset, 홀짝 막대·파이 차트, 홀수/짝수 샘플 시각화 |
+| `notebooks/stage2/stage2-5_regression-dataset.ipynb` | to_regression, RegressionDataset, 변환 함수 그래프, digit별 분포, 복원 검증 |
+
+**결정사항**
+
+| 항목 | 결정 내용 |
+|---|---|
+| `load_images`/`load_labels` 역할 | 순수 로딩만 담당. 정규화·변환은 transforms.py + datasets.py 계층이 담당 |
+| `get_task_spec()` 위치 | `src/task.py` 독립 파일 — data 패키지와 core 패키지 간 순환 의존 방지 |
+| transform 적용 방식 | eager (생성자에서 전체 배열에 한 번) — `__getitem__` 호출 시 추가 연산 없음 |
+| task별 Dataset 설계 | 기본 transform 내장 + 외부 override 허용 (`transform=None` 체크) |
+
 ## 260621 Phase 3.6, Phase 4.3 교육용 노트북 작성
 
 **완료 항목**

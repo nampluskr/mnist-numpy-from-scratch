@@ -1,19 +1,19 @@
 ---
 tags: [docs, stage2, mnist, data]
 created: "2026-06-20"
-updated: "2026-06-20"
+updated: "2026-06-21"
 ---
 
 # MNIST 원본 데이터 로딩
 
 ## 1. 개요
 
-`src/data/mnist.py`의 `load_mnist`는 로컬에 저장된 MNIST gz 파일 4개를 파싱하여 원본 배열을 반환하는 단일 진입점이다. 정규화, target 변환 등 전처리는 이 함수의 책임 범위 밖이며, 각각 `MNISTDataset`과 `transform_targets`가 담당한다. 데이터 파이프라인에서 `load_mnist`는 가장 앞 단계에 위치하며, 이미지와 레이블 원본 배열을 다음 단계(`MNISTDataset`)로 넘긴다.
+`src/data/mnist.py`는 로컬에 저장된 MNIST gz 파일 4개를 파싱하여 원본 배열을 반환하는 공통 로딩 모듈이다. 이 파일은 NumPy 이외의 어떤 프레임워크 의존도 갖지 않으며, 후속 PyTorch, TensorFlow, JAX 프로젝트에서도 동일하게 재사용한다. 정규화, target 변환, Dataset 클래스 구성 등의 전처리는 이 모듈의 책임 밖이며 각 프레임워크 프로젝트의 `datasets.py`와 `transforms.py`가 담당한다.
 
-**목표**
-- 로컬 MNIST gz 파일 4개를 파싱하여 `"train"` / `"test"` split을 선택한다.
-- 이미지는 `(N, 28, 28)` `uint8`, 레이블은 `(N,)` `uint8` 원본 배열로 반환한다.
-- 파일 없음, 잘못된 split 등 오류 조건을 명확한 예외로 처리한다.
+공개 진입점은 두 함수다.
+
+- `load_images(split)`: split에 해당하는 gz 파일을 파싱하여 `(N, 28, 28)` `uint8` 이미지 배열을 반환한다.
+- `load_labels(split)`: split에 해당하는 gz 파일을 파싱하여 `(N,)` `uint8` 레이블 배열을 반환한다.
 
 ## 2. 개념
 
@@ -30,7 +30,26 @@ MNIST는 손으로 쓴 숫자 이미지 70,000장(train 60,000 + test 10,000)으
 | `t10k-images-idx3-ubyte.gz` | 테스트 이미지 10,000장 |
 | `t10k-labels-idx1-ubyte.gz` | 테스트 레이블 10,000개 |
 
-### 2.2. IDX 바이너리 포맷
+### 2.2. 프레임워크 공통 모듈로서의 역할
+
+이 프로젝트는 `numpy > pytorch > tensorflow > jax` 순서로 진행되는 딥러닝 프레임워크 학습 시리즈의 첫 번째이다. MNIST 데이터 파일 포맷은 프레임워크와 무관하므로 `load_images`와 `load_labels`는 모든 프레임워크 프로젝트에서 동일하게 사용한다.
+
+각 프레임워크 프로젝트에서 `src/data/mnist.py`를 재사용하는 방식은 다음과 같다.
+
+```python
+# pytorch 프로젝트의 dataset.py (예시)
+from src.data.mnist import load_images, load_labels
+
+class MNISTDataset(torch.utils.data.Dataset):
+    def __init__(self, split, transform=None, target_transform=None):
+        images = load_images(split)
+        labels = load_labels(split)
+        ...
+```
+
+각 프레임워크 프로젝트는 `load_images`와 `load_labels`가 반환하는 원본 배열을 그대로 받아, 해당 프레임워크에 맞는 Dataset 클래스와 transform을 자체 구성한다. 이 구조로 MNIST 파일 파싱 로직은 한 번만 구현하고, 프레임워크별 차이는 Dataset 계층에서만 처리한다.
+
+### 2.3. IDX 바이너리 포맷
 
 IDX 포맷은 헤더와 데이터 영역으로 구성된 바이너리 직렬화 형식이다. 모든 정수는 big-endian 32-bit 부호 없는 정수(`">I"`)로 저장된다.
 
@@ -51,26 +70,30 @@ IDX 포맷은 헤더와 데이터 영역으로 구성된 바이너리 직렬화 
 
 | 이름 | 종류 | 입력 | 출력 | 설명 |
 |---|---|---|---|---|
-| `load_mnist` | 함수 | `split: str`, `dataset_dir: str` | `(images, labels)` tuple | MNIST 원본 배열 로딩 |
-| `get_task_spec` | 함수 | `task: str` | `dict` | task별 스펙 dict 반환 |
-| `transform_targets` | 함수 | `labels: ndarray`, `task: str` | `ndarray` | task별 target 변환 |
-| `MNISTDataset` | 클래스 | `split`, `task` | dataset instance | 정규화 및 target 변환 포함 |
+| `load_images` | 함수 | `split: str`, `dataset_dir: str` | `ndarray (N, 28, 28) uint8` | 이미지 원본 배열 로딩 |
+| `load_labels` | 함수 | `split: str`, `dataset_dir: str` | `ndarray (N,) uint8` | 레이블 원본 배열 로딩 |
 
-### 3.1. load_mnist
+### 3.1. load_images / load_labels
 
-`load_mnist`는 split에 해당하는 gz 파일 2개를 읽어 `(images, labels)` tuple을 반환한다.
+두 함수 모두 split 유효성을 먼저 검사한 뒤 내부 파싱 함수로 위임한다.
 
 ```python
-def load_mnist(split, dataset_dir=None):
+def load_images(split, dataset_dir=None):
     if split not in _SPLIT_FILES:
         raise ValueError(f"split must be 'train' or 'test', got '{split}'")
     if dataset_dir is None:
         dataset_dir = _DATASET_DIR
+    img_file, _ = _SPLIT_FILES[split]
+    return _load_images(os.path.join(dataset_dir, img_file))
 
-    img_file, lbl_file = _SPLIT_FILES[split]
-    images = _load_images(os.path.join(dataset_dir, img_file))
-    labels = _load_labels(os.path.join(dataset_dir, lbl_file))
-    return images, labels
+
+def load_labels(split, dataset_dir=None):
+    if split not in _SPLIT_FILES:
+        raise ValueError(f"split must be 'train' or 'test', got '{split}'")
+    if dataset_dir is None:
+        dataset_dir = _DATASET_DIR
+    _, lbl_file = _SPLIT_FILES[split]
+    return _load_labels(os.path.join(dataset_dir, lbl_file))
 ```
 
 split별 파일 매핑은 다음과 같다.
@@ -99,9 +122,10 @@ def _load_images(path):
 최소 사용 예제는 다음과 같다.
 
 ```python
-from src.data.mnist import load_mnist
+from src.data.mnist import load_images, load_labels
 
-images, labels = load_mnist("train")
+images = load_images("train")
+labels = load_labels("train")
 print(images.shape, images.dtype)
 print(labels.shape, labels.dtype)
 ```
@@ -113,13 +137,13 @@ print(labels.shape, labels.dtype)
 (60000,) uint8
 ```
 
-프로젝트 통합 예제는 다음과 같다. `MNISTDataset`은 `load_mnist`를 내부에서 호출하여 정규화와 target 변환까지 처리한다.
+프로젝트 통합 예제는 다음과 같다. `MulticlassDataset`은 내부에서 `load_images`와 `load_labels`를 호출하여 정규화와 target 변환까지 처리한다.
 
 ```python
-from src.data.mnist import MNISTDataset
+from src.data.datasets import MulticlassDataset
 from src.data.dataloader import Dataloader
 
-dataset = MNISTDataset("train", "multiclass")
+dataset = MulticlassDataset("train")
 loader = Dataloader(dataset, batch_size=64, shuffle=True)
 
 for images, targets in loader:
@@ -137,15 +161,16 @@ conda run -n numpy_py311 pytest tests/stage2/test_mnist.py -v
 
 테스트 구성은 다음과 같다.
 
-| 클래스 | 항목 수 | 주요 검증 내용 |
-|---|---|---|
-| `TestLoadMnist` | 9 | shape, dtype, 픽셀 범위, 레이블 범위, 잘못된 split/파일 없음 예외 |
-| `TestLoadMnistReal` | 4 | 실제 MNIST 파일 기반 shape, dtype 검증 (파일 없으면 skip) |
+| 클래스 | 주요 검증 내용 |
+|---|---|
+| `TestLoadImages` | shape, dtype uint8, 픽셀 범위, test split shape, 잘못된 split/파일 없음 예외 |
+| `TestLoadLabels` | shape, dtype uint8, 레이블 값 범위, test split shape, 잘못된 split/파일 없음 예외 |
+| `TestLoadMnistReal` | 실제 MNIST 파일 기반 shape, dtype 검증 (파일 없으면 skip) |
 
 단위 테스트는 `tmp_path` fixture로 합성 gz 파일을 생성하여 실제 MNIST 파일에 의존하지 않고 실행한다. 실제 MNIST 의존 테스트(`TestLoadMnistReal`)는 `/mnt/d/datasets/mnist` 경로가 없으면 skip 처리된다.
 
 ## 6. 요약
 
-`load_mnist`는 로컬 MNIST gz 파일을 IDX 바이너리 포맷으로 파싱하여 원본 `uint8` 배열을 반환한다. 정규화와 target 변환은 이 함수의 책임 범위 밖이며, `MNISTDataset`이 담당한다. 단위 테스트는 합성 데이터로 실행하여 실제 파일 의존을 최소화한다.
+`load_images`와 `load_labels`는 로컬 MNIST gz 파일을 IDX 바이너리 포맷으로 파싱하여 원본 `uint8` 배열을 반환한다. 정규화와 target 변환은 이 모듈의 책임 밖이며, 각 프레임워크 프로젝트의 Dataset 계층이 담당한다. 이 분리 구조 덕분에 MNIST 파일 파싱 코드는 후속 PyTorch, TensorFlow, JAX 프로젝트에서 그대로 재사용된다.
 
-다음 Phase에서는 [[phase2.2_dataset]]을 다룬다.
+다음 Phase에서는 [[phase2.2_transforms]]을 다룬다.

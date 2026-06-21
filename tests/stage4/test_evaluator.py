@@ -3,7 +3,7 @@
 import numpy as np
 import pytest
 from src.core.evaluator import Evaluator
-from src.data.mnist import get_task_spec
+from src.task import get_task_spec
 
 
 class TinyModel:

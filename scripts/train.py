@@ -5,7 +5,8 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import argparse
 
-from src.data.mnist import MNISTDataset, get_task_spec
+from src.data.datasets import MulticlassDataset, BinaryDataset, RegressionDataset
+from src.task import get_task_spec
 from src.data.dataloader import Dataloader
 from src.models.mlp import MLP
 from src.models.cnn import CNN
@@ -63,8 +64,9 @@ def main(args=None):
     dataset_dir = config["dataset_dir"]
     batch_size = config["batch_size"]
 
-    train_dataset = MNISTDataset("train", task, dataset_dir=dataset_dir)
-    test_dataset = MNISTDataset("test", task, dataset_dir=dataset_dir)
+    _dataset_cls = {"multiclass": MulticlassDataset, "binary": BinaryDataset, "regression": RegressionDataset}[task]
+    train_dataset = _dataset_cls("train", dataset_dir=dataset_dir)
+    test_dataset = _dataset_cls("test", dataset_dir=dataset_dir)
     train_loader = Dataloader(train_dataset, batch_size=batch_size, shuffle=True)
     test_loader = Dataloader(test_dataset, batch_size=batch_size, shuffle=False)
 

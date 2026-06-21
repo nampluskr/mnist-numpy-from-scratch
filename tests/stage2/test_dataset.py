@@ -1,4 +1,4 @@
-# test_dataset.py: Tests for MNISTDataset in src/data/mnist.py.
+# test_dataset.py: Tests for MNISTDataset, MulticlassDataset, BinaryDataset, RegressionDataset.
 
 import gzip
 import os
@@ -7,7 +7,8 @@ import struct
 import numpy as np
 import pytest
 
-from src.data.mnist import MNISTDataset
+from src.data.datasets import MNISTDataset, MulticlassDataset, BinaryDataset, RegressionDataset
+from src.data import transforms as T
 
 
 # --- synthetic data helpers ---
@@ -43,149 +44,151 @@ _skip_no_real_data = pytest.mark.skipif(
 )
 
 
-# --- synthetic data tests ---
+# --- MNISTDataset base class tests ---
 
 class TestMNISTDataset:
-    # __len__
-    def test_len_train(self, mnist_dir):
-        ds = MNISTDataset("train", "multiclass", dataset_dir=mnist_dir)
-        assert len(ds) == 20
+    def test_no_transform_returns_raw(self, mnist_dir):
+        ds = MNISTDataset("train", dataset_dir=mnist_dir)
+        assert ds.images.shape == (20, 28, 28)
+        assert ds.images.dtype == np.uint8
 
-    def test_len_test(self, mnist_dir):
-        ds = MNISTDataset("test", "multiclass", dataset_dir=mnist_dir)
-        assert len(ds) == 20
-
-    # images: shape and dtype
-    def test_images_shape_multiclass(self, mnist_dir):
-        ds = MNISTDataset("train", "multiclass", dataset_dir=mnist_dir)
+    def test_custom_transform(self, mnist_dir):
+        ds = MNISTDataset("train", transform=lambda x: T.to_flat(T.normalize(x)), dataset_dir=mnist_dir)
         assert ds.images.shape == (20, 784)
-
-    def test_images_dtype_float32(self, mnist_dir):
-        ds = MNISTDataset("train", "multiclass", dataset_dir=mnist_dir)
         assert ds.images.dtype == np.float32
 
-    def test_images_normalized(self, mnist_dir):
-        ds = MNISTDataset("train", "multiclass", dataset_dir=mnist_dir)
-        assert ds.images.min() >= 0.0
-        assert ds.images.max() <= 1.0
-
-    # targets: multiclass
-    def test_targets_shape_multiclass(self, mnist_dir):
-        ds = MNISTDataset("train", "multiclass", dataset_dir=mnist_dir)
+    def test_custom_target_transform(self, mnist_dir):
+        ds = MNISTDataset("train", target_transform=T.one_hot, dataset_dir=mnist_dir)
         assert ds.targets.shape == (20, 10)
 
-    def test_targets_dtype_multiclass(self, mnist_dir):
-        ds = MNISTDataset("train", "multiclass", dataset_dir=mnist_dir)
-        assert ds.targets.dtype == np.float32
+    def test_len(self, mnist_dir):
+        ds = MNISTDataset("train", dataset_dir=mnist_dir)
+        assert len(ds) == 20
 
-    def test_targets_onehot_multiclass(self, mnist_dir):
-        ds = MNISTDataset("train", "multiclass", dataset_dir=mnist_dir)
-        assert np.all(ds.targets.sum(axis=1) == 1.0)
-        assert set(np.unique(ds.targets)).issubset({0.0, 1.0})
-
-    # targets: binary
-    def test_targets_shape_binary(self, mnist_dir):
-        ds = MNISTDataset("train", "binary", dataset_dir=mnist_dir)
-        assert ds.targets.shape == (20, 1)
-
-    def test_targets_dtype_binary(self, mnist_dir):
-        ds = MNISTDataset("train", "binary", dataset_dir=mnist_dir)
-        assert ds.targets.dtype == np.float32
-
-    def test_targets_values_binary(self, mnist_dir):
-        ds = MNISTDataset("train", "binary", dataset_dir=mnist_dir)
-        assert set(np.unique(ds.targets)).issubset({0.0, 1.0})
-
-    def test_targets_odd_is_one_binary(self, mnist_dir):
-        # Labels are 0..9 repeated. Odd labels map to 1, even labels map to 0.
-        ds = MNISTDataset("train", "binary", dataset_dir=mnist_dir)
-        assert ds.targets[1, 0] == 1.0
-        assert ds.targets[0, 0] == 0.0
-
-    # targets: regression
-    def test_targets_shape_regression(self, mnist_dir):
-        ds = MNISTDataset("train", "regression", dataset_dir=mnist_dir)
-        assert ds.targets.shape == (20, 1)
-
-    def test_targets_dtype_regression(self, mnist_dir):
-        ds = MNISTDataset("train", "regression", dataset_dir=mnist_dir)
-        assert ds.targets.dtype == np.float32
-
-    def test_targets_range_regression(self, mnist_dir):
-        ds = MNISTDataset("train", "regression", dataset_dir=mnist_dir)
-        assert ds.targets.min() >= 0.0
-        assert ds.targets.max() <= 1.0
-
-    def test_targets_values_regression(self, mnist_dir):
-        ds = MNISTDataset("train", "regression", dataset_dir=mnist_dir)
-        # Label 9 at index 9 maps to 9/9 = 1.0.
-        assert pytest.approx(ds.targets[9, 0], abs=1e-6) == 1.0
-        # Label 0 at index 0 maps to 0/9 = 0.0.
-        assert pytest.approx(ds.targets[0, 0], abs=1e-6) == 0.0
-
-    # __getitem__
     def test_getitem_returns_tuple(self, mnist_dir):
-        ds = MNISTDataset("train", "multiclass", dataset_dir=mnist_dir)
+        ds = MNISTDataset("train", dataset_dir=mnist_dir)
         item = ds[0]
         assert isinstance(item, tuple) and len(item) == 2
 
-    def test_getitem_image_shape(self, mnist_dir):
-        ds = MNISTDataset("train", "multiclass", dataset_dir=mnist_dir)
-        image, _ = ds[0]
-        assert image.shape == (784,)
+    def test_invalid_split_raises(self, mnist_dir):
+        with pytest.raises(ValueError):
+            MNISTDataset("valid", dataset_dir=mnist_dir)
 
-    def test_getitem_target_shape_multiclass(self, mnist_dir):
-        ds = MNISTDataset("train", "multiclass", dataset_dir=mnist_dir)
-        _, target = ds[0]
+
+# --- MulticlassDataset tests ---
+
+class TestMulticlassDataset:
+    def test_len(self, mnist_dir):
+        ds = MulticlassDataset("train", dataset_dir=mnist_dir)
+        assert len(ds) == 20
+
+    def test_images_shape(self, mnist_dir):
+        ds = MulticlassDataset("train", dataset_dir=mnist_dir)
+        assert ds.images.shape == (20, 784)
+
+    def test_images_dtype(self, mnist_dir):
+        ds = MulticlassDataset("train", dataset_dir=mnist_dir)
+        assert ds.images.dtype == np.float32
+
+    def test_images_normalized(self, mnist_dir):
+        ds = MulticlassDataset("train", dataset_dir=mnist_dir)
+        assert ds.images.min() >= 0.0
+        assert ds.images.max() <= 1.0
+
+    def test_targets_shape(self, mnist_dir):
+        ds = MulticlassDataset("train", dataset_dir=mnist_dir)
+        assert ds.targets.shape == (20, 10)
+
+    def test_targets_dtype(self, mnist_dir):
+        ds = MulticlassDataset("train", dataset_dir=mnist_dir)
+        assert ds.targets.dtype == np.float32
+
+    def test_targets_onehot(self, mnist_dir):
+        ds = MulticlassDataset("train", dataset_dir=mnist_dir)
+        assert np.all(ds.targets.sum(axis=1) == 1.0)
+        assert set(np.unique(ds.targets)).issubset({0.0, 1.0})
+
+    def test_getitem_shapes(self, mnist_dir):
+        ds = MulticlassDataset("train", dataset_dir=mnist_dir)
+        image, target = ds[0]
+        assert image.shape == (784,)
         assert target.shape == (10,)
 
-    def test_getitem_target_shape_binary(self, mnist_dir):
-        ds = MNISTDataset("train", "binary", dataset_dir=mnist_dir)
+    def test_custom_transform_override(self, mnist_dir):
+        ds = MulticlassDataset("train", transform=lambda x: x.reshape(len(x), -1), dataset_dir=mnist_dir)
+        assert ds.images.dtype == np.uint8
+
+
+# --- BinaryDataset tests ---
+
+class TestBinaryDataset:
+    def test_targets_shape(self, mnist_dir):
+        ds = BinaryDataset("train", dataset_dir=mnist_dir)
+        assert ds.targets.shape == (20, 1)
+
+    def test_targets_dtype(self, mnist_dir):
+        ds = BinaryDataset("train", dataset_dir=mnist_dir)
+        assert ds.targets.dtype == np.float32
+
+    def test_targets_binary_values(self, mnist_dir):
+        ds = BinaryDataset("train", dataset_dir=mnist_dir)
+        assert set(np.unique(ds.targets)).issubset({0.0, 1.0})
+
+    def test_targets_odd_is_one(self, mnist_dir):
+        ds = BinaryDataset("train", dataset_dir=mnist_dir)
+        assert ds.targets[1, 0] == 1.0
+        assert ds.targets[0, 0] == 0.0
+
+    def test_getitem_target_shape(self, mnist_dir):
+        ds = BinaryDataset("train", dataset_dir=mnist_dir)
         _, target = ds[0]
         assert target.shape == (1,)
 
-    # task_spec
-    def test_task_spec_keys(self, mnist_dir):
-        ds = MNISTDataset("train", "multiclass", dataset_dir=mnist_dir)
-        for key in ("task", "output_dim", "target_dtype", "prediction_mode"):
-            assert key in ds.task_spec
 
-    def test_task_spec_multiclass(self, mnist_dir):
-        ds = MNISTDataset("train", "multiclass", dataset_dir=mnist_dir)
-        assert ds.task_spec["output_dim"] == 10
-        assert ds.task_spec["prediction_mode"] == "argmax"
+# --- RegressionDataset tests ---
 
-    def test_task_spec_binary(self, mnist_dir):
-        ds = MNISTDataset("train", "binary", dataset_dir=mnist_dir)
-        assert ds.task_spec["output_dim"] == 1
-        assert ds.task_spec["prediction_mode"] == "threshold"
+class TestRegressionDataset:
+    def test_targets_shape(self, mnist_dir):
+        ds = RegressionDataset("train", dataset_dir=mnist_dir)
+        assert ds.targets.shape == (20, 1)
 
-    def test_task_spec_regression(self, mnist_dir):
-        ds = MNISTDataset("train", "regression", dataset_dir=mnist_dir)
-        assert ds.task_spec["output_dim"] == 1
-        assert ds.task_spec["prediction_mode"] == "round_clip"
+    def test_targets_dtype(self, mnist_dir):
+        ds = RegressionDataset("train", dataset_dir=mnist_dir)
+        assert ds.targets.dtype == np.float32
 
-    # error handling
-    def test_invalid_split_raises(self, mnist_dir):
-        with pytest.raises(ValueError):
-            MNISTDataset("valid", "multiclass", dataset_dir=mnist_dir)
+    def test_targets_range(self, mnist_dir):
+        ds = RegressionDataset("train", dataset_dir=mnist_dir)
+        assert ds.targets.min() >= 0.0
+        assert ds.targets.max() <= 1.0
 
-    def test_invalid_task_raises(self, mnist_dir):
-        with pytest.raises(ValueError):
-            MNISTDataset("train", "unknown", dataset_dir=mnist_dir)
+    def test_targets_values(self, mnist_dir):
+        ds = RegressionDataset("train", dataset_dir=mnist_dir)
+        assert pytest.approx(ds.targets[9, 0], abs=1e-6) == 1.0
+        assert pytest.approx(ds.targets[0, 0], abs=1e-6) == 0.0
+
+    def test_getitem_target_shape(self, mnist_dir):
+        ds = RegressionDataset("train", dataset_dir=mnist_dir)
+        _, target = ds[0]
+        assert target.shape == (1,)
 
 
 # --- real data integration tests ---
 
-class TestMNISTDatasetReal:
+class TestDatasetsReal:
     @_skip_no_real_data
-    def test_train_multiclass_shapes(self):
-        ds = MNISTDataset("train", "multiclass")
+    def test_multiclass_train_shapes(self):
+        ds = MulticlassDataset("train")
         assert ds.images.shape == (60000, 784)
         assert ds.targets.shape == (60000, 10)
 
     @_skip_no_real_data
-    def test_test_binary_shapes(self):
-        ds = MNISTDataset("test", "binary")
+    def test_binary_test_shapes(self):
+        ds = BinaryDataset("test")
+        assert ds.images.shape == (10000, 784)
+        assert ds.targets.shape == (10000, 1)
+
+    @_skip_no_real_data
+    def test_regression_test_shapes(self):
+        ds = RegressionDataset("test")
         assert ds.images.shape == (10000, 784)
         assert ds.targets.shape == (10000, 1)
