@@ -188,7 +188,7 @@ conda run -n numpy_py311 pytest tests/ -q
 
 ```text
 tests/stage1/  # 공통 유틸리티 (batching, random, io, checkpoints, training_plots)
-tests/stage2/  # MNIST loading, Dataset, DataLoader
+tests/stage2/  # MNIST loading, Dataset, Dataloader
 tests/stage3/  # nn 모듈 (activation, loss, metric, layer, conv)
 tests/stage4/  # 모델 (MLP, CNN)
 tests/stage5/  # 실행 객체 (optimizer, trainer, evaluator, predictor, visualizer)
@@ -203,7 +203,7 @@ tests/stage6/  # 클라이언트 스크립트 (train, evaluate, predict, visuali
 |---:|---|
 | 0 | 환경 구성 및 계획 수립 |
 | 1 | 공통 유틸리티 (batching, random, io, checkpoints, training_plots) |
-| 2 | MNIST 데이터 로더 (load_mnist, MnistDataset, DataLoader) |
+| 2 | MNIST 데이터 로더 (load_mnist, MNISTDataset, Dataloader) |
 | 3 | nn 모듈 (activation, loss, metric, layer, conv) |
 | 4 | 모델 (MLP, CNN) |
 | 5 | 실행 객체 (optimizer, trainer, evaluator, predictor, visualizer, logger) |

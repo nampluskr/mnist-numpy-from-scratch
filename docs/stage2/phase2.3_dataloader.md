@@ -4,11 +4,11 @@ created: "2026-06-20"
 updated: "2026-06-20"
 ---
 
-# DataLoader와 mini-batch 순회
+# Dataloader와 mini-batch 순회
 
 ## 1. 개요
 
-`src/data/dataloader.py`의 `DataLoader`는 `__len__`과 `__getitem__`을 구현한 Dataset을 받아 mini-batch 단위로 순회하는 범용 이터레이터를 제공한다. MNIST 전용이 아니며, 같은 프로토콜을 따르는 모든 Dataset과 함께 동작한다. 데이터 파이프라인에서 `DataLoader`는 `MnistDataset` 다음, Trainer/Evaluator 이전 단계에 위치하여 배치 단위 이미지와 target을 학습 루프로 공급한다.
+`src/data/dataloader.py`의 `Dataloader`는 `__len__`과 `__getitem__`을 구현한 Dataset을 받아 mini-batch 단위로 순회하는 범용 이터레이터를 제공한다. MNIST 전용이 아니며, 같은 프로토콜을 따르는 모든 Dataset과 함께 동작한다. 데이터 파이프라인에서 `Dataloader`는 `MNISTDataset` 다음, Trainer/Evaluator 이전 단계에 위치하여 배치 단위 이미지와 target을 학습 루프로 공급한다.
 
 **목표**
 - Dataset을 mini-batch 단위로 순회하는 이터레이터를 제공한다.
@@ -19,13 +19,13 @@ updated: "2026-06-20"
 
 ### 2.1. mini-batch 이터레이터
 
-학습 루프는 매 epoch마다 전체 데이터를 mini-batch 단위로 분할하여 처리한다. `DataLoader`는 Dataset 인덱스 배열을 생성하고, `batch_size` 단위로 슬라이싱하여 각 배치의 샘플을 `np.stack`으로 조립한다. Dataset 원본 배열을 복사하거나 셔플하지 않고, 인덱스 배열만 조작하므로 메모리 효율이 높다.
+학습 루프는 매 epoch마다 전체 데이터를 mini-batch 단위로 분할하여 처리한다. `Dataloader`는 Dataset 인덱스 배열을 생성하고, `batch_size` 단위로 슬라이싱하여 각 배치의 샘플을 `np.stack`으로 조립한다. Dataset 원본 배열을 복사하거나 셔플하지 않고, 인덱스 배열만 조작하므로 메모리 효율이 높다.
 
-`DataLoader`의 핵심 용어는 다음과 같다.
+`Dataloader`의 핵심 용어는 다음과 같다.
 
 | 용어 | 의미 | 이 프로젝트에서의 역할 |
 |---|---|---|
-| `batch_size` | 한 번에 처리하는 샘플 수 | DataLoader의 분할 단위 |
+| `batch_size` | 한 번에 처리하는 샘플 수 | `Dataloader`의 분할 단위 |
 | `shuffle` | 매 iteration마다 인덱스 순서를 무작위로 재배치 | 학습 일반화를 위해 train split에 `True` 설정 |
 | 마지막 배치 | 나머지 샘플로 구성된 배치 | `len(dataset) % batch_size != 0`일 때 발생 |
 
@@ -41,14 +41,14 @@ updated: "2026-06-20"
 
 | 이름 | 종류 | 입력 | 출력 | 설명 |
 |---|---|---|---|---|
-| `DataLoader` | 클래스 | `dataset`, `batch_size`, `shuffle=False` | dataloader instance | mini-batch 이터레이터 |
+| `Dataloader` | 클래스 | `dataset`, `batch_size`, `shuffle=False` | dataloader instance | mini-batch 이터레이터 |
 | `__len__` | 메서드 | 없음 | `int` | `ceil(len(dataset) / batch_size)` |
 | `__iter__` | 메서드 | 없음 | generator | `(images_batch, targets_batch)` tuple yield |
 
-### 3.1. DataLoader 구현
+### 3.1. Dataloader 구현
 
 ```python
-class DataLoader:
+class Dataloader:
     def __init__(self, dataset, batch_size, shuffle=False):
         self.dataset = dataset
         self.batch_size = batch_size
@@ -73,18 +73,18 @@ class DataLoader:
 
 ### 3.2. 셔플 동작
 
-`shuffle=True`를 설정하면 `__iter__` 호출 시마다 새로운 `np.random.permutation`이 생성된다. 따라서 같은 `DataLoader` 인스턴스를 반복 사용하면 epoch마다 다른 순서로 배치가 생성된다. Dataset 원본 배열은 변경하지 않는다.
+`shuffle=True`를 설정하면 `__iter__` 호출 시마다 새로운 `np.random.permutation`이 생성된다. 따라서 같은 `Dataloader` 인스턴스를 반복 사용하면 epoch마다 다른 순서로 배치가 생성된다. Dataset 원본 배열은 변경하지 않는다.
 
 ## 4. 사용법
 
 최소 사용 예제는 다음과 같다.
 
 ```python
-from src.data.mnist import MnistDataset
-from src.data.dataloader import DataLoader
+from src.data.mnist import MNISTDataset
+from src.data.dataloader import Dataloader
 
-ds = MnistDataset("train", "multiclass")
-loader = DataLoader(ds, batch_size=64, shuffle=True)
+ds = MNISTDataset("train", "multiclass")
+loader = Dataloader(ds, batch_size=64, shuffle=True)
 
 print(len(loader))
 
@@ -103,14 +103,14 @@ for images, targets in loader:
 프로젝트 통합 예제는 다음과 같다. Trainer 내부의 학습 루프에서 다음과 같이 사용한다.
 
 ```python
-from src.data.mnist import MnistDataset
-from src.data.dataloader import DataLoader
+from src.data.mnist import MNISTDataset
+from src.data.dataloader import Dataloader
 
-train_ds = MnistDataset("train", "multiclass")
-test_ds = MnistDataset("test", "multiclass")
+train_ds = MNISTDataset("train", "multiclass")
+test_ds = MNISTDataset("test", "multiclass")
 
-train_loader = DataLoader(train_ds, batch_size=64, shuffle=True)
-test_loader = DataLoader(test_ds, batch_size=64, shuffle=False)
+train_loader = Dataloader(train_ds, batch_size=64, shuffle=True)
+test_loader = Dataloader(test_ds, batch_size=64, shuffle=False)
 
 for epoch in range(num_epochs):
     for images, targets in train_loader:
@@ -130,16 +130,16 @@ conda run -n numpy_py311 pytest tests/stage2/test_dataloader.py -v
 
 | 클래스 | 항목 수 | 주요 검증 내용 |
 |---|---|---|
-| `TestDataLoaderLen` | 3 | 나누어떨어지는 경우, 나머지 있는 경우, batch_size > n 경우 |
-| `TestDataLoaderIter` | 6 | tuple 반환, batch image/target shape, 배치 수, 마지막 배치 크기, 전체 샘플 수 |
-| `TestDataLoaderOrder` | 1 | shuffle=False일 때 원본 순서 유지 |
-| `TestDataLoaderShuffle` | 2 | 순서 변경, 전체 샘플 포함 |
-| `TestDataLoaderIndependence` | 1 | 두 번의 iter가 서로 다른 순서 생성 |
+| `TestDataloaderLen` | 3 | 나누어떨어지는 경우, 나머지 있는 경우, batch_size > n 경우 |
+| `TestDataloaderIter` | 6 | tuple 반환, batch image/target shape, 배치 수, 마지막 배치 크기, 전체 샘플 수 |
+| `TestDataloaderOrder` | 1 | shuffle=False일 때 원본 순서 유지 |
+| `TestDataloaderShuffle` | 2 | 순서 변경, 전체 샘플 포함 |
+| `TestDataloaderIndependence` | 1 | 두 번의 iter가 서로 다른 순서 생성 |
 
-단위 테스트는 MNIST 의존 없이 `ToyDataset`(n=20, feature_dim=4) 합성 데이터로 DataLoader의 범용성을 검증한다.
+단위 테스트는 MNIST 의존 없이 `ToyDataset`(n=20, feature_dim=4) 합성 데이터로 `Dataloader`의 범용성을 검증한다.
 
 ## 6. 요약
 
-`DataLoader`는 Dataset 인덱스 배열을 `batch_size` 단위로 슬라이싱하고 `np.stack`으로 배치를 조립하는 범용 이터레이터이다. Dataset 원본을 변경하지 않고 인덱스만 조작하므로 모든 Dataset 타입을 수용한다. `shuffle=True` 설정 시 매 epoch마다 독립적인 무작위 순서를 생성한다.
+`Dataloader`는 Dataset 인덱스 배열을 `batch_size` 단위로 슬라이싱하고 `np.stack`으로 배치를 조립하는 범용 이터레이터이다. Dataset 원본을 변경하지 않고 인덱스만 조작하므로 모든 Dataset 타입을 수용한다. `shuffle=True` 설정 시 매 epoch마다 독립적인 무작위 순서를 생성한다.
 
 다음 Stage에서는 [[phase3.1_activations]]를 다룬다.

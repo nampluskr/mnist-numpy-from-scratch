@@ -5,8 +5,8 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import argparse
 
-from src.data.mnist import MnistDataset, get_task_spec
-from src.data.dataloader import DataLoader
+from src.data.mnist import MNISTDataset, get_task_spec
+from src.data.dataloader import Dataloader
 from src.models.mlp import MLP
 from src.models.cnn import CNN
 from src.core.optimizers import SGD
@@ -63,10 +63,10 @@ def main(args=None):
     dataset_dir = config["dataset_dir"]
     batch_size = config["batch_size"]
 
-    train_dataset = MnistDataset("train", task, dataset_dir=dataset_dir)
-    test_dataset = MnistDataset("test", task, dataset_dir=dataset_dir)
-    train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
-    test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False)
+    train_dataset = MNISTDataset("train", task, dataset_dir=dataset_dir)
+    test_dataset = MNISTDataset("test", task, dataset_dir=dataset_dir)
+    train_loader = Dataloader(train_dataset, batch_size=batch_size, shuffle=True)
+    test_loader = Dataloader(test_dataset, batch_size=batch_size, shuffle=False)
 
     if config.get("model") == "cnn":
         model = CNN(task=task, seed=config["seed"])

@@ -86,11 +86,11 @@ Stage는 책의 Chapter에, Phase는 Chapter 내부의 Section에 대응한다. 
 
 ### 5.3. Stage 2 MNIST 데이터 로더 구현
 
-`src/data/` 패키지에 로컬 MNIST `.gz` 파일을 파싱하는 `load_mnist`부터, task별 target 변환을 포함한 `MnistDataset`, 배치·shuffle·반복 순회를 지원하는 `DataLoader`까지 데이터 파이프라인 전체를 구현한다.
+`src/data/` 패키지에 로컬 MNIST `.gz` 파일을 파싱하는 `load_mnist`부터, task별 target 변환을 포함한 `MNISTDataset`, 배치·shuffle·반복 순회를 지원하는 `Dataloader`까지 데이터 파이프라인 전체를 구현한다.
 
 - Phase 2.1 MNIST 데이터 로딩
 - Phase 2.2 Dataset 구현
-- Phase 2.3 DataLoader 구현
+- Phase 2.3 Dataloader 구현
 - Phase 2.4 실습 노트북 작성
 
 ### 5.4. Stage 3 nn 모듈 구현
@@ -202,13 +202,13 @@ src/
 | `src/nn/losses.py` | `cross_entropy`, `binary_cross_entropy`, `mse` 손실 함수와 이들의 gradient 함수를 구현한다. numpy-only (`torch.nn` 대응). |
 | `src/nn/metrics.py` | `accuracy`, `binary_accuracy`, `r2_score` 평가 지표를 구현한다. numpy-only. |
 | `src/nn/conv.py` | `im2col`/`col2im` 기반 `Conv2d`, `MaxPool2d`, `Flatten`, `Dropout`을 구현한다. numpy-only. |
-| `src/data/mnist.py` | 로컬 MNIST `*.gz` 파일 로딩(`load_mnist`)과 `MnistDataset` 클래스를 제공한다. task별 target 변환은 `MnistDataset` 내부에서 처리한다. |
-| `src/data/dataloader.py` | 범용 `DataLoader` 클래스를 제공한다. `__len__`과 `__getitem__`을 구현한 Dataset이면 모두 수용한다. |
+| `src/data/mnist.py` | 로컬 MNIST `*.gz` 파일 로딩(`load_mnist`)과 `MNISTDataset` 클래스를 제공한다. task별 target 변환은 `MNISTDataset` 내부에서 처리한다. |
+| `src/data/dataloader.py` | 범용 `Dataloader` 클래스를 제공한다. `__len__`과 `__getitem__`을 구현한 Dataset이면 모두 수용한다. |
 | `src/models/mlp.py` | NumPy 기반 MLP 생성, forward, backward, update를 구현한다. `src/nn/` 모듈을 조립하여 구성한다. |
 | `src/models/cnn.py` | CuPy 기반 CNN 생성, forward, backward, update를 구현한다. |
 | `src/core/optimizers.py` | `SGD`, `Adam` 옵티마이저를 구현한다. model.params/grads 기반 in-place 업데이트를 수행한다. |
-| `src/core/trainer.py` | 학습 루프를 실행한다. `DataLoader`를 수신하여 loss/metric을 집계한다. |
-| `src/core/evaluator.py` | 평가 루프를 실행한다. `DataLoader`를 수신하여 loss/metric을 집계한다. |
+| `src/core/trainer.py` | 학습 루프를 실행한다. `Dataloader`를 수신하여 loss/metric을 집계한다. |
+| `src/core/evaluator.py` | 평가 루프를 실행한다. `Dataloader`를 수신하여 loss/metric을 집계한다. |
 | `src/core/predictor.py` | task별 예측 후처리를 수행한다. |
 | `src/core/visualizer.py` | 예측 결과와 샘플 이미지를 시각화한다. |
 | `src/core/logger.py` | epoch별 loss/metric 로그를 기록하고 CSV 또는 dict 형태로 반환한다. |
@@ -311,7 +311,7 @@ task별 차이와 구현 대상 파일의 매핑 기준은 아래와 같다.
 
 | 구분 | multiclass 레거시 | binary 레거시 | regression 레거시 | 구현 대상 파일 |
 | --- | --- | --- | --- | --- |
-| target 변환 | one-hot, shape `(N, 10)` | 홀수/짝수 이진화, shape `(N, 1)` | `label / 9.0`, shape `(N, 1)` | `src/data/mnist.py` (`MnistDataset` 내부) |
+| target 변환 | one-hot, shape `(N, 10)` | 홀수/짝수 이진화, shape `(N, 1)` | `label / 9.0`, shape `(N, 1)` | `src/data/mnist.py` (`MNISTDataset` 내부) |
 | output dimension | `10` | `1` | `1` | `src/models/mlp.py` |
 | output activation | `softmax` | `sigmoid` | `identity` | `src/models/mlp.py` |
 | loss | `cross_entropy` | `binary_cross_entropy` | `mse` | `src/core/trainer.py`, `src/core/evaluator.py` |
@@ -336,8 +336,8 @@ Stage 2 이후 구현에서 사용할 공통 진입점은 후속 프레임워크
 | 파일 | 공개 진입점 | 입력 | 출력 | 책임 |
 | --- | --- | --- | --- | --- |
 | `src/data/mnist.py` | `load_mnist(split)` | `split: str` | `(images, labels)` tuple | 로컬 MNIST 원본 배열 로딩 |
-| `src/data/mnist.py` | `MnistDataset` | `split: str`, `task: str` | dataset instance | MNIST 로딩·정규화·task별 target 변환 담당 |
-| `src/data/dataloader.py` | `DataLoader` | `dataset`, `batch_size: int`, `shuffle: bool` | dataloader instance | 범용 배치·셔플 이터레이터 (`__len__`+`__getitem__` 프로토콜 요구) |
+| `src/data/mnist.py` | `MNISTDataset` | `split: str`, `task: str` | dataset instance | MNIST 로딩·정규화·task별 target 변환 담당 |
+| `src/data/dataloader.py` | `Dataloader` | `dataset`, `batch_size: int`, `shuffle: bool` | dataloader instance | 범용 배치·셔플 이터레이터 (`__len__`+`__getitem__` 프로토콜 요구) |
 | `src/nn/activations.py` | `sigmoid`, `softmax`, `identity`, `relu` | `np.ndarray` | `np.ndarray` | 활성화 함수 - forward 전용 (numpy-only) |
 | `src/nn/layers.py` | `Linear`, `Sigmoid`, `ReLU`, `Sequential` | 차원 또는 없음 | layer instance | from-scratch 레이어 구현 (numpy-only) |
 | `src/nn/losses.py` | `cross_entropy`, `binary_cross_entropy`, `mse` | `logits, targets: np.ndarray` | scalar | 손실 함수 - logit 입력, activation 내부 처리 (numpy-only) |
@@ -355,22 +355,22 @@ Stage 2 이후 구현에서 사용할 공통 진입점은 후속 프레임워크
 - `split` 값은 `"train"` 또는 `"test"`만 허용한다.
 - `task` 값은 `"multiclass"`, `"binary"`, `"regression"`만 허용한다.
 - `load_mnist(split)`의 `images`는 `(N, 28, 28)` `uint8`, `labels`는 `(N,)` `uint8` 원본 배열을 반환한다.
-- `MnistDataset(split, task)`의 `images`는 `(N, 784)` `float32` (reshape + /255 정규화 완료), `targets`는 task별 `float32` 배열이다.
-- `MnistDataset.__getitem__(idx)`는 `(image, target)` 단일 샘플 tuple을 반환한다.
-- `MnistDataset`의 task별 target 변환 규약은 다음과 같다.
+- `MNISTDataset(split, task)`의 `images`는 `(N, 784)` `float32` (reshape + /255 정규화 완료), `targets`는 task별 `float32` 배열이다.
+- `MNISTDataset.__getitem__(idx)`는 `(image, target)` 단일 샘플 tuple을 반환한다.
+- `MNISTDataset`의 task별 target 변환 규약은 다음과 같다.
   - `multiclass`: `one_hot(labels, num_classes=10)` -> shape `(N, 10)`
   - `binary`: `(labels % 2)` (홀수=1, 짝수=0) -> shape `(N, 1)`
   - `regression`: `labels / 9.0` -> shape `(N, 1)`
-- `DataLoader(dataset, batch_size, shuffle)`의 `__iter__`는 `(images_batch, targets_batch)` tuple을 yield한다.
-- `DataLoader`는 `__len__`과 `__getitem__`을 구현한 Dataset이면 종류에 관계없이 수용한다.
+- `Dataloader(dataset, batch_size, shuffle)`의 `__iter__`는 `(images_batch, targets_batch)` tuple을 yield한다.
+- `Dataloader`는 `__len__`과 `__getitem__`을 구현한 Dataset이면 종류에 관계없이 수용한다.
 - `get_task_spec(task)`는 최소한 `task`, `output_dim`, `target_dtype`, `prediction_mode` 키를 포함한다.
 - `transform_targets(labels, task)`는 `task.py`에 유지하며 각 Dataset 클래스 내부에서 호출한다.
 - `MLP.forward(x)`는 `(N, output_dim)` raw logit 배열을 반환한다. activation은 `src.nn.losses` 함수가 처리한다.
 - `MLP.params`와 `MLP.grads`는 list이다. `params[0]`이 첫 번째 `Linear`의 `w`에 해당한다.
 - `Linear.backward(dout)`는 상위 레이어로 전달할 gradient를 반환하며, `grad_w`, `grad_b`를 인스턴스에 in-place 저장한다.
 - `SGD.step()`, `Adam.step()`은 model.params 를 in-place 업데이트하며 반환값이 없다.
-- `Trainer.fit(train_loader)`는 `DataLoader`를 수신하며 epoch별 로그 dict 목록 또는 요약 dict를 반환한다.
-- `Evaluator.evaluate(test_loader)`는 `DataLoader`를 수신하며 `loss`, `metric`, `num_samples`를 포함한 dict를 반환한다.
+- `Trainer.fit(train_loader)`는 `Dataloader`를 수신하며 epoch별 로그 dict 목록 또는 요약 dict를 반환한다.
+- `Evaluator.evaluate(test_loader)`는 `Dataloader`를 수신하며 `loss`, `metric`, `num_samples`를 포함한 dict를 반환한다.
 - `Predictor.predict(images)`는 raw prediction과 decoded prediction을 함께 담은 dict를 반환한다.
 - `Experiment`는 config를 기준으로 dataset, dataloader, task spec, model, optimizer, trainer, evaluator, predictor를 조립하는 최상위 진입점 역할을 한다.
 
@@ -438,7 +438,7 @@ notebooks/
 | --- | --- | --- |
 | `stage1-1_utils` | batching, random seed, io, checkpoints, training_plots | - |
 | `stage2-1_mnist-loading` | `load_mnist`, shape/dtype, 픽셀 분포 | 샘플 16장 grid, histogram |
-| `stage2-2_dataset-and-dataloader` | `MnistDataset` 3종, `DataLoader` 배치 | target 시각화 |
+| `stage2-2_dataset-and-dataloader` | `MNISTDataset` 3종, `Dataloader` 배치 | target 시각화 |
 | `stage3-1_activations` | sigmoid/relu/softmax 수식 및 그래프 | 4종 함수 그래프 |
 | `stage3-2_losses-and-metrics` | 3 loss 값+gradient, 3 metric 데모 | loss 곡선 비교 |
 | `stage3-3_layers` | `Linear` forward/backward, `Sequential` | shape 추적 표 |

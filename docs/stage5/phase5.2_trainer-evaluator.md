@@ -8,7 +8,7 @@ updated: "2026-06-21"
 
 ## 1. 개요
 
-`src/core/trainer.py`의 `Trainer`와 `src/core/evaluator.py`의 `Evaluator`는 학습과 평가 루프를 각각 캡슐화한 실행 객체이다. `Trainer.fit`은 `DataLoader`를 받아 epoch 단위 학습 루프를 실행하고, `Evaluator.evaluate`는 `DataLoader`를 받아 배치 단위 평가를 집계한다. 두 객체 모두 task를 기준으로 loss 함수와 metric 함수를 자동으로 선택하여 multiclass, binary, regression 세 가지 task를 동일한 인터페이스로 처리한다.
+`src/core/trainer.py`의 `Trainer`와 `src/core/evaluator.py`의 `Evaluator`는 학습과 평가 루프를 각각 캡슐화한 실행 객체이다. `Trainer.fit`은 `Dataloader`를 받아 epoch 단위 학습 루프를 실행하고, `Evaluator.evaluate`는 `Dataloader`를 받아 배치 단위 평가를 집계한다. 두 객체 모두 task를 기준으로 loss 함수와 metric 함수를 자동으로 선택하여 multiclass, binary, regression 세 가지 task를 동일한 인터페이스로 처리한다.
 
 **목표**
 - `Trainer.fit(train_loader)`으로 epoch 단위 학습 루프를 실행하고 epoch별 loss/metric 로그를 반환한다.
@@ -22,7 +22,7 @@ updated: "2026-06-21"
 딥러닝 학습은 전체 데이터셋을 여러 번 반복 순회하며 파라미터를 점진적으로 개선하는 과정이다. 학습 루프는 epoch 반복과 batch 반복의 이중 구조로 이루어진다.
 
 - **epoch**: 전체 train set을 한 번 순회하는 단위. epoch가 끝날 때마다 loss/metric을 집계하여 학습 진행을 모니터링한다.
-- **batch**: `DataLoader`가 한 번의 iteration에서 반환하는 소규모 샘플 묶음. 하나의 epoch는 `ceil(N / batch_size)`번의 batch iteration으로 구성된다.
+- **batch**: `Dataloader`가 한 번의 iteration에서 반환하는 소규모 샘플 묶음. 하나의 epoch는 `ceil(N / batch_size)`번의 batch iteration으로 구성된다.
 
 각 batch에서 실행되는 연산 순서는 다음과 같다.
 
@@ -129,7 +129,7 @@ task별 함수 매핑은 다음과 같다.
 | gradient 계산 | 필요 (`grad_fn` 포함) | 불필요 (`grad_fn` 없음) |
 | backward | `model.backward(grad)` 호출 | 호출하지 않음 |
 | optimizer | `optimizer.step()` 호출 | 사용하지 않음 |
-| DataLoader | train set | test/validation set |
+| Dataloader | train set | test/validation set |
 | 반환값 | `loss`, `metric`, `num_samples` | `loss`, `metric`, `num_samples` |
 
 `Evaluator`는 `grad_fn`을 보유하지 않는다. forward와 loss/metric 집계만 수행하므로 backward 경로가 없어 파라미터가 변경되지 않는다.
@@ -139,7 +139,7 @@ task별 함수 매핑은 다음과 같다.
 | 용어 | 의미 | 이 프로젝트에서의 역할 |
 |---|---|---|
 | epoch | 전체 데이터 1회 순회 | 클라이언트가 루프를 돌며 `Trainer.fit` 1회 = 1 epoch |
-| batch | `DataLoader`가 반환하는 소규모 샘플 묶음 | `for x, y in train_loader` 형태로 순회 |
+| batch | `Dataloader`가 반환하는 소규모 샘플 묶음 | `for x, y in train_loader` 형태로 순회 |
 | dispatch | task 이름으로 함수를 선택하는 구조 | `_TASK_FNS` dict로 loss/grad/metric 함수 매핑 |
 | 가중 평균 | 샘플 수 기반 집계 | `total_loss += loss * n; epoch_loss = total_loss / total_samples` |
 | task_spec | task 정보를 담은 dict | `task_spec["task"]`로 `_TASK_FNS` 조회 |
@@ -268,21 +268,21 @@ print(result)
 {"loss": 0.298, "metric": 0.905, "num_samples": 10000}
 ```
 
-프로젝트 통합 예제는 다음과 같다. train/test DataLoader를 구성하여 학습하고 평가하는 전체 흐름이다.
+프로젝트 통합 예제는 다음과 같다. train/test `Dataloader`를 구성하여 학습하고 평가하는 전체 흐름이다.
 
 ```python
-from src.data.mnist import MnistDataset
-from src.data.dataloader import DataLoader
+from src.data.mnist import MNISTDataset
+from src.data.dataloader import Dataloader
 from src.models.mlp import MLP
 from src.core.optimizers import Adam
 from src.core.trainer import Trainer
 from src.core.evaluator import Evaluator
 
 task = "multiclass"
-train_ds = MnistDataset(split="train", task=task)
-test_ds = MnistDataset(split="test", task=task)
-train_loader = DataLoader(train_ds, batch_size=128, shuffle=True)
-test_loader = DataLoader(test_ds, batch_size=256, shuffle=False)
+train_ds = MNISTDataset(split="train", task=task)
+test_ds = MNISTDataset(split="test", task=task)
+train_loader = Dataloader(train_ds, batch_size=128, shuffle=True)
+test_loader = Dataloader(test_ds, batch_size=256, shuffle=False)
 
 model = MLP(task=task, seed=42)
 optimizer = Adam(model, lr=0.001)
@@ -310,6 +310,6 @@ conda run -n numpy_py311 pytest tests/stage5/test_trainer.py tests/stage5/test_e
 
 ## 6. 요약
 
-`Trainer`는 `DataLoader`를 순회하며 forward, loss, gradient, backward, optimizer.step의 학습 루프를 epoch 단위로 실행하고 로그를 반환한다. `Evaluator`는 eval mode에서 forward와 loss/metric 집계만 수행하여 test set 성능을 반환한다. 두 객체 모두 `TASK_SPEC` dict dispatch로 task별 함수를 자동 선택하므로 클라이언트 코드에 task 분기가 없다.
+`Trainer`는 `Dataloader`를 순회하며 forward, loss, gradient, backward, optimizer.step의 학습 루프를 epoch 단위로 실행하고 로그를 반환한다. `Evaluator`는 eval mode에서 forward와 loss/metric 집계만 수행하여 test set 성능을 반환한다. 두 객체 모두 `TASK_SPEC` dict dispatch로 task별 함수를 자동 선택하므로 클라이언트 코드에 task 분기가 없다.
 
 다음 Phase에서는 [[phase5.3_predictor-visualizer]]을 다룬다.

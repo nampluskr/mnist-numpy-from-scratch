@@ -38,7 +38,7 @@ created: 2026-06-20
 
 인터페이스 변경 방향:
 
-- `MnistDataset`, `MLP`, `CNN` - `get_task_spec` import 제거, task 문자열로 내부 분기
+- ` MNISTDataset`, `MLP`, `CNN` - `get_task_spec` import 제거, task 문자열로 내부 분기
 - `Trainer`, `Evaluator`, `Predictor` - `task_spec` dict 대신 `task` 문자열 수신
 - `experiments/run_*.py` - `_CONFIGS` 리스트에 task 규약 key(output_dim, loss, metric, prediction_mode)까지 포함
 - `scripts/*.py` - `Experiment` 없이 dataset, dataloader, model, optimizer, trainer, evaluator 직접 조립
@@ -115,7 +115,7 @@ notebooks/ 이동:
 ### 우선 2: src/ 코드 변경
 
 1. `src/config.py`, `src/task.py`, `src/core/experiment.py` 삭제
-2. 영향받는 파일 수정 (MnistDataset, MLP, CNN, Trainer, Evaluator, Predictor)
+2. 영향받는 파일 수정 ( MNISTDataset, MLP, CNN, Trainer, Evaluator, Predictor)
 3. `src/core/logger.py` 신규 구현
 4. `scripts/*.py` 직접 조립 패턴으로 재작성
 5. `experiments/run_*.py` CONFIGS에 task 규약 key 추가

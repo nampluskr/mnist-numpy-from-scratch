@@ -104,8 +104,8 @@ Stage 2 테스트 대상은 아래와 같다.
 | 테스트 파일 | 검증 대상 | 주요 검증 내용 |
 |---|---|---|
 | `test_mnist.py` | `load_mnist` | images shape `(N,28,28)` uint8, labels shape `(N,)` uint8, split 분리 |
-| `test_dataset.py` | `MnistDataset` | task별 target shape·dtype, `__len__`, `__getitem__` tuple 반환 |
-| `test_dataloader.py` | `DataLoader` | 배치 shape, shuffle, `__len__`, 전체 반복 커버리지 |
+| `test_dataset.py` | `MNISTDataset` | task별 target shape·dtype, `__len__`, `__getitem__` tuple 반환 |
+| `test_dataloader.py` | `Dataloader` | 배치 shape, shuffle, `__len__`, 전체 반복 커버리지 |
 
 Stage 3 테스트 대상은 아래와 같다.
 
@@ -129,7 +129,7 @@ Stage 5 테스트 대상은 아래와 같다.
 | 테스트 파일 | 검증 대상 | 주요 검증 내용 |
 |---|---|---|
 | `test_optimizers.py` | `SGD`, `Adam` | `step()` 후 params 변화, lr 민감도, 반환값 없음 |
-| `test_trainer.py` | `Trainer.fit` | 1 epoch 실행, 로그 dict 반환, DataLoader 수신 |
+| `test_trainer.py` | `Trainer.fit` | 1 epoch 실행, 로그 dict 반환, Dataloader 수신 |
 | `test_evaluator.py` | `Evaluator.evaluate` | loss·metric·num_samples 키 포함 dict 반환 |
 | `test_predictor.py` | `Predictor.predict` | task별 후처리 결과 shape·값 범위 |
 | `test_visualizer.py` | `Visualizer` | 이미지 파일 생성 여부 |

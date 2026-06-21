@@ -92,7 +92,7 @@ created: 2026-06-20
 ### 우선 3: src/ 코드 변경 (핸드오프 260620-080229 기준)
 
 1. `src/config.py`, `src/task.py`, `src/core/experiment.py` 삭제
-2. 영향받는 파일 수정 (MnistDataset, MLP, CNN, Trainer, Evaluator, Predictor)
+2. 영향받는 파일 수정 ( MNISTDataset, MLP, CNN, Trainer, Evaluator, Predictor)
 3. `src/core/logger.py` 신규 구현
 4. `scripts/*.py` 직접 조립 패턴으로 재작성
 5. `experiments/run_*.py` CONFIGS에 task 규약 key 추가

@@ -7,7 +7,7 @@ import argparse
 
 import numpy as np
 
-from src.data.mnist import MnistDataset, get_task_spec
+from src.data.mnist import MNISTDataset, get_task_spec
 from src.models.mlp import MLP
 from src.models.cnn import CNN
 from src.core.predictor import Predictor
@@ -66,7 +66,7 @@ def main(args=None):
     if args.checkpoint:
         checkpoints.load(model, args.checkpoint)
 
-    dataset = MnistDataset("test", task, dataset_dir=dataset_dir)
+    dataset = MNISTDataset("test", task, dataset_dir=dataset_dir)
     n = min(args.n, len(dataset))
     images = np.stack([dataset[i][0] for i in range(n)])
     result = predictor.predict(images)

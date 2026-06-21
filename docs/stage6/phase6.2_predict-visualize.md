@@ -32,7 +32,7 @@ updated: "2026-06-21"
 
 ### 2.2. predict.py의 샘플 구성
 
-`predict.py`는 `--n` 인자로 test set 앞부분에서 $n$개 샘플을 선택한다. `MnistDataset.__getitem__(i)`로 개별 샘플을 꺼내 `np.stack`으로 배치를 구성하여 `Predictor.predict`에 전달한다.
+`predict.py`는 `--n` 인자로 test set 앞부분에서 $n$개 샘플을 선택한다. `MNISTDataset.__getitem__(i)`로 개별 샘플을 꺼내 `np.stack`으로 배치를 구성하여 `Predictor.predict`에 전달한다.
 
 ```text
 dataset[0], dataset[1], ..., dataset[n-1]
@@ -56,7 +56,7 @@ dataset[0], dataset[1], ..., dataset[n-1]
 
 `plot_training_log`는 `src/utils/training_plots.py`의 함수로, epoch별 train/test loss/metric을 PNG로 저장한다. `Visualizer.plot_predictions`는 이미지와 예측/정답을 grid로 배치하여 PNG를 저장한다.
 
-**labels 변환**: `visualize.py`는 `MnistDataset.__getitem__`이 반환하는 task별 target(`one-hot`, `binary`, `regression` 실수)을 사람이 읽을 수 있는 정수 레이블로 변환하는 `_decode_labels` 내부 함수를 포함한다. 이 변환은 `Visualizer`에 전달하는 `labels` 인자를 위한 전처리이다.
+**labels 변환**: `visualize.py`는 `MNISTDataset.__getitem__`이 반환하는 task별 target(`one-hot`, `binary`, `regression` 실수)을 사람이 읽을 수 있는 정수 레이블로 변환하는 `_decode_labels` 내부 함수를 포함한다. 이 변환은 `Visualizer`에 전달하는 `labels` 인자를 위한 전처리이다.
 
 | task | target 형태 | decode 방법 |
 |---|---|---|
@@ -100,7 +100,7 @@ dataset[0], dataset[1], ..., dataset[n-1]
 
 ```python
 import numpy as np
-from src.data.mnist import MnistDataset, get_task_spec
+from src.data.mnist import MNISTDataset, get_task_spec
 from src.models.mlp import MLP
 from src.models.cnn import CNN
 from src.core.predictor import Predictor
@@ -121,7 +121,7 @@ def main(args=None):
     if args.checkpoint:
         checkpoints.load(model, args.checkpoint)
 
-    dataset = MnistDataset("test", task, dataset_dir=config["dataset_dir"])
+    dataset = MNISTDataset("test", task, dataset_dir=config["dataset_dir"])
     n = min(args.n, len(dataset))
     images = np.stack([dataset[i][0] for i in range(n)])
 
@@ -137,8 +137,8 @@ def main(args=None):
 
 ```python
 import numpy as np
-from src.data.mnist import MnistDataset, get_task_spec
-from src.data.dataloader import DataLoader
+from src.data.mnist import MNISTDataset, get_task_spec
+from src.data.dataloader import Dataloader
 from src.models.mlp import MLP
 from src.models.cnn import CNN
 from src.core.optimizers import SGD
@@ -156,10 +156,10 @@ def main(args=None):
     task = config["task"]
     task_spec = get_task_spec(task)
 
-    train_dataset = MnistDataset("train", task, dataset_dir=config["dataset_dir"])
-    test_dataset  = MnistDataset("test",  task, dataset_dir=config["dataset_dir"])
-    train_loader  = DataLoader(train_dataset, batch_size=config["batch_size"], shuffle=True)
-    test_loader   = DataLoader(test_dataset,  batch_size=config["batch_size"], shuffle=False)
+    train_dataset = MNISTDataset("train", task, dataset_dir=config["dataset_dir"])
+    test_dataset  = MNISTDataset("test",  task, dataset_dir=config["dataset_dir"])
+    train_loader  = Dataloader(train_dataset, batch_size=config["batch_size"], shuffle=True)
+    test_loader   = Dataloader(test_dataset,  batch_size=config["batch_size"], shuffle=False)
 
     model     = CNN(task=task, seed=config["seed"]) if config["model"] == "cnn" \
                 else MLP(task=task, seed=config["seed"])

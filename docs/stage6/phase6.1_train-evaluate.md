@@ -101,8 +101,8 @@ for epoch in 1..N:
 ### 3.1. train.py 구현
 
 ```python
-from src.data.mnist import MnistDataset, get_task_spec
-from src.data.dataloader import DataLoader
+from src.data.mnist import MNISTDataset, get_task_spec
+from src.data.dataloader import Dataloader
 from src.models.mlp import MLP
 from src.models.cnn import CNN
 from src.core.optimizers import SGD
@@ -118,10 +118,10 @@ def main(args=None):
     task = config["task"]
     task_spec = get_task_spec(task)
 
-    train_dataset = MnistDataset("train", task, dataset_dir=config["dataset_dir"])
-    test_dataset  = MnistDataset("test",  task, dataset_dir=config["dataset_dir"])
-    train_loader  = DataLoader(train_dataset, batch_size=config["batch_size"], shuffle=True)
-    test_loader   = DataLoader(test_dataset,  batch_size=config["batch_size"], shuffle=False)
+    train_dataset = MNISTDataset("train", task, dataset_dir=config["dataset_dir"])
+    test_dataset  = MNISTDataset("test",  task, dataset_dir=config["dataset_dir"])
+    train_loader  = Dataloader(train_dataset, batch_size=config["batch_size"], shuffle=True)
+    test_loader   = Dataloader(test_dataset,  batch_size=config["batch_size"], shuffle=False)
 
     model     = CNN(task=task, seed=config["seed"]) if config["model"] == "cnn" \
                 else MLP(task=task, seed=config["seed"])
@@ -145,8 +145,8 @@ def main(args=None):
 ### 3.2. evaluate.py 구현
 
 ```python
-from src.data.mnist import MnistDataset, get_task_spec
-from src.data.dataloader import DataLoader
+from src.data.mnist import MNISTDataset, get_task_spec
+from src.data.dataloader import Dataloader
 from src.models.mlp import MLP
 from src.models.cnn import CNN
 from src.core.evaluator import Evaluator
@@ -160,8 +160,8 @@ def main(args=None):
     task = config["task"]
     task_spec = get_task_spec(task)
 
-    test_dataset = MnistDataset("test", task, dataset_dir=config["dataset_dir"])
-    test_loader  = DataLoader(test_dataset, batch_size=config["batch_size"], shuffle=False)
+    test_dataset = MNISTDataset("test", task, dataset_dir=config["dataset_dir"])
+    test_loader  = Dataloader(test_dataset, batch_size=config["batch_size"], shuffle=False)
 
     model = CNN(task=task, seed=config["seed"]) if config["model"] == "cnn" \
             else MLP(task=task, seed=config["seed"])
@@ -224,6 +224,6 @@ conda run -n numpy_py311 pytest tests/stage6/test_train.py tests/stage6/test_eva
 
 ## 6. 요약
 
-`train.py`는 명령행 인자를 받아 MnistDataset, DataLoader, MLP, optimizer, Trainer를 조립하고 학습 결과를 `outputs/{exp_name}/`에 저장한다. `evaluate.py`는 checkpoint를 로드하여 Evaluator로 test set 성능을 출력한다. 두 스크립트 모두 `src/core/` 실행 객체만 참조하며 내부 구현을 직접 호출하지 않는다.
+`train.py`는 명령행 인자를 받아 MNISTDataset, Dataloader, MLP, optimizer, Trainer를 조립하고 학습 결과를 `outputs/{exp_name}/`에 저장한다. `evaluate.py`는 checkpoint를 로드하여 Evaluator로 test set 성능을 출력한다. 두 스크립트 모두 `src/core/` 실행 객체만 참조하며 내부 구현을 직접 호출하지 않는다.
 
 다음 Phase에서는 [[phase6.2_predict-visualize]]을 다룬다.

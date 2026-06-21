@@ -88,7 +88,7 @@ def load_mnist(split, dataset_dir=None):
     return images, labels
 
 
-class MnistDataset:
+class MNISTDataset:
     def __init__(self, split, task, dataset_dir=None):
         images, labels = load_mnist(split, dataset_dir=dataset_dir)
         self.images = images.reshape(-1, 784).astype(np.float32) / 255.0

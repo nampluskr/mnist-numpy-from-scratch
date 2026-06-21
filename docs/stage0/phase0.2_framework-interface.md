@@ -26,7 +26,7 @@ updated: "2026-06-20"
 | 비교 항목 | 동일하게 유지 | 프레임워크마다 교체 |
 |---|---|---|
 | 파일 구조 | `src/data/`, `src/models/`, `src/core/` | `src/nn/` 내부 구현 |
-| 함수명·클래스명 | `load_mnist`, `MnistDataset`, `DataLoader`, `MLP` 등 | 없음 |
+| 함수명·클래스명 | `load_mnist`, `MNISTDataset`, `Dataloader`, `MLP` 등 | 없음 |
 | CLI 인터페이스 | `--task`, `--model`, `--epochs`, `--lr` 인자 | 없음 |
 | 데이터 파이프라인 | `(N, 784)` float32 입력, task별 target 형식 | 없음 |
 
@@ -45,8 +45,8 @@ task별로 다른 output_dim, loss, metric, 예측 후처리는 `src/data/mnist.
 | `src/data/mnist.py` | `load_mnist(split)` | `split: str` | `(images, labels)` - `(N,28,28)` uint8, `(N,)` uint8 |
 | `src/data/mnist.py` | `get_task_spec(task)` | `task: str` | `dict` |
 | `src/data/mnist.py` | `transform_targets(labels, task)` | `labels: np.ndarray`, `task: str` | `np.ndarray` |
-| `src/data/mnist.py` | `MnistDataset` | `split: str`, `task: str` | dataset instance |
-| `src/data/dataloader.py` | `DataLoader` | `dataset`, `batch_size: int`, `shuffle: bool` | dataloader instance |
+| `src/data/mnist.py` | `MNISTDataset` | `split: str`, `task: str` | dataset instance |
+| `src/data/dataloader.py` | `Dataloader` | `dataset`, `batch_size: int`, `shuffle: bool` | dataloader instance |
 | `src/nn/activations.py` | `sigmoid`, `softmax`, `identity`, `relu` | `np.ndarray` | `np.ndarray` |
 | `src/nn/layers.py` | `Linear`, `Sigmoid`, `ReLU`, `Sequential` | 차원 또는 없음 | layer instance |
 | `src/nn/losses.py` | `cross_entropy`, `binary_cross_entropy`, `mse` | `logits, targets: np.ndarray` | scalar |
@@ -70,7 +70,7 @@ task별로 다른 output_dim, loss, metric, 예측 후처리는 `src/data/mnist.
 - `images`: `(N, 28, 28)` uint8 원본 배열
 - `labels`: `(N,)` uint8 원본 배열
 
-`MnistDataset(split, task)` 내부 배열 규약은 다음과 같다.
+`MNISTDataset(split, task)` 내부 배열 규약은 다음과 같다.
 
 - `images`: `(N, 784)` float32 (`reshape(-1, 784)` + `/255` 정규화 완료)
 - `targets`: task별 float32 배열 (아래 표 참조)
@@ -119,14 +119,14 @@ task별로 다른 항목의 전체 규약은 아래와 같다.
 
 ## 4. 사용법
 
-`MnistDataset`과 `DataLoader`를 조합하는 최소 예제는 다음과 같다.
+`MNISTDataset`과 `Dataloader`를 조합하는 최소 예제는 다음과 같다.
 
 ```python
-from src.data.mnist import MnistDataset
-from src.data.dataloader import DataLoader
+from src.data.mnist import MNISTDataset
+from src.data.dataloader import Dataloader
 
-dataset = MnistDataset(split="train", task="multiclass")
-loader = DataLoader(dataset, batch_size=64, shuffle=True)
+dataset = MNISTDataset(split="train", task="multiclass")
+loader = Dataloader(dataset, batch_size=64, shuffle=True)
 
 for images, targets in loader:
     print(images.shape)   # (64, 784) float32

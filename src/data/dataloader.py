@@ -3,7 +3,7 @@
 import numpy as np
 
 
-class DataLoader:
+class Dataloader:
     def __init__(self, dataset, batch_size, shuffle=False):
         self.dataset = dataset
         self.batch_size = batch_size

@@ -60,7 +60,7 @@ $$
 \text{prediction} = \text{clip}\!\left(\text{round}(\hat{y} \times 9),\ 0,\ 9\right), \quad \hat{y} \in \mathbb{R}^{N \times 1}
 $$
 
-`MnistDataset`이 레이블을 $\text{label} / 9.0$으로 정규화했으므로, 모델 출력에 9를 곱해 원래 스케일 $[0, 9]$로 복원한다. `round`로 정수화하고 `clip`으로 범위를 보장한다.
+`MNISTDataset`이 레이블을 $\text{label} / 9.0$으로 정규화했으므로, 모델 출력에 9를 곱해 원래 스케일 $[0, 9]$로 복원한다. `round`로 정수화하고 `clip`으로 범위를 보장한다.
 
 task별 후처리 규칙은 다음과 같다.
 
@@ -111,7 +111,7 @@ $N$개 샘플을 최대 8열로 배치하고, 행 수는 올림 나눗셈으로 
 
 **이미지 변환**
 
-MNIST 이미지는 `MnistDataset`에서 `(784,)` 1D float32로 저장되어 있다. `images[i].reshape(28, 28)`으로 28×28 2D 배열로 복원한 뒤 `imshow(cmap="gray")`로 렌더링한다.
+MNIST 이미지는 `MNISTDataset`에서 `(784,)` 1D float32로 저장되어 있다. `images[i].reshape(28, 28)`으로 28×28 2D 배열로 복원한 뒤 `imshow(cmap="gray")`로 렌더링한다.
 
 **정오답 색상 구분**
 
@@ -231,13 +231,13 @@ from src.models.mlp import MLP
 from src.core.predictor import Predictor
 from src.core.visualizer import Visualizer
 from src.utils.checkpoints import load_checkpoint
-from src.data.mnist import MnistDataset
+from src.data.mnist import MNISTDataset
 
 task = "multiclass"
 model = MLP(task=task, seed=42)
 load_checkpoint(model, "outputs/multiclass_mlp/model.npz")
 
-dataset = MnistDataset(split="test", task=task)
+dataset = MNISTDataset(split="test", task=task)
 images = dataset.images[:32]
 labels_raw = dataset.labels_raw[:32]
 

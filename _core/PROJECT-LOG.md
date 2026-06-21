@@ -235,7 +235,7 @@ updated: 2026-06-21 (Phase 3.6 노트북 4개, Phase 4.3 노트북 2개 작성)
 |---|---|
 | `src/data/mnist.py` | `get_task_spec()`, `transform_targets()`, `_TASK_SPECS` 흡수, `_DATASET_DIR` 기본값 상수화 |
 | `src/utils/checkpoints.py` | `src/core/` 에서 이동 (내용 무변경) |
-| `scripts/train.py` | `Experiment` 제거, DataLoader/Model/Optimizer/Trainer/Evaluator 직접 조립 |
+| `scripts/train.py` | `Experiment` 제거, Dataloader/Model/Optimizer/Trainer/Evaluator 직접 조립 |
 | `scripts/evaluate.py` | `Experiment` 제거, 직접 조립 |
 | `scripts/predict.py` | `Experiment` 제거, 직접 조립 |
 | `scripts/visualize.py` | `Experiment` 제거, 직접 조립 |
@@ -510,7 +510,7 @@ updated: 2026-06-21 (Phase 3.6 노트북 4개, Phase 4.3 노트북 2개 작성)
 | `_core/PROJECT-TODO.md` | Phase 1.4/2.4/3.6/4.8/5.5/6.3/7.7 체크박스 항목 추가 |
 | `notebooks/stage1/stage1-1_config-and-task.ipynb` | config dict, 3 task spec 비교, target 변환, 분포 시각화 |
 | `notebooks/stage2/stage2-1_mnist-loading.ipynb` | load_mnist shape/dtype 확인, 샘플 grid, 픽셀 histogram |
-| `notebooks/stage2/stage2-2_dataset-and-dataloader.ipynb` | MnistDataset 3종 비교, DataLoader 배치/shuffle 검증 |
+| `notebooks/stage2/stage2-2_dataset-and-dataloader.ipynb` | MNISTDataset 3종 비교, Dataloader 배치/shuffle 검증 |
 | `notebooks/stage3/stage3-1_activations.ipynb` | 4종 활성화 함수 그래프, 수치 안정성, 배치 입출력 확인 |
 
 **결정사항**

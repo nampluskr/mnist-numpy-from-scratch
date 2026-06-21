@@ -112,7 +112,7 @@ tests/, notebooks/ 구조 설명도 새 Stage 번호에 맞게 갱신.
 ### 우선 3: src/ 코드 변경
 
 1. `src/config.py`, `src/task.py`, `src/core/experiment.py` 삭제
-2. 영향 파일 수정 (MnistDataset 내부에 task 변환 로직 흡수, scripts/*.py 직접 조립 패턴)
+2. 영향 파일 수정 ( MNISTDataset 내부에 task 변환 로직 흡수, scripts/*.py 직접 조립 패턴)
 3. `src/core/logger.py` 신규 구현
 4. `experiments/run_*.py` CONFIGS에 task 규약 key 추가
 

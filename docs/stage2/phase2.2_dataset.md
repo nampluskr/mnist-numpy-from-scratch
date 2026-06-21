@@ -8,25 +8,25 @@ updated: "2026-06-20"
 
 ## 1. 개요
 
-`MnistDataset`은 `load_mnist`로 로드한 원본 배열에 정규화와 task별 target 변환을 적용하여 `DataLoader`가 소비할 수 있는 Dataset 인터페이스를 제공한다. `__len__`과 `__getitem__` 프로토콜을 구현하여 `DataLoader`와의 조합이 가능하다. task 변환 규약은 같은 파일의 `transform_targets`를 내부에서 호출하며, `task_spec`은 `get_task_spec(task)` 결과를 보관한다. 데이터 파이프라인에서 `MnistDataset`은 `load_mnist` 다음, `DataLoader` 이전 단계에 위치한다.
+`MNISTDataset`은 `load_mnist`로 로드한 원본 배열에 정규화와 task별 target 변환을 적용하여 `Dataloader`가 소비할 수 있는 Dataset 인터페이스를 제공한다. `__len__`과 `__getitem__` 프로토콜을 구현하여 `Dataloader`와의 조합이 가능하다. task 변환 규약은 같은 파일의 `transform_targets`를 내부에서 호출하며, `task_spec`은 `get_task_spec(task)` 결과를 보관한다. 데이터 파이프라인에서 `MNISTDataset`은 `load_mnist` 다음, `Dataloader` 이전 단계에 위치한다.
 
 **목표**
 - `load_mnist`의 원본 배열을 `(N, 784)` `float32`, 범위 `[0, 1]`로 정규화한다.
 - task에 따라 레이블을 `multiclass` one-hot, `binary` 이진화, `regression` 정규화로 변환한다.
-- `__len__`과 `__getitem__`을 구현하여 `DataLoader`와 연동한다.
+- `__len__`과 `__getitem__`을 구현하여 `Dataloader`와 연동한다.
 
 ## 2. 개념
 
 ### 2.1. Dataset 프로토콜
 
-딥러닝 프레임워크에서 Dataset은 `__len__`과 `__getitem__` 두 메서드를 구현한 객체를 가리킨다. `__len__`은 전체 샘플 수를 반환하고, `__getitem__`은 인덱스를 받아 단일 `(image, target)` tuple을 반환한다. DataLoader는 이 인터페이스만 요구하므로 MNIST 외의 데이터셋도 같은 DataLoader와 조합할 수 있다.
+딥러닝 프레임워크에서 Dataset은 `__len__`과 `__getitem__` 두 메서드를 구현한 객체를 가리킨다. `__len__`은 전체 샘플 수를 반환하고, `__getitem__`은 인덱스를 받아 단일 `(image, target)` tuple을 반환한다. `Dataloader`는 이 인터페이스만 요구하므로 MNIST 외의 데이터셋도 같은 `Dataloader`와 조합할 수 있다.
 
 이 프로토콜의 핵심 용어는 다음과 같다.
 
 | 용어 | 의미 | 이 프로젝트에서의 역할 |
 |---|---|---|
-| `__len__` | 전체 샘플 수 반환 | DataLoader가 배치 수 계산에 사용 |
-| `__getitem__(idx)` | 인덱스로 단일 샘플 반환 | DataLoader가 배치 조립에 사용 |
+| `__len__` | 전체 샘플 수 반환 | `Dataloader`가 배치 수 계산에 사용 |
+| `__getitem__(idx)` | 인덱스로 단일 샘플 반환 | `Dataloader`가 배치 조립에 사용 |
 | `task_spec` | task별 스펙 dict | Trainer, Evaluator, Predictor가 task 분기에 사용 |
 
 ### 2.2. task별 target 변환
@@ -47,16 +47,16 @@ MNIST 레이블은 0부터 9까지의 정수이다. task에 따라 이 레이블
 
 | 이름 | 종류 | 입력 | 출력 | 설명 |
 |---|---|---|---|---|
-| `MnistDataset` | 클래스 | `split`, `task`, `dataset_dir` | dataset instance | 정규화 및 target 변환 포함 Dataset |
+| `MNISTDataset` | 클래스 | `split`, `task`, `dataset_dir` | dataset instance | 정규화 및 target 변환 포함 Dataset |
 | `transform_targets` | 함수 | `labels: ndarray`, `task: str` | `ndarray` | task별 target 변환 |
 | `get_task_spec` | 함수 | `task: str` | `dict` | task별 스펙 dict 반환 |
 
-### 3.1. MnistDataset
+### 3.1. MNISTDataset
 
-`MnistDataset`은 생성자에서 `load_mnist`를 호출하여 정규화와 target 변환을 완료한 뒤 `self.images`, `self.targets`, `self.task_spec`에 저장한다.
+`MNISTDataset`은 생성자에서 `load_mnist`를 호출하여 정규화와 target 변환을 완료한 뒤 `self.images`, `self.targets`, `self.task_spec`에 저장한다.
 
 ```python
-class MnistDataset:
+class MNISTDataset:
     def __init__(self, split, task, dataset_dir=None):
         images, labels = load_mnist(split, dataset_dir=dataset_dir)
         self.images = images.reshape(-1, 784).astype(np.float32) / 255.0
@@ -96,9 +96,9 @@ def transform_targets(labels, task):
 최소 사용 예제는 다음과 같다.
 
 ```python
-from src.data.mnist import MnistDataset
+from src.data.mnist import MNISTDataset
 
-ds = MnistDataset("train", "multiclass")
+ds = MNISTDataset("train", "multiclass")
 print(len(ds))
 image, target = ds[0]
 print(image.shape, target.shape)
@@ -111,15 +111,15 @@ print(image.shape, target.shape)
 (784,) (10,)
 ```
 
-프로젝트 통합 예제는 다음과 같다. task별 Dataset을 생성하고 `DataLoader`와 조합한다.
+프로젝트 통합 예제는 다음과 같다. task별 Dataset을 생성하고 `Dataloader`와 조합한다.
 
 ```python
-from src.data.mnist import MnistDataset
-from src.data.dataloader import DataLoader
+from src.data.mnist import MNISTDataset
+from src.data.dataloader import Dataloader
 
 for task in ("multiclass", "binary", "regression"):
-    ds = MnistDataset("train", task)
-    loader = DataLoader(ds, batch_size=64, shuffle=True)
+    ds = MNISTDataset("train", task)
+    loader = Dataloader(ds, batch_size=64, shuffle=True)
     for images, targets in loader:
         print(task, images.shape, targets.shape)
         break
@@ -137,20 +137,20 @@ conda run -n numpy_py311 pytest tests/stage2/test_dataset.py -v
 
 | 클래스 | 항목 수 | 주요 검증 내용 |
 |---|---|---|
-| `TestMnistDatasetLen` | 2 | train/test split 샘플 수 |
-| `TestMnistDatasetImages` | 3 | shape `(N, 784)`, dtype `float32`, 범위 `[0, 1]` |
-| `TestMnistDatasetTargetsMulticlass` | 3 | shape `(N, 10)`, dtype, one-hot 합 검증 |
-| `TestMnistDatasetTargetsBinary` | 4 | shape `(N, 1)`, dtype, 값 범위, 홀수=1 검증 |
-| `TestMnistDatasetTargetsRegression` | 4 | shape `(N, 1)`, dtype, 값 범위, 경계값 검증 |
-| `TestMnistDatasetGetitem` | 4 | tuple 반환, image/target shape |
-| `TestMnistDatasetTaskSpec` | 4 | 필수 키 존재, task별 `output_dim`, `prediction_mode` |
-| `TestMnistDatasetErrors` | 2 | 잘못된 split/task `ValueError` |
-| `TestMnistDatasetReal` | 2 | 실제 MNIST train/test shape 검증 (파일 없으면 skip) |
+| `TestMNISTDatasetLen` | 2 | train/test split 샘플 수 |
+| `TestMNISTDatasetImages` | 3 | shape `(N, 784)`, dtype `float32`, 범위 `[0, 1]` |
+| `TestMNISTDatasetTargetsMulticlass` | 3 | shape `(N, 10)`, dtype, one-hot 합 검증 |
+| `TestMNISTDatasetTargetsBinary` | 4 | shape `(N, 1)`, dtype, 값 범위, 홀수=1 검증 |
+| `TestMNISTDatasetTargetsRegression` | 4 | shape `(N, 1)`, dtype, 값 범위, 경계값 검증 |
+| `TestMNISTDatasetGetitem` | 4 | tuple 반환, image/target shape |
+| `TestMNISTDatasetTaskSpec` | 4 | 필수 키 존재, task별 `output_dim`, `prediction_mode` |
+| `TestMNISTDatasetErrors` | 2 | 잘못된 split/task `ValueError` |
+| `TestMNISTDatasetReal` | 2 | 실제 MNIST train/test shape 검증 (파일 없으면 skip) |
 
 단위 테스트는 `tmp_path` fixture로 합성 gz 파일(n=20)을 생성하여 실제 MNIST 파일에 의존하지 않는다.
 
 ## 6. 요약
 
-`MnistDataset`은 `load_mnist` 원본 배열을 `(N, 784)` `float32`로 정규화하고, task에 따라 one-hot, 이진화, 정규화 중 하나로 target을 변환한다. `__len__`과 `__getitem__` 프로토콜로 `DataLoader`와 연동하며, `task_spec`으로 Trainer, Evaluator 등 실행 객체에 task 정보를 전달한다.
+`MNISTDataset`은 `load_mnist` 원본 배열을 `(N, 784)` `float32`로 정규화하고, task에 따라 one-hot, 이진화, 정규화 중 하나로 target을 변환한다. `__len__`과 `__getitem__` 프로토콜로 `Dataloader`와 연동하며, `task_spec`으로 Trainer, Evaluator 등 실행 객체에 task 정보를 전달한다.
 
 다음 Phase에서는 [[phase2.3_dataloader]]를 다룬다.

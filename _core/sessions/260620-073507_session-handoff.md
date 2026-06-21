@@ -32,7 +32,7 @@ Stage 3(nn + MLP)과 Stage 4(CuPy CNN)를 하나의 Stage 3으로 통합하고,
 |---|---|---|
 | Stage 0 | 환경 구성 및 계획 수립 | 0.0~0.3 |
 | Stage 1 | 기본 설정 및 과제 규약 | 1.1~1.4 |
-| Stage 2 | MNIST DataLoader | 2.1~2.4 |
+| Stage 2 | MNIST Dataloader | 2.1~2.4 |
 | Stage 3 | nn 모듈 및 모델 구현 | 3.1~3.7 (공통/MLP/CNN 3그룹) |
 | Stage 4 | 실행 객체 | 4.1~4.8 |
 | Stage 5 | 클라이언트 코드 | 5.1~5.5 |

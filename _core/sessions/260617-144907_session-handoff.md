@@ -1,13 +1,13 @@
 # mnist-numpy-from-scratch 세션 핸드오프
 
 > 작성일시: 260617-144907
-> 세션 목적: Phase 2.3 DataLoader 구현 및 session-end.md 커밋/푸시 절차 추가
+> 세션 목적: Phase 2.3 Dataloader 구현 및 session-end.md 커밋/푸시 절차 추가
 > 이전 핸드오프: 260617-144014_session-handoff.md
 
 ## 1. 세션 핵심 요약
 
 Phase 2.3을 TDD 순서로 완료했다.
-`test_dataloader.py` 13개 테스트를 먼저 작성하여 ImportError로 실패 확인 후, `DataLoader` 클래스를 `src/data/dataloader.py`에 구현하여 전체 통과시켰다.
+`test_dataloader.py` 13개 테스트를 먼저 작성하여 ImportError로 실패 확인 후, `Dataloader` 클래스를 `src/data/dataloader.py`에 구현하여 전체 통과시켰다.
 Stage 2 전체(54개 테스트)를 재실행하여 이상 없음을 확인했다.
 추가로 `session-end.md`에 Step 6(사용자 승인 후 커밋/푸시) 절차를 추가했다.
 
@@ -15,14 +15,14 @@ Stage 2 전체(54개 테스트)를 재실행하여 이상 없음을 확인했다
 
 | 요청 내용 | 배경 목적 |
 |---|---|
-| Phase 2.3만 진행 | Stage 2 순차 진행 — Phase 2.2 완료 상태에서 DataLoader 단독 구현 |
+| Phase 2.3만 진행 | Stage 2 순차 진행 — Phase 2.2 완료 상태에서 Dataloader 단독 구현 |
 | session-end.md에 커밋/푸시 절차 추가 | 세션 종료 시 문서 작업 후 승인을 받아 커밋·푸시까지 일괄 처리 |
 
 ## 3. 확정된 결정사항
 
 | 항목 | 확정 내용 | 비고 |
 |---|---|---|
-| `DataLoader` 위치 | `src/data/dataloader.py` (신규 파일) | |
+| `Dataloader` 위치 | `src/data/dataloader.py` (신규 파일) | |
 | index 방식 | `np.random.permutation` / `np.arange`로 index 배열 생성 후 슬라이싱 | Dataset 원본 배열 직접 셔플 안 함 |
 | 배치 조립 | `np.stack([dataset[i][0] for i in batch_idx])` | MNIST 전용 아님, 범용 |
 | 마지막 배치 | drop 없음, 그대로 yield | 호출부에서 필요 시 처리 |

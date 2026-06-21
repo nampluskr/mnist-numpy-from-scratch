@@ -49,7 +49,7 @@ utils -> data -> nn -> models -> core -> scripts/experiments
 
 | 레거시 | src 대응 | 변경 사항 |
 |---|---|---|
-| `common/mnist.py` | `src/data/mnist.py` | `load_images`/`load_labels` -> `load_mnist`로 통합, `MnistDataset` 추가 |
+| `common/mnist.py` | `src/data/mnist.py` | `load_images`/`load_labels` -> `load_mnist`로 통합, `MNISTDataset` 추가 |
 | `common/dataloader.py` | `src/data/dataloader.py` | 배열 직접 수신 -> Dataset 프로토콜 기반으로 전환 |
 | `common/functions.py` (활성화) | `src/nn/activations.py` | `sigmoid`, `softmax`, `identity`, `relu` |
 | `common/functions.py` (손실·gradient) | `src/nn/losses.py` | 손실 3종 + gradient 3종 |
@@ -119,8 +119,8 @@ src/
 | `src/nn/losses.py` | 손실 함수 3종(`cross_entropy`, `binary_cross_entropy`, `mse`) + gradient 함수 3종 |
 | `src/nn/metrics.py` | `accuracy`, `binary_accuracy`, `r2_score` |
 | `src/nn/conv.py` | `im2col`/`col2im` + `Conv2d`, `MaxPool2d`, `Flatten`, `Dropout` |
-| `src/data/mnist.py` | 로컬 gzip 로딩(`load_mnist`), `get_task_spec()`, `transform_targets()`, `MnistDataset` |
-| `src/data/dataloader.py` | `__len__`·`__getitem__` 프로토콜 기반 범용 `DataLoader` |
+| `src/data/mnist.py` | 로컬 gzip 로딩(`load_mnist`), `get_task_spec()`, `transform_targets()`, `MNISTDataset` |
+| `src/data/dataloader.py` | `__len__`·`__getitem__` 프로토콜 기반 범용 `Dataloader` |
 | `src/models/mlp.py` | `src/nn/` 모듈을 조립한 NumPy 기반 MLP |
 | `src/models/cnn.py` | CuPy 기반 CNN |
 | `src/core/optimizers.py` | `SGD`, `Adam` - `model.params`/`grads` 기반 in-place 업데이트 |
@@ -147,8 +147,8 @@ Stage 1부터 Stage 6까지의 Phase 분할은 아래와 같다.
 | 1 | 1.2 파일 입출력 | `io.py`, `checkpoints.py` | `test_io.py`, `test_checkpoints.py` |
 | 1 | 1.3 시각화 유틸리티 | `training_plots.py` | `test_training_plots.py` |
 | 2 | 2.1 MNIST 로딩 | `data/mnist.py` (`load_mnist`) | `test_mnist.py` |
-| 2 | 2.2 Dataset | `data/mnist.py` (`MnistDataset`) | `test_dataset.py` |
-| 2 | 2.3 DataLoader | `data/dataloader.py` | `test_dataloader.py` |
+| 2 | 2.2 Dataset | `data/mnist.py` (`MNISTDataset`) | `test_dataset.py` |
+| 2 | 2.3 Dataloader | `data/dataloader.py` | `test_dataloader.py` |
 | 3 | 3.1 activation | `nn/activations.py` | `test_activations.py` |
 | 3 | 3.2 loss | `nn/losses.py` | `test_losses.py` |
 | 3 | 3.3 metric | `nn/metrics.py` | `test_metrics.py` |

@@ -8,7 +8,7 @@ updated: "2026-06-20"
 
 ## 1. 개요
 
-`src/data/mnist.py`의 `load_mnist`는 로컬에 저장된 MNIST gz 파일 4개를 파싱하여 원본 배열을 반환하는 단일 진입점이다. 정규화, target 변환 등 전처리는 이 함수의 책임 범위 밖이며, 각각 `MnistDataset`과 `transform_targets`가 담당한다. 데이터 파이프라인에서 `load_mnist`는 가장 앞 단계에 위치하며, 이미지와 레이블 원본 배열을 다음 단계(`MnistDataset`)로 넘긴다.
+`src/data/mnist.py`의 `load_mnist`는 로컬에 저장된 MNIST gz 파일 4개를 파싱하여 원본 배열을 반환하는 단일 진입점이다. 정규화, target 변환 등 전처리는 이 함수의 책임 범위 밖이며, 각각 `MNISTDataset`과 `transform_targets`가 담당한다. 데이터 파이프라인에서 `load_mnist`는 가장 앞 단계에 위치하며, 이미지와 레이블 원본 배열을 다음 단계(`MNISTDataset`)로 넘긴다.
 
 **목표**
 - 로컬 MNIST gz 파일 4개를 파싱하여 `"train"` / `"test"` split을 선택한다.
@@ -54,7 +54,7 @@ IDX 포맷은 헤더와 데이터 영역으로 구성된 바이너리 직렬화 
 | `load_mnist` | 함수 | `split: str`, `dataset_dir: str` | `(images, labels)` tuple | MNIST 원본 배열 로딩 |
 | `get_task_spec` | 함수 | `task: str` | `dict` | task별 스펙 dict 반환 |
 | `transform_targets` | 함수 | `labels: ndarray`, `task: str` | `ndarray` | task별 target 변환 |
-| `MnistDataset` | 클래스 | `split`, `task` | dataset instance | 정규화 및 target 변환 포함 |
+| `MNISTDataset` | 클래스 | `split`, `task` | dataset instance | 정규화 및 target 변환 포함 |
 
 ### 3.1. load_mnist
 
@@ -113,14 +113,14 @@ print(labels.shape, labels.dtype)
 (60000,) uint8
 ```
 
-프로젝트 통합 예제는 다음과 같다. `MnistDataset`은 `load_mnist`를 내부에서 호출하여 정규화와 target 변환까지 처리한다.
+프로젝트 통합 예제는 다음과 같다. `MNISTDataset`은 `load_mnist`를 내부에서 호출하여 정규화와 target 변환까지 처리한다.
 
 ```python
-from src.data.mnist import MnistDataset
-from src.data.dataloader import DataLoader
+from src.data.mnist import MNISTDataset
+from src.data.dataloader import Dataloader
 
-dataset = MnistDataset("train", "multiclass")
-loader = DataLoader(dataset, batch_size=64, shuffle=True)
+dataset = MNISTDataset("train", "multiclass")
+loader = Dataloader(dataset, batch_size=64, shuffle=True)
 
 for images, targets in loader:
     print(images.shape, targets.shape)
@@ -146,6 +146,6 @@ conda run -n numpy_py311 pytest tests/stage2/test_mnist.py -v
 
 ## 6. 요약
 
-`load_mnist`는 로컬 MNIST gz 파일을 IDX 바이너리 포맷으로 파싱하여 원본 `uint8` 배열을 반환한다. 정규화와 target 변환은 이 함수의 책임 범위 밖이며, `MnistDataset`이 담당한다. 단위 테스트는 합성 데이터로 실행하여 실제 파일 의존을 최소화한다.
+`load_mnist`는 로컬 MNIST gz 파일을 IDX 바이너리 포맷으로 파싱하여 원본 `uint8` 배열을 반환한다. 정규화와 target 변환은 이 함수의 책임 범위 밖이며, `MNISTDataset`이 담당한다. 단위 테스트는 합성 데이터로 실행하여 실제 파일 의존을 최소화한다.
 
 다음 Phase에서는 [[phase2.2_dataset]]을 다룬다.
